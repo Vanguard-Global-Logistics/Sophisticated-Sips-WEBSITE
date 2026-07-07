@@ -11,11 +11,13 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => req.cookies.getAll(),
-        setAll: (list: { name: string; value: string; options: CookieOptions }[]) =>,
-      },
-    }
-  );
+  getAll: () => req.cookies.getAll(),
+  setAll: (list: { name: string; value: string; options: CookieOptions }[]) => {
+    list.forEach(({ name, value, options }) => {
+      res.cookies.set(name, value, options);
+    });
+  },
+},
   const { data } = await supabase.auth.getUser();
   // Session gate only; owner authorization happens server-side (requireOwner + RLS),
   // which allows additional admins from the owners table and in-app ownership transfer.
