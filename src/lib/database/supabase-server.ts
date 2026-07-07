@@ -1,6 +1,8 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+
+type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 /** Session-aware client for server components / route handlers (respects RLS). */
 export async function supabaseServer() {
@@ -11,9 +13,12 @@ export async function supabaseServer() {
     {
       cookies: {
         getAll: () => cookieStore.getAll(),
-        setAll: (list: { name: string; value: string; options?: any }[]) => list.forEach(({ name, value, options }) => {
-          try { cookieStore.set(name, value, options); } catch {}
-        }),
+        setAll: (list: CookieToSet[]) =>
+          list.forEach(({ name, value, options }) => {
+            try {
+              cookieStore.set(name, value, options);
+            } catch {}
+          }),
       },
     }
   );
