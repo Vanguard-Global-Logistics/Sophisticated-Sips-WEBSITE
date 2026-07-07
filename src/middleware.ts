@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 /** Protects /owner. Only a signed-in session matching OWNER_EMAIL gets through. */
 export async function middleware(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function middleware(req: NextRequest) {
     {
       cookies: {
         getAll: () => req.cookies.getAll(),
-        setAll: (list) => list.forEach(({ name, value, options }) => res.cookies.set(name, value, options)),
+        setAll: (list: { name: string; value: string; options: CookieOptions }[]) =>,
       },
     }
   );
