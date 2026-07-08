@@ -19,7 +19,15 @@ export async function POST(req: Request) {
   // so it authorizes against the signed-in SESSION email matching the invitation.
   if (action === "confirm") {
     const sb = await supabaseServer();
-    const { data: userData } = await sb.auth.getUser();
+
+if (!sb) {
+  return NextResponse.json(
+    { error: "Supabase is not configured yet." },
+    { status: 503 }
+  );
+}
+
+const { data: userData } = await sb.auth.getUser();
     const sessionEmail = userData.user?.email?.toLowerCase();
     if (!sessionEmail) return NextResponse.json({ error: "Sign in first with your invited email." }, { status: 401 });
 
