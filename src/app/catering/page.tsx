@@ -1,13 +1,18 @@
 import Link from "next/link";
 import { SecHead, PackageCards } from "@/components/public/Bits";
 import { supabaseServer } from "@/lib/database/supabase-server";
+import { DEMO_PACKAGES } from "@/lib/demo-data";
 
 export const revalidate = 300;
 export const metadata = { title: "Coffee Catering for Florida Events — Sophisticated Sips" };
 
 export default async function Catering() {
   const sb = await supabaseServer();
-  const { data: packages } = await sb.from("catering_packages").select("*").eq("active", true).order("sort");
+  let packages = DEMO_PACKAGES as any[];
+  if (sb) {
+    const { data } = await sb.from("catering_packages").select("*").eq("active", true).order("sort");
+    if (data?.length) packages = data;
+  }
   return (
     <div className="section">
       <div className="wrap">

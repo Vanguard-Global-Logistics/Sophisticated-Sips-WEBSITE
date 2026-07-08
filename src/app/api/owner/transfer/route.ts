@@ -13,6 +13,7 @@ export const runtime = "nodejs";
 export async function POST(req: Request) {
   const { action, newOwnerEmail } = await req.json().catch(() => ({}));
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
   // "confirm" is special: the invited new owner is NOT in the owners table yet,
   // so it authorizes against the signed-in SESSION email matching the invitation.

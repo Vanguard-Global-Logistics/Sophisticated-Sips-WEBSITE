@@ -10,6 +10,7 @@ export async function POST() {
 
   // Ground the ideas in real pipeline data.
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const { data: leads } = await db
     .from("leads")
     .select("event_type,guest_count,status")

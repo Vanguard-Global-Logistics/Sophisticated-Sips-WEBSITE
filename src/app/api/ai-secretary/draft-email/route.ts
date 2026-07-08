@@ -13,6 +13,7 @@ export async function POST(req: Request) {
   if (!leadId) return NextResponse.json({ error: "leadId required" }, { status: 400 });
 
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const { data: lead } = await db.from("leads").select("*").eq("id", leadId).single();
   if (!lead) return NextResponse.json({ error: "lead not found" }, { status: 404 });
   if (!lead.contact_email)

@@ -13,7 +13,7 @@ export default function Nav() {
     <nav className="nav">
       <div className="wrap nav-in">
         <Link href="/" className="logo">
-          <div className="logo-cup">☕</div>
+          <div className="logo-mono">S</div>
           <div className="logo-name serif">Sophisticated <em>Sips</em></div>
         </Link>
         <div className="nav-links">

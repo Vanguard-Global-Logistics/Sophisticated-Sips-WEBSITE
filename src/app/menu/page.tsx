@@ -1,14 +1,18 @@
 import { SecHead } from "@/components/public/Bits";
 import MenuTabs from "@/components/public/MenuTabs";
 import { supabaseServer } from "@/lib/database/supabase-server";
+import { DEMO_MENU } from "@/lib/demo-data";
 
 export const revalidate = 60;
 export const metadata = { title: "Menu — Sophisticated Sips" };
 
 export default async function MenuPage() {
   const sb = await supabaseServer();
-  const { data: items } = await sb.from("menu_items").select("*").eq("active", true)
-    .order("category").order("sort");
+  let items = DEMO_MENU as any[];
+  if (sb) {
+    const { data } = await sb.from("menu_items").select("*").eq("active", true).order("category").order("sort");
+    if (data?.length) items = data;
+  }
   return (
     <div className="section">
       <div className="wrap" style={{ maxWidth: 780 }}>

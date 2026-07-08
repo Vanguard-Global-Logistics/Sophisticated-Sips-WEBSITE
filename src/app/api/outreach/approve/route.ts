@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "draftId and action (approve|decline) required" }, { status: 400 });
 
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const { data: draft } = await db.from("email_drafts").select("*").eq("id", draftId).single();
   if (!draft) return NextResponse.json({ error: "draft not found" }, { status: 404 });
   if (draft.status !== "pending")

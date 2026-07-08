@@ -21,6 +21,7 @@ export async function POST(req: Request) {
 
   const guests = Math.max(0, Math.min(100000, parseInt(f.guest_count) || 0));
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
   const { data: booking, error } = await db.from("booking_requests").insert({
     name, email,

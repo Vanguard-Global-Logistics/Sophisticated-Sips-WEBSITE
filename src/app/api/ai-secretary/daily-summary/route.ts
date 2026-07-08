@@ -11,6 +11,7 @@ export async function POST() {
     return NextResponse.json({ error: "owner only" }, { status: 401 });
 
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const dayAgo = new Date(Date.now() - 864e5).toISOString();
   const weekAgo = new Date(Date.now() - 7 * 864e5).toISOString();
 

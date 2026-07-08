@@ -16,6 +16,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: `channel must be one of: ${CHANNELS.join(", ")}` }, { status: 400 });
 
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const [{ data: menu }, { data: leads }] = await Promise.all([
     db.from("menu_items").select("name,category,price_label").eq("active", true),
     db.from("leads").select("event_type").order("created_at", { ascending: false }).limit(40),

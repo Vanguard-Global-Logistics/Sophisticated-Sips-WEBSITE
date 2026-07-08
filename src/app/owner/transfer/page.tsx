@@ -1,21 +1,26 @@
 import { redirect } from "next/navigation";
-import { requireOwner, supabaseServer, supabaseAdmin } from "@/lib/database/supabase-server";
+import { requireOwner, supabaseServer, supabaseAdmin, isSupabaseConfigured } from "@/lib/database/supabase-server";
 import ConfirmTransfer from "@/components/admin/ConfirmTransfer";
+import SetupNeeded from "@/components/admin/SetupNeeded";
 
 export const metadata = { title: "Ownership Transfer — Sophisticated Sips" };
 export const dynamic = "force-dynamic";
 
 export default async function TransferPage() {
+  if (!isSupabaseConfigured()) return <SetupNeeded />;
   if (await requireOwner()) redirect("/owner"); // existing owners manage transfers from the dashboard
 
   const sb = await supabaseServer();
+  if (!sb) return <SetupNeeded />;
   const { data } = await sb.auth.getUser();
   const email = data.user?.email?.toLowerCase();
   if (!email) redirect("/owner/login");
 
-  const { data: reqRow } = await supabaseAdmin()
-    .from("owner_transfer_requests").select("new_owner_email,status")
-    .eq("status", "pending").order("created_at", { ascending: false }).limit(1).maybeSingle();
+  const admin = supabaseAdmin();
+  const { data: reqRow } = admin
+    ? await admin.from("owner_transfer_requests").select("new_owner_email,status")
+        .eq("status", "pending").order("created_at", { ascending: false }).limit(1).maybeSingle()
+    : { data: null };
 
   const invited = reqRow?.new_owner_email === email;
   return (

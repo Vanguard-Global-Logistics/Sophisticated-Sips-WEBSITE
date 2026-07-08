@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { requireOwner } from "@/lib/database/supabase-server";
+import { requireOwner, isSupabaseConfigured } from "@/lib/database/supabase-server";
+import SetupNeeded from "@/components/admin/SetupNeeded";
 
 export const metadata = { title: "Training & Setup — Sophisticated Sips" };
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ const SECTIONS: [string, string][] = [
 ];
 
 export default async function TrainingPage() {
+  if (!isSupabaseConfigured()) return <SetupNeeded />;
   if (!(await requireOwner())) redirect("/owner/login");
   return (
     <div className="section">

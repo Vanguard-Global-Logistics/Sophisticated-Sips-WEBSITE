@@ -7,7 +7,9 @@ export const runtime = "nodejs";
 export async function GET() {
   const started = Date.now();
   try {
-    const { error } = await supabaseAdmin().from("menu_items").select("id").limit(1);
+    const db = supabaseAdmin();
+    if (!db) return NextResponse.json({ status: "setup", db: "unconfigured", version: "1.0.0-rc.1" }, { status: 200 });
+    const { error } = await db.from("menu_items").select("id").limit(1);
     return NextResponse.json({
       status: error ? "degraded" : "ok",
       db: error ? "unreachable" : "ok",

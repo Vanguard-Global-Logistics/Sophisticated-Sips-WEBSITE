@@ -49,6 +49,7 @@ async function saveLead(input: any) {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return "Email looked invalid — ask the visitor to re-check it.";
   const guests = Math.max(0, Math.min(100000, parseInt(input.guest_count) || 0));
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const { error } = await db.from("leads").insert({
     name: String(input.name || "Website visitor").slice(0, 200),
     contact_email: email,

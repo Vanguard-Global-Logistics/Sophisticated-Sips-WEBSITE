@@ -14,6 +14,7 @@ export async function GET(req: Request) {
   if (!email) return html("This unsubscribe link is invalid or expired.");
 
   const db = supabaseAdmin();
+  if (!db) return html("This site isn't fully set up yet — please try again later.");
   await db.from("suppression_list").upsert({ email, reason: "unsubscribed" });
   await db.from("email_drafts").update({ status: "blocked", decided_at: new Date().toISOString() }).eq("to_email", email).eq("status", "pending");
   await db.from("leads").update({ status: "declined" }).eq("contact_email", email);

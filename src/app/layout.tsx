@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Outfit } from "next/font/google";
+import { Fraunces, Outfit, Great_Vibes } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/public/Nav";
 import Concierge from "@/components/ai/Concierge";
@@ -7,6 +7,7 @@ import Link from "next/link";
 
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const script = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-script", display: "swap" });
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -39,7 +40,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${outfit.variable} ${script.variable}`}>
       <body>
         {process.env.NEXT_PUBLIC_APP_ENV !== "production" && (
           <div role="status" style={{
@@ -53,11 +54,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">Skip to content</a>
         <Nav />
         <main id="main">{children}</main>
-        <footer className="foot">
-          <div className="wrap">
-            <div className="serif" style={{ fontSize: 19 }}>Sophisticated <span className="goldtxt">Sips</span></div>
-            <div>Luxury mobile espresso · crepes · desserts — serving Florida events</div>
-            <div>Family-owned by Amy Lavold · <Link className="goldtxt" href="/book">Request a quote</Link></div>
+        <footer className="foot2">
+          <div className="wrap foot2-in">
+            <span>© {new Date().getFullYear()} Sophisticated Sips. All rights reserved.</span>
+            <span>Family-owned by Amy Lavold · <Link className="goldtxt" href="/book">Request a quote</Link></span>
           </div>
         </footer>
         <Concierge />

@@ -17,6 +17,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "eventId and amountCents (≥100) required" }, { status: 400 });
 
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const { data: ev } = await db
     .from("events").select("id,title,lead_id, leads(contact_email,name)")
     .eq("id", eventId).single();

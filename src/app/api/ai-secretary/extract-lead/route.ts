@@ -29,6 +29,7 @@ Never guess emails. Only extract what the text actually says.`,
 
     const guests = Math.max(0, Math.min(100000, parseInt(p.guest_estimate) || 0));
     const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
     const { data: lead, error } = await db.from("leads").insert({
       name: String(p.name).slice(0, 200),
       contact_email: p.contact_email ? String(p.contact_email).toLowerCase().slice(0, 200) : null,

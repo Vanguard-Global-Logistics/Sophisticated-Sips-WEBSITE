@@ -11,6 +11,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const cutoff = new Date(Date.now() - 4 * 24 * 3600 * 1000).toISOString();
 
   const { data: leads } = await db

@@ -8,7 +8,9 @@ const EDITABLE = ["business_name","owner_name","phone","mailing_address","servic
 
 export async function GET() {
   if (!(await ownerEmail())) return NextResponse.json({ error: "owner only" }, { status: 401 });
-  const { data } = await supabaseAdmin().from("business_settings").select("*").eq("id", 1).single();
+  const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
+  const { data } = await db.from("business_settings").select("*").eq("id", 1).single();
   return NextResponse.json({ settings: data });
 }
 
@@ -26,7 +28,9 @@ export async function PUT(req: Request) {
   }
   patch.updated_at = new Date().toISOString();
 
-  const { error } = await supabaseAdmin().from("business_settings").update(patch).eq("id", 1);
+  const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
+  const { error } = await db.from("business_settings").update(patch).eq("id", 1);
   if (error) return NextResponse.json({ error: "Couldn't save settings." }, { status: 500 });
   await logAdmin(actor, "settings.update", Object.keys(patch).filter((k) => k !== "updated_at").join(", "));
   return NextResponse.json({ ok: true });

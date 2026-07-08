@@ -18,6 +18,7 @@ export async function POST(req: Request) {
 
   const event = JSON.parse(raw);
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
   const markPaid = async (col: "square_order_id" | "square_invoice_id", val: string) => {
     const { data: pay } = await db.from("payments").select("*").eq(col, val).maybeSingle();

@@ -8,6 +8,7 @@ export async function GET() {
   if (!(await ownerEmail())) return NextResponse.json({ error: "owner only" }, { status: 401 });
 
   const db = supabaseAdmin();
+  if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const [{ data: owners }, { data: transfer }] = await Promise.all([
     db.from("owners").select("email").order("email"),
     db.from("owner_transfer_requests").select("*").in("status", ["pending", "confirmed"]).order("created_at", { ascending: false }).limit(1),
