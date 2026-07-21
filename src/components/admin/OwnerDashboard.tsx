@@ -173,14 +173,15 @@ export default function OwnerDashboard() {
   const supplies = forecastSupplies(events.filter((e) => e.status === "scheduled"));
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const ownerName = (settings?.owner_name || "").trim() || "there";
 
   return (
     <div className="section">
       <div className="wrap">
         <div className="morning">
           <div>
-            <div className="sec-kicker">AI Catering Secretary</div>
-            <h1 className="serif">{greeting}, Amy ✦</h1>
+            <div className="sec-kicker">Owner command center</div>
+            <h1 className="serif">{greeting}, {ownerName} ✦</h1>
             <p style={{ fontSize: 14, opacity: .7, marginTop: 6 }}>
               {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
               {" · "}{todaysEvents.length === 0 ? "no events today" : `${todaysEvents.length} event${todaysEvents.length > 1 ? "s" : ""} today · ~${staffNeeded} barista${staffNeeded > 1 ? "s" : ""} needed`}
@@ -202,12 +203,32 @@ export default function OwnerDashboard() {
           </div>
         </div>
 
+        <div className="kai">
+          <div className="kai-head">
+            <div className="kai-orb" aria-hidden="true">K</div>
+            <div>
+              <div className="kai-title">KAI</div>
+              <div className="kai-sub">Your business assistant</div>
+            </div>
+          </div>
+          <p className="kai-say">
+            Soon you&apos;ll just tell me: <b>&ldquo;change the mocha to $6.75,&rdquo;</b> <b>&ldquo;print 50 flyers,&rdquo;</b> or <b>&ldquo;show tomorrow&apos;s orders.&rdquo;</b> Voice is on the way — for now, every job has a button.
+          </p>
+          <div className="kai-actions">
+            <a href="/owner/menu"><span className="ico">☕</span> Edit menu &amp; prices</a>
+            <a href="/menu/print" target="_blank" rel="noreferrer"><span className="ico">🖨</span> Print Menu Flyer</a>
+            <button onClick={() => setTab("Payments")}><span className="ico">🧾</span> Today&apos;s orders &amp; invoices</button>
+            <button onClick={() => { setTab("Daily Summary"); dailyBriefing(); }}><span className="ico">✦</span> Ask for a briefing</button>
+          </div>
+          <div className="kai-note">Manual controls always work — even if the AI is unavailable.</div>
+        </div>
+
         <div className="qa" role="navigation" aria-label="Quick actions">
           <button onClick={() => setTab("Payments")}><span>🧾</span>Create invoice</button>
           <button onClick={() => setTab("Approval Queue")}><span>✉️</span>Approve emails{pending.length > 0 ? ` (${pending.length})` : ""}</button>
           <button onClick={() => setTab("Payments")}><span>💳</span>Send deposit</button>
-          <button onClick={() => { setTab("Daily Summary"); dailyBriefing(); }}><span>✦</span>Ask AI</button>
-          <button onClick={() => setTab("Menu Editor")}><span>☕</span>New product</button>
+          <button onClick={() => router.push("/owner/menu")}><span>☕</span>Edit menu</button>
+          <a className="qa-link" href="/menu/print" target="_blank" rel="noreferrer"><span>🖨</span>Print flyer</a>
           <button onClick={() => setTab("Growth Ideas")}><span>📈</span>Growth report</button>
         </div>
         <div style={{ height: 10 }} />

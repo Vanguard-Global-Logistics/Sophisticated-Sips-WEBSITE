@@ -25,7 +25,7 @@ export default function OwnerLogin() {
       <div className="wrap" style={{ maxWidth: 420 }}>
         <div className="sec-head">
           <div className="sec-kicker">Owner access</div>
-          <h1 className="sec-title serif">Welcome back, Amy</h1>
+          <h1 className="sec-title serif">Welcome back</h1>
           <p className="sec-sub">This dashboard is private to Sophisticated Sips.</p>
         </div>
         <div className="glass" style={{ padding: 28 }}>

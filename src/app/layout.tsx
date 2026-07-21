@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${fraunces.variable} ${outfit.variable} ${script.variable}`}>
       <body>
         {process.env.NEXT_PUBLIC_APP_ENV !== "production" && (
-          <div role="status" style={{
+          <div role="status" className="staging-banner no-print" style={{
             background: "repeating-linear-gradient(45deg,#C9A45C,#C9A45C 14px,#B0713E 14px,#B0713E 28px)",
             color: "#14100C", textAlign: "center", fontWeight: 700, fontSize: 13,
             letterSpacing: ".08em", padding: "8px 12px",

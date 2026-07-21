@@ -48,8 +48,8 @@ export default async function Home() {
     const { data } = await sb.from("business_settings").select("phone,service_area").eq("id", 1).maybeSingle();
     settings = data;
   }
-  const heroImg = has("hero-trailer.jpg");
-  const sigImg = has("signature-drinks.jpg");
+  const heroImg = has("gallery/hero-trailer.jpg");
+  const sigImg = has("gallery/signature-drinks.jpg");
 
   const jsonLd = {
     "@context": "https://schema.org", "@type": "FoodEstablishment",
@@ -69,7 +69,7 @@ export default async function Home() {
       <header className="hero2">
         <div className="hero2-bg" style={{
           backgroundImage: heroImg
-            ? "url(/hero-trailer.jpg)"
+            ? "url(/gallery/hero-trailer.jpg)"
             : "radial-gradient(800px 500px at 70% 45%, rgba(201,164,92,.28), transparent 65%), linear-gradient(150deg,#123B3A,#0A1D18 60%,#1a1108)",
         }} />
         <div className="hero2-shade" />
@@ -119,7 +119,7 @@ export default async function Home() {
             <div className="sig-photo">
               {sigImg ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
-                <img src="/signature-drinks.jpg" alt="Four signature iced espresso drinks topped with whipped cream" />
+                <img src="/gallery/signature-drinks.jpg" alt="Four signature iced espresso drinks topped with whipped cream" />
               ) : (
                 <div className="gal-fallback" style={{ aspectRatio: "3/2" }}>☕</div>
               )}

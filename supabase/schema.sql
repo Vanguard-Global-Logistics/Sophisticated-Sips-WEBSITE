@@ -63,7 +63,9 @@ create table if not exists menu_items (
   description text,
   is_signature boolean default false,
   sort int default 100,
-  active boolean default true
+  active boolean default true,
+  sold_out boolean default false,
+  photo_url text
 );
 
 -- ---------- catering_packages ----------
@@ -258,6 +260,42 @@ create policy "owner read transfers" on owner_transfer_requests for select using
 create policy "owner read audit" on admin_audit_log for select using (is_owner());
 -- Writes to transfers/audit go through server routes (service role) only.
 
+-- ---------- Menu Studio: version history, inventory, scheduled changes ----------
+create table if not exists menu_versions (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  label text,
+  author_email text,
+  snapshot jsonb not null
+);
+create table if not exists inventory_items (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  unit text default 'unit',
+  on_hand numeric default 0,
+  par_level numeric default 0,
+  sort int default 100,
+  updated_at timestamptz default now()
+);
+create table if not exists scheduled_menu_changes (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  effective_at timestamptz not null,
+  action text not null,
+  payload jsonb not null,
+  status text default 'pending',
+  applied_at timestamptz
+);
+alter table menu_versions enable row level security;
+alter table inventory_items enable row level security;
+alter table scheduled_menu_changes enable row level security;
+create policy "owner read menu_versions" on menu_versions for select using (is_owner());
+create policy "owner all inventory" on inventory_items for all using (is_owner()) with check (is_owner());
+create policy "owner read scheduled_changes" on scheduled_menu_changes for select using (is_owner());
+create index if not exists idx_menu_versions_created on menu_versions(created_at desc);
+create index if not exists idx_inventory_sort on inventory_items(sort);
+create index if not exists idx_scheduled_effective on scheduled_menu_changes(status, effective_at);
+
 -- HARD GUARANTEE: the system can never have zero owners.
 create or replace function prevent_zero_owners() returns trigger
 language plpgsql security definer as $$
@@ -270,3 +308,17 @@ end; $$;
 drop trigger if exists owners_min on owners;
 create trigger owners_min before delete on owners
   for each row execute function prevent_zero_owners();
+
+-- ============================================================
+-- Role grants (Supabase model: broad table grants, RLS is the gate)
+-- Hosted Supabase applies these via default privileges; a fresh/self-hosted
+-- database needs them explicitly, or PostgREST returns "permission denied".
+-- Every table above has RLS enabled, so anon/authenticated still only see
+-- what a policy allows; service_role bypasses RLS by design.
+-- ============================================================
+grant usage on schema public to anon, authenticated, service_role;
+grant all on all tables in schema public to anon, authenticated, service_role;
+grant all on all sequences in schema public to anon, authenticated, service_role;
+grant all on all functions in schema public to anon, authenticated, service_role;
+alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
+alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
