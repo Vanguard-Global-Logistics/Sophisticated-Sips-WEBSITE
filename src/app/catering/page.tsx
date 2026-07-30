@@ -17,7 +17,7 @@ export default async function Catering() {
     <div className="section">
       <div className="wrap">
         <SecHead kicker="Coffee catering, done beautifully" title="Bring the best coffee break of the year to your event"
-          sub="For businesses, planners, schools, and celebrations across Florida — Sophisticated Sips makes your event feel effortless, generous, and unforgettable." />
+          sub="For businesses, planners, schools, and celebrations across Florida — Sophisticated Sips makes your event feel effortless, generous, and unforgettable."  as="h1"/>
         <div className="grid g3" style={{ marginBottom: 54 }}>
           {[["🏢","Corporate coffee catering","Client events, conferences, and office pop-ups with invoice-friendly billing and branded menus."],
             ["💛","Employee appreciation days","The highest-ROI morale boost you can book. Watch the line form and the Slack messages roll in."],

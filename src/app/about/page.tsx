@@ -7,7 +7,7 @@ export default function About() {
   return (
     <div className="section">
       <div className="wrap" style={{ maxWidth: 720 }}>
-        <SecHead kicker="Our story" title="Family-owned. Florida-proud. Espresso-obsessed." />
+        <SecHead kicker="Our story" title="Family-owned. Florida-proud. Espresso-obsessed."  as="h1"/>
         <div className="glass" style={{ padding: 34, fontSize: 15.5, lineHeight: 1.85, fontWeight: 300 }}>
           <p style={{ fontSize: 15.5, opacity: 0.88 }}>
             Sophisticated Sips began with a simple belief: the best moments at any event happen

@@ -17,7 +17,7 @@ export default async function MenuPage() {
     <div className="section">
       <div className="wrap" style={{ maxWidth: 780 }}>
         <SecHead kicker="The menu" title="Artisan drinks & desserts"
-          sub="Everything is made to order at your event. Custom and seasonal menus available for catering." />
+          sub="Everything is made to order at your event. Custom and seasonal menus available for catering."  as="h1"/>
         <MenuTabs items={items || []} />
       </div>
     </div>

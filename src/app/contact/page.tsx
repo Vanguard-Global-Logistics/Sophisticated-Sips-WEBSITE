@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ContactForm from "@/components/public/ContactForm";
 import { SecHead } from "@/components/public/Bits";
 
@@ -15,12 +16,13 @@ export default function ContactPage() {
             kicker="Contact Sophisticated Sips"
             title="Start a conversation"
             sub="Have a question before requesting a quote? Send Amy a note here, or talk with Kai for immediate event-planning help."
-          />
+           as="h1"/>
           <div className="contact-kai-note">
             <span aria-hidden="true">✦</span>
             <div>
               <b>Need an answer now?</b>
-              <p>Open Kai in the lower-right corner to compare packages, shape a menu, or estimate guest needs.</p>
+              <p>Visit Kai on the homepage to compare packages, shape a menu, or estimate guest needs.</p>
+              <Link href="/#kai" className="mini-btn" style={{ display: "inline-flex", marginTop: 10 }}>Talk with Kai →</Link>
             </div>
           </div>
         </div>

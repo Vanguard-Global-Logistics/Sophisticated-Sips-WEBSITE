@@ -45,7 +45,7 @@ export default function BookingForm() {
   );
 
   return (
-    <div className="glass" style={{ padding: 28 }}>
+    <form className="glass" style={{ padding: 28 }} onSubmit={(event) => { event.preventDefault(); void submit(); }}>
       <input type="text" value={f.website} onChange={set("website")} tabIndex={-1} autoComplete="off"
         style={{ position: "absolute", left: -9999, opacity: 0, height: 0 }} aria-hidden="true" />
       <div className="fgrid">
@@ -65,9 +65,9 @@ export default function BookingForm() {
       <div className="field"><label htmlFor="bf-dessert-crepe-add-ons">Dessert / crepe add-ons</label><input id="bf-dessert-crepe-add-ons" value={f.addons} onChange={set("addons")} placeholder="e.g. crepe station, cheesecake display" /></div>
       <div className="field"><label htmlFor="bf-notes">Notes</label><textarea id="bf-notes" rows={3} value={f.notes} onChange={set("notes")} placeholder="Anything else we should know?" /></div>
       {err && <div className="form-error" role="alert">{err}</div>}
-      <button className="btn btn-gold" style={{ width: "100%", marginTop: 6 }} onClick={submit} disabled={busy}>
+      <button className="btn btn-gold" type="submit" style={{ width: "100%", marginTop: 6 }} disabled={busy}>
         {busy ? "Sending…" : "Request My Catering Quote"}
       </button>
-    </div>
+    </form>
   );
 }
