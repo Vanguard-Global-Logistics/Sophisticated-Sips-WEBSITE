@@ -39,7 +39,7 @@ export default function KaiPublicStage() {
   };
 
   return (
-    <section className="kai-presence kai-presence-public" aria-labelledby="kai-public-title">
+    <section id="kai" className="kai-presence kai-presence-public" aria-labelledby="kai-public-title">
       <div className="kai-conversation">
         <div className="kai-eyebrow"><span /> Kai · AI event concierge</div>
         <h2 id="kai-public-title">Meet Kai</h2>
