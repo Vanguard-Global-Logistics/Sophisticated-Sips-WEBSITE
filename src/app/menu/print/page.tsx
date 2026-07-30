@@ -1,32 +1,34 @@
+import BrandedMenu, { type BrandedMenuItem } from "@/components/public/BrandedMenu";
 import PrintButton from "@/components/public/PrintButton";
+import { supabaseServer } from "@/lib/database/supabase-server";
+import { DEMO_MENU } from "@/lib/demo-data";
 
+export const revalidate = 60;
 export const metadata = {
   title: "Menu Flyer — Sophisticated Sips",
-  robots: { index: false, follow: false }, // print artifact, not for search
+  robots: { index: false, follow: false },
 };
 
-/**
- * Print-ready menu flyer.
- * Menu-Locked.png is the LOCKED official brand — displayed as-is at full quality, never
- * altered or cropped. The Order-QR sits in a dedicated strip BELOW the menu
- * (lower-right of the page) so it covers zero menu content; the whole sheet fits
- * one Letter page. The teal QR sits on a white card (quiet zone) to stay scannable.
- */
-export default function MenuFlyer() {
+async function activeMenu(): Promise<BrandedMenuItem[]> {
+  const sb = await supabaseServer();
+  if (!sb) return DEMO_MENU;
+  const { data } = await sb
+    .from("menu_items")
+    .select("*")
+    .eq("active", true)
+    .order("category")
+    .order("sort");
+  return data?.length ? data : DEMO_MENU;
+}
+
+export default async function MenuFlyer() {
+  const items = await activeMenu();
+
   return (
-    <div className="mflyer-screen">
+    <main className="dynamic-menu-print">
+      <h1 className="sr-only">Sophisticated Sips printable menu</h1>
       <PrintButton />
-      <div className="mflyer-sheet">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="mflyer-img" src="/branding/menu/Menu-Locked.png" alt="Sophisticated Sips menu" />
-        <div className="mflyer-order">
-          <div className="mflyer-order-cap">Scan to Order</div>
-          <div className="mflyer-qr-card">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="mflyer-qr-img" src="/branding/qr/Order-QR.png" alt="Scan to order" />
-          </div>
-        </div>
-      </div>
-    </div>
+      <BrandedMenu items={items} variant="print" />
+    </main>
   );
 }
