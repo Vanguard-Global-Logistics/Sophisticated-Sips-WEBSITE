@@ -8,7 +8,7 @@ export default function Book() {
     <div className="section">
       <div className="wrap" style={{ maxWidth: 640 }}>
         <SecHead kicker="Book the trailer" title="Tell us about your event"
-          sub="Two minutes now, a personal quote from Amy within one business day." />
+          sub="Two minutes now, a personal quote from Amy within one business day."  as="h1"/>
         <BookingForm />
       </div>
     </div>
