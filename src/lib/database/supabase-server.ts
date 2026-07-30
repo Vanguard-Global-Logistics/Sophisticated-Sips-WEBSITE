@@ -5,7 +5,9 @@ import { cookies } from "next/headers";
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Supabase publishable keys are intended for browser distribution. The environment
+// value remains preferred so the key can be rotated without a code change.
+const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_8apPcpmpfBid2mIdjyTK7Q_7rSyMzx7";
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 /** True only when the public Supabase env vars exist. Public pages use this to
