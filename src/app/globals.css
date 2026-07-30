@@ -35,6 +35,14 @@ a,button{font-family:inherit}
   background-size:200% 100%;color:var(--espresso);font-weight:600;border:none;
   padding:11px 16px;border-radius:22px;cursor:pointer;white-space:nowrap;min-height:44px;
   animation:shimmer 3.5s linear infinite;box-shadow:0 4px 18px rgba(201,164,92,.35)}
+@media(max-width:760px){
+  .nav-in{height:auto;min-height:150px;flex-direction:column;justify-content:center;gap:8px;padding-top:9px;padding-bottom:11px}
+  .logo{align-self:center}
+  .brand-logo{height:54px;width:auto}
+  .nav-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;width:100%;overflow:visible}
+  .nav-link,.nav-book{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;min-height:38px;
+    padding:7px 2px;border-radius:18px;font-size:10px;letter-spacing:.07em;text-align:center}
+}
 @keyframes shimmer{0%{background-position:0 0}100%{background-position:200% 0}}
 
 /* hero */
