@@ -82,21 +82,21 @@ export default function OwnerLogin() {
           <h1 className="sec-title serif">Welcome back</h1>
           <p className="sec-sub">This dashboard is private to Sophisticated Sips.</p>
         </div>
-        <div className="glass" style={{ padding: 28 }}>
+        <form className="glass" style={{ padding: 28 }} onSubmit={(event) => { event.preventDefault(); void login(); }}>
           {configurationMissing && (
             <div className="form-error" role="alert" style={{ marginBottom: 16 }}>
               This deployment is not connected to Supabase. The dashboard is safe, but it cannot accept owner sign-ins until the Vercel environment configuration is restored.
             </div>
           )}
-          <div className="field"><label>Email</label>
-            <input type="email" autoComplete="email" value={email} disabled={configurationMissing} onChange={(e) => setEmail(e.target.value)}
+          <div className="field"><label htmlFor="owner-email">Email</label>
+            <input id="owner-email" name="email" type="email" autoComplete="email" required value={email} disabled={configurationMissing} onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && login()} /></div>
-          <div className="field"><label>Password</label>
-            <input type="password" autoComplete="current-password" value={password} disabled={configurationMissing} onChange={(e) => setPassword(e.target.value)}
+          <div className="field"><label htmlFor="owner-password">Password</label>
+            <input id="owner-password" name="password" type="password" autoComplete="current-password" required value={password} disabled={configurationMissing} onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && login()} /></div>
           {err && <div className="form-error" role="alert">{err}</div>}
           {notice && <div className="form-success" role="status" style={{ marginBottom: 14 }}>{notice}</div>}
-          <button className="btn btn-gold" style={{ width: "100%" }} onClick={login} disabled={busy || resetBusy || configurationMissing}>
+          <button type="submit" className="btn btn-gold" style={{ width: "100%" }} disabled={busy || resetBusy || configurationMissing}>
             {busy ? "Signing in…" : "Sign in"}
           </button>
           <button
@@ -108,7 +108,7 @@ export default function OwnerLogin() {
           >
             {resetBusy ? "Sending reset email…" : "Forgot password?"}
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );
