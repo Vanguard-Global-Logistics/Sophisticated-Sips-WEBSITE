@@ -9,13 +9,6 @@ export const revalidate = 300;
 
 const has = (rel: string) => fs.existsSync(path.join(process.cwd(), "public", rel));
 
-const FEATURES: [string, string, string][] = [
-  ["sparkle", "Crafted with Care", "Barista-crafted beverages made with premium beans and high-quality ingredients."],
-  ["leaf", "Mobile & Flexible", "Our sleek espresso bar comes to you, ready to impress your guests anywhere."],
-  ["people", "Perfect for Any Event", "Weddings, corporate events, parties, and everything in between."],
-  ["heart", "Experience That Lasts", "Exceptional service and unforgettable moments your guests will love."],
-];
-
 const GALLERY = [
   ["gallery/01-latte-art.jpg", "Latte art close-up"],
   ["gallery/02-trailer-event.jpg", "The trailer at an evening event"],
@@ -23,16 +16,6 @@ const GALLERY = [
   ["gallery/04-bottle-display.jpg", "Bottled coffee display"],
   ["gallery/05-espresso-pour.jpg", "Espresso pouring close-up"],
 ] as const;
-
-function Icon({ name }: { name: string }) {
-  const paths: Record<string, React.ReactNode> = {
-    sparkle: (<><path d="M16 3c1.2 7.2 5.8 11.8 13 13-7.2 1.2-11.8 5.8-13 13C14.8 21.8 10.2 17.2 3 16 10.2 14.8 14.8 10.2 16 3z" /><path d="M25 3v6M22 6h6" /></>),
-    leaf: (<><path d="M6 26C6 14 14 6 27 6c0 13-8 21-21 20z" /><path d="M8 24C13 18 18 13 24 9" /></>),
-    people: (<><circle cx="12" cy="10" r="4" /><path d="M4 26c0-4.4 3.6-8 8-8s8 3.6 8 8" /><circle cx="23" cy="12" r="3" /><path d="M22 18c3.3 0 6 2.7 6 6" /></>),
-    heart: (<path d="M16 27S4 19.5 4 11.8C4 7.9 7 5 10.6 5c2.2 0 4.2 1.1 5.4 2.9C17.2 6.1 19.2 5 21.4 5 25 5 28 7.9 28 11.8 28 19.5 16 27 16 27z" />),
-  };
-  return <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true">{paths[name]}</svg>;
-}
 
 export default async function Home() {
   const sb = await supabaseServer();
@@ -84,15 +67,28 @@ export default async function Home() {
         </div>
       </header>
 
-      {/* 3 — feature strip */}
-      <section className="strip" aria-label="Why Sophisticated Sips">
-        <div className="wrap strip-grid">
-          {FEATURES.map(([icon, title, copy]) => (
-            <div className="feat" key={title}>
-              <Icon name={icon} />
-              <div><b>{title}</b><p>{copy}</p></div>
-            </div>
-          ))}
+      {/* 3 — photographic proof, matching Amy's luxury flyers */}
+      <section className="home-proof" aria-label="The Sophisticated Sips experience">
+        <div className="home-proof__grid">
+          <figure>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/gallery/05-espresso-pour.jpg" alt="Espresso pouring into a Sophisticated Sips cup" />
+            <figcaption><b>Crafted with care</b><span>Fresh espresso and café-level presentation.</span></figcaption>
+          </figure>
+          <figure>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/branding/catering/Catering-Luxury.jpeg"
+              alt="A fresh strawberry and chocolate crepe"
+              style={{ objectPosition: "center 54%" }}
+            />
+            <figcaption><b>Made fresh for guests</b><span>Decadent crepes prepared as part of the experience.</span></figcaption>
+          </figure>
+          <figure>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/gallery/hero-trailer.jpg" alt="Sophisticated Sips mobile espresso trailer at an event" />
+            <figcaption><b>Mobile & unforgettable</b><span>A complete luxury café brought directly to your event.</span></figcaption>
+          </figure>
         </div>
       </section>
 

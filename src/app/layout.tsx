@@ -54,10 +54,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip-link">Skip to content</a>
         <Nav />
         <main id="main">{children}</main>
-        <footer className="foot2">
-          <div className="wrap foot2-in">
+        <footer className="lux-footer">
+          <div className="wrap lux-footer__main">
+            <div className="lux-footer__brand">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/photos/sophisticated-sips-ornate-wordmark.svg" alt="Sophisticated Sips" />
+              <span>Mobile espresso &amp; crepe experiences across Florida</span>
+            </div>
+            <div className="lux-footer__links" aria-label="Footer navigation">
+              <Link href="/catering">Catering</Link>
+              <Link href="/menu">Menu</Link>
+              <Link href="/gallery">Gallery</Link>
+              <Link href="/about">About</Link>
+              <Link href="/contact">Contact</Link>
+            </div>
+            <div className="lux-footer__book">
+              <span className="lux-script">Let&apos;s make it unforgettable.</span>
+              <Link className="btn btn-lux btn-gold" href="/book">Reserve Your Experience</Link>
+            </div>
+          </div>
+          <div className="wrap lux-footer__legal">
             <span>© {new Date().getFullYear()} Sophisticated Sips. All rights reserved.</span>
-            <span>Family-owned by Amy Lavold · <Link className="goldtxt" href="/book">Request a quote</Link></span>
+            <span>Family-owned by Amy Lavold</span>
           </div>
         </footer>
         <Concierge />
