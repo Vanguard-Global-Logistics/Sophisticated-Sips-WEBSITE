@@ -16,14 +16,6 @@ const FEATURES: [string, string, string][] = [
   ["heart", "Experience That Lasts", "Exceptional service and unforgettable moments your guests will love."],
 ];
 
-/* SAMPLE testimonials — replace with real client quotes before production launch.
-   The staging banner covers the interim; do not go live with these. */
-const TESTIMONIALS: [string, string][] = [
-  ["Sophisticated Sips was the highlight of our wedding! The coffee was incredible and the service was top-notch.", "Jessica & Michael"],
-  ["Professional, friendly, and unforgettable. Our corporate event guests are still talking about it!", "Amanda R."],
-  ["The attention to detail is unmatched. Highly recommend for any special occasion.", "David L."],
-];
-
 const GALLERY = [
   ["gallery/01-latte-art.jpg", "Latte art close-up"],
   ["gallery/02-trailer-event.jpg", "The trailer at an evening event"],
@@ -156,26 +148,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 6 — testimonials */}
-      <section className="testi">
-        <div className="wrap">
-          <p className="sec-kicker" style={{ textAlign: "center" }}>Kind Words</p>
-          <h2>From Happy Clients</h2>
-          <Reveal>
-            <div className="testi-grid">
-              {TESTIMONIALS.map(([quote, name]) => (
-                <div className="quote" key={name}>
-                  <div className="stars" aria-label="5 star review">★★★★★</div>
-                  <p>&ldquo;{quote}&rdquo;</p>
-                  <span>— {name}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* 7 — final CTA */}
+      {/* 6 — final CTA */}
       <section className="cta2">
         <div className="wrap cta2-grid">
           <div>
