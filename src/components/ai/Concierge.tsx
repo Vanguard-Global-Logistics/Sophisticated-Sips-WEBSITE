@@ -86,12 +86,6 @@ export default function Concierge() {
 
   return (
     <>
-      <button className="fab" onClick={() => setOpen(!open)}
-        aria-label={open ? "Close Kai AI Concierge" : "Open Kai AI Concierge"} aria-expanded={open}>
-        {open
-          ? <span className="kai-x">✕</span>
-          : <Image src="/brand/kai-ai-assistant.png" alt="" width={864} height={1821} sizes="60px" />}
-      </button>
       {open && (
         <div className="chat kai-window" role="dialog" aria-label="Kai AI Concierge">
           <div className="kai-portrait-window">
@@ -110,7 +104,10 @@ export default function Concierge() {
                 <b style={{ fontSize: 18 }}>Kai · AI Concierge</b>
                 <div style={{ fontSize: 11.5, opacity: 0.65 }}>Sophisticated Sips · here to plan with you</div>
               </div>
-              <button className="mini-btn" onClick={() => { setOpen(false); router.push("/book"); }}>Get a quote →</button>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <button className="mini-btn" onClick={() => { setOpen(false); router.push("/book"); }}>Get a quote →</button>
+                <button className="mini-btn" onClick={() => setOpen(false)} aria-label="Close Kai AI Concierge">✕</button>
+              </div>
             </div>
             <div className="chat-body" ref={bodyRef} aria-live="polite">
               {msgs.map((m, i) => (
