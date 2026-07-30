@@ -389,9 +389,13 @@ a,button{font-family:inherit}
 .kai-character{position:relative;z-index:2;height:650px;align-self:end;overflow:hidden;min-width:290px}
 .kai-character:before{content:"";position:absolute;inset:10% 2% 0;border-radius:50% 50% 12px 12px;
   background:radial-gradient(circle at 50% 28%,rgba(201,164,92,.2),transparent 54%);filter:blur(8px)}
-.kai-character img{position:absolute;left:50%;bottom:-8%;height:106%;width:auto;max-width:none;
+.kai-character:after{content:"";position:absolute;z-index:1;left:50%;bottom:13px;width:78%;height:38px;
+  transform:translateX(-50%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.82) 0%,rgba(0,0,0,.5) 42%,transparent 72%);
+  border-top:1px solid rgba(201,164,92,.34);box-shadow:0 -4px 22px rgba(201,164,92,.12)}
+.kai-character img{position:absolute;z-index:2;left:50%;bottom:-3%;height:103%;width:auto;max-width:none;
   transform:translateX(-50%);filter:drop-shadow(0 22px 28px rgba(0,0,0,.7))}
-.kai-status{position:absolute;z-index:3;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;
+.kai-status{position:absolute;z-index:3;top:92px;right:4px;display:flex;align-items:center;
   gap:8px;white-space:nowrap;padding:8px 13px;border:1px solid var(--line);border-radius:999px;
   background:rgba(8,10,8,.82);backdrop-filter:blur(10px);font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase}
 .kai-prompt-row{display:flex;align-items:center;gap:8px;margin-top:20px}
