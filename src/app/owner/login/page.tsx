@@ -8,6 +8,8 @@ export default function OwnerLogin() {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
+  const [resetBusy, setResetBusy] = useState(false);
+  const [notice, setNotice] = useState("");
   const [configurationMissing, setConfigurationMissing] = useState(false);
   const router = useRouter();
 
@@ -42,6 +44,36 @@ export default function OwnerLogin() {
     }
   };
 
+  const requestPasswordReset = async () => {
+    setErr("");
+    setNotice("");
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setErr("Enter the owner email address first.");
+      return;
+    }
+    setResetBusy(true);
+    try {
+      const sb = supabaseBrowser();
+      const request = sb.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: `${window.location.origin}/owner/reset-password`,
+      });
+      const timeout = new Promise<never>((_, reject) =>
+        window.setTimeout(() => reject(new Error("Reset request timed out.")), 15000)
+      );
+      const { error } = await Promise.race([request, timeout]);
+      if (error) {
+        setErr("The reset email could not be sent. Please try again.");
+        return;
+      }
+      setNotice("Check your email for a secure password-reset link. It may take a few minutes.");
+    } catch {
+      setErr("The password-reset service did not respond. Please try again.");
+    } finally {
+      setResetBusy(false);
+    }
+  };
+
   return (
     <div className="section">
       <div className="wrap" style={{ maxWidth: 420 }}>
@@ -62,9 +94,19 @@ export default function OwnerLogin() {
           <div className="field"><label>Password</label>
             <input type="password" autoComplete="current-password" value={password} disabled={configurationMissing} onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && login()} /></div>
-          {err && <div className="form-error">{err}</div>}
-          <button className="btn btn-gold" style={{ width: "100%" }} onClick={login} disabled={busy || configurationMissing}>
+          {err && <div className="form-error" role="alert">{err}</div>}
+          {notice && <div className="form-success" role="status" style={{ marginBottom: 14 }}>{notice}</div>}
+          <button className="btn btn-gold" style={{ width: "100%" }} onClick={login} disabled={busy || resetBusy || configurationMissing}>
             {busy ? "Signing in…" : "Sign in"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            style={{ width: "100%", marginTop: 10 }}
+            onClick={requestPasswordReset}
+            disabled={busy || resetBusy || configurationMissing}
+          >
+            {resetBusy ? "Sending reset email…" : "Forgot password?"}
           </button>
         </div>
       </div>
