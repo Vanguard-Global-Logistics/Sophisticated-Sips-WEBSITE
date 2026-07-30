@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Logo from "@/components/public/Logo";
 
 const LINKS = [
   ["Home", "/"], ["Catering", "/catering"], ["Menu", "/menu"],
-  ["Gallery", "/gallery"], ["About", "/about"],
+  ["Gallery", "/gallery"], ["About", "/about"], ["Contact", "/contact"],
 ] as const;
 
 export default function Nav() {
@@ -12,9 +13,8 @@ export default function Nav() {
   return (
     <nav className="nav">
       <div className="wrap nav-in">
-        <Link href="/" className="logo">
-          <div className="logo-mono">S</div>
-          <div className="logo-name serif">Sophisticated <em>Sips</em></div>
+        <Link href="/" className="logo" aria-label="Sophisticated Sips — home">
+          <Logo size={56} priority />
         </Link>
         <div className="nav-links">
           {LINKS.map(([label, href]) => (

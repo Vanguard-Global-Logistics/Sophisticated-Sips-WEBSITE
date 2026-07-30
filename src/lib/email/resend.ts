@@ -44,3 +44,16 @@ export async function sendBookingReceipt(to: string, name: string) {
     });
   } catch { /* non-fatal */ }
 }
+
+/** General-contact confirmation (transactional, no unsubscribe needed). */
+export async function sendContactReceipt(to: string, name: string) {
+  try {
+    const routed = stagingReroute(to, "We received your message — Sophisticated Sips");
+    await resend().emails.send({
+      from: process.env.OUTREACH_FROM!,
+      to: routed.to,
+      subject: routed.subject,
+      text: `Hi ${name},\n\nThank you for reaching out to Sophisticated Sips. Amy will review your message personally and follow up shortly.\n\nWarmly,\nSophisticated Sips`,
+    });
+  } catch { /* confirmation failure must not lose the inquiry */ }
+}

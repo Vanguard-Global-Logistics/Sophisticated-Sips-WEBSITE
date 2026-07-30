@@ -31,7 +31,7 @@ export default function Gallery() {
              "01 - Golden hour trailer.jpg" — the filename becomes the caption. */
           <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))" }}>
             {[
-              ["☕", "The espresso bar", "linear-gradient(150deg,#1A4E4B,#0A2423)", true],
+              ["✦", "The espresso bar", "linear-gradient(150deg,#1A4E4B,#0A2423)", true],
               ["✨", "Golden Pulse Latte", "linear-gradient(150deg,#6E4A22,#2B1D12)", false],
               ["🥞", "The crepe station", "linear-gradient(150deg,#8A5A2E,#2B1D12)", false],
               ["🍰", "Artisan dessert display", "linear-gradient(150deg,#5A3A1E,#0A2423)", false],
