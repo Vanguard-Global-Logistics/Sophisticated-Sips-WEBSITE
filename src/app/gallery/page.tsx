@@ -24,7 +24,7 @@ export default function Gallery() {
     <div className="section">
       <div className="wrap">
         <SecHead kicker="Gallery" title="The trailer in its element"
-          sub="Real events, real pours — the Sophisticated Sips experience across Florida." />
+          sub="Real events, real pours — the Sophisticated Sips experience across Florida."  as="h1"/>
         {photos.length === 0 ? (
           /* No photos on disk yet → branded "what to expect" tiles (no fake event claims).
              To show real photos: drop images into /public/gallery named like
