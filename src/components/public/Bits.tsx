@@ -1,10 +1,12 @@
 import Link from "next/link";
 
-export function SecHead({ kicker, title, sub }: { kicker: string; title: string; sub?: string }) {
+export function SecHead({ kicker, title, sub, as: Heading = "h2" }: {
+  kicker: string; title: string; sub?: string; as?: "h1" | "h2";
+}) {
   return (
     <div className="sec-head reveal">
       <div className="sec-kicker">{kicker}</div>
-      <h2 className="sec-title serif">{title}</h2>
+      <Heading className="sec-title serif">{title}</Heading>
       {sub && <p className="sec-sub">{sub}</p>}
     </div>
   );
