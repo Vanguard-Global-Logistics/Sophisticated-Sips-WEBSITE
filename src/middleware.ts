@@ -14,14 +14,15 @@ type CookieToSet = {
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  if (pathname === "/owner/login" || pathname === "/owner/setup") {
+  if (pathname === "/owner/login" || pathname === "/owner/setup" || pathname === "/owner/reset-password") {
     return NextResponse.next();
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    || "sb_publishable_8apPcpmpfBid2mIdjyTK7Q_7rSyMzx7";
 
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!supabaseUrl) {
     return NextResponse.next();
   }
 
