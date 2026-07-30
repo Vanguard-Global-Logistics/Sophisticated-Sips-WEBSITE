@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import BrandedMenu from "@/components/public/BrandedMenu";
 
 /**
  * MenuEditor — Amy's manual, AI-independent menu control surface.
@@ -221,32 +222,19 @@ export default function MenuEditor() {
           </div>
         ))}
 
-        {/* Live preview */}
+        {/* Amy's exact live flyer preview */}
         {!loading && items.length > 0 && (
-          <div className="glass" style={{ marginTop: 10 }}>
-            <h3>Live preview <span style={{ fontSize: 12, opacity: .6, fontWeight: 400 }}>— how customers see it (available items only)</span></h3>
-            <div style={{ marginTop: 10 }}>
-              {byCat.map(({ c, list }) => {
-                const shown = list.filter((i) => i.active);
-                if (!shown.length) return null;
-                return (
-                  <div key={c} style={{ marginBottom: 14 }}>
-                    <div className="sec-kicker" style={{ marginBottom: 6 }}>{c}</div>
-                    {shown.map((m) => (
-                      <div key={m.id} className="mi" style={{ opacity: m.sold_out ? .5 : 1 }}>
-                        <div style={{ minWidth: 0 }}>
-                          <div className="mi-name">{m.name}{m.is_signature && <span className="sig">Signature</span>}{m.sold_out && <span className="sig" style={{ color: "#F0B5A0", borderColor: "#F0B5A0" }}>Sold out</span>}</div>
-                          {m.description && <div className="mi-desc">{m.description}</div>}
-                        </div>
-                        <div className="mi-dots" />
-                        <div className="mi-price">{m.price_label}</div>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
+          <section className="owner-menu-preview" aria-labelledby="owner-menu-preview-title">
+            <div className="owner-menu-preview__heading">
+              <div>
+                <div className="sec-kicker">Live flyer preview</div>
+                <h2 id="owner-menu-preview-title" className="serif">Exactly what customers will see</h2>
+                <p>Only items marked Available appear here, on the public Menu page, and on the printable flyer.</p>
+              </div>
+              <a className="mini-btn gold" href="/menu/print" target="_blank" rel="noreferrer">🖨 Open printable flyer</a>
             </div>
-          </div>
+            <BrandedMenu items={items.filter((item) => item.active)} variant="preview" />
+          </section>
         )}
       </div>
     </div>
