@@ -20,13 +20,26 @@ export default function OwnerLogin() {
       setErr("This deployment is missing its Supabase environment configuration. The site owner must correct the Vercel project settings before sign-in can work.");
       return;
     }
-    setErr(""); setBusy(true);
-    const sb = supabaseBrowser();
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (error) { setErr("That login didn't work — check your email and password."); return; }
-    router.push("/owner");
-    router.refresh();
+    setErr("");
+    setBusy(true);
+    try {
+      const sb = supabaseBrowser();
+      const signIn = sb.auth.signInWithPassword({ email, password });
+      const timeout = new Promise<never>((_, reject) =>
+        window.setTimeout(() => reject(new Error("Sign-in timed out.")), 15000)
+      );
+      const { error } = await Promise.race([signIn, timeout]);
+      if (error) {
+        setErr("That login didn't work — check your email and password.");
+        return;
+      }
+      router.replace("/owner");
+      router.refresh();
+    } catch {
+      setErr("The sign-in service did not respond. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
