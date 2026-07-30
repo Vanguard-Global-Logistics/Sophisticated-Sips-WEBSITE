@@ -391,6 +391,7 @@ a,button{font-family:inherit}
   background:radial-gradient(circle at 50% 28%,rgba(201,164,92,.2),transparent 54%);filter:blur(8px)}
 .kai-character img{position:absolute;z-index:2;left:50%;bottom:-4%;height:103%;width:auto;max-width:none;
   transform:translateX(-50%);filter:drop-shadow(0 22px 28px rgba(0,0,0,.7))}
+/* Public Kai PNG includes transparent space below his shoes; offset keeps visible feet on the hero border. */
 .kai-presence-public .kai-character img{bottom:-15%}
 .kai-presence-public .kai-status{top:163px}
 .kai-status{position:absolute;z-index:3;top:92px;right:4px;display:flex;align-items:center;
