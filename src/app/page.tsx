@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import Link from "next/link";
 import Reveal from "@/components/public/Reveal";
+import KaiPublicStage from "@/components/ai/KaiPublicStage";
 import { supabaseServer } from "@/lib/database/supabase-server";
 
 export const revalidate = 300;
@@ -9,7 +10,7 @@ export const revalidate = 300;
 const has = (rel: string) => fs.existsSync(path.join(process.cwd(), "public", rel));
 
 const FEATURES: [string, string, string][] = [
-  ["cup", "Crafted with Care", "Barista-crafted beverages made with premium beans and high-quality ingredients."],
+  ["sparkle", "Crafted with Care", "Barista-crafted beverages made with premium beans and high-quality ingredients."],
   ["leaf", "Mobile & Flexible", "Our sleek espresso bar comes to you, ready to impress your guests anywhere."],
   ["people", "Perfect for Any Event", "Weddings, corporate events, parties, and everything in between."],
   ["heart", "Experience That Lasts", "Exceptional service and unforgettable moments your guests will love."],
@@ -33,7 +34,7 @@ const GALLERY = [
 
 function Icon({ name }: { name: string }) {
   const paths: Record<string, React.ReactNode> = {
-    cup: (<><path d="M5 11h16v5a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6v-5z" /><path d="M21 12h2a3 3 0 0 1 0 6h-2M9 7c0-1.5 1-1.5 1-3M14 7c0-1.5 1-1.5 1-3" /></>),
+    sparkle: (<><path d="M16 3c1.2 7.2 5.8 11.8 13 13-7.2 1.2-11.8 5.8-13 13C14.8 21.8 10.2 17.2 3 16 10.2 14.8 14.8 10.2 16 3z" /><path d="M25 3v6M22 6h6" /></>),
     leaf: (<><path d="M6 26C6 14 14 6 27 6c0 13-8 21-21 20z" /><path d="M8 24C13 18 18 13 24 9" /></>),
     people: (<><circle cx="12" cy="10" r="4" /><path d="M4 26c0-4.4 3.6-8 8-8s8 3.6 8 8" /><circle cx="23" cy="12" r="3" /><path d="M22 18c3.3 0 6 2.7 6 6" /></>),
     heart: (<path d="M16 27S4 19.5 4 11.8C4 7.9 7 5 10.6 5c2.2 0 4.2 1.1 5.4 2.9C17.2 6.1 19.2 5 21.4 5 25 5 28 7.9 28 11.8 28 19.5 16 27 16 27z" />),
@@ -73,18 +74,21 @@ export default async function Home() {
             : "radial-gradient(800px 500px at 70% 45%, rgba(201,164,92,.28), transparent 65%), linear-gradient(150deg,#123B3A,#0A1D18 60%,#1a1108)",
         }} />
         <div className="hero2-shade" />
-        <div className="hero2-in">
-          <p className="kick">Premium coffee. Memorable experiences.</p>
-          <h1>Elevate<br />Your Event</h1>
-          <p className="sub">One sip at a time.</p>
-          <p className="copy">
-            Sophisticated Sips is a luxury mobile espresso bar bringing café-quality coffee and
-            elevated service to weddings, corporate events, and private celebrations across Florida.
-          </p>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <Link href="/book" className="btn btn-lux btn-gold">Book an Event</Link>
-            <Link href="/catering" className="btn btn-lux btn-ghost">View Packages</Link>
+        <div className="hero2-in hero2-kai-grid">
+          <div className="hero2-copy">
+            <p className="kick">Premium coffee. Memorable experiences.</p>
+            <h1>Elevate<br />Your Event</h1>
+            <p className="sub">One sip at a time.</p>
+            <p className="copy">
+              Sophisticated Sips is a luxury mobile espresso bar bringing café-quality coffee and
+              elevated service to weddings, corporate events, and private celebrations across Florida.
+            </p>
+            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+              <Link href="/book" className="btn btn-lux btn-gold">Book an Event</Link>
+              <Link href="/catering" className="btn btn-lux btn-ghost">View Packages</Link>
+            </div>
           </div>
+          <KaiPublicStage />
         </div>
       </header>
 
@@ -121,7 +125,7 @@ export default async function Home() {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img src="/gallery/signature-drinks.jpg" alt="Four signature iced espresso drinks topped with whipped cream" />
               ) : (
-                <div className="gal-fallback" style={{ aspectRatio: "3/2" }}>☕</div>
+                <div className="gal-fallback" style={{ aspectRatio: "3/2" }}>✦</div>
               )}
             </div>
           </Reveal>
@@ -140,7 +144,7 @@ export default async function Home() {
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img src={`/${src}`} alt={alt} loading="lazy" decoding="async" />
                   ) : (
-                    <div className="gal-fallback">☕</div>
+                    <div className="gal-fallback">✦</div>
                   )}
                 </div>
               ))}

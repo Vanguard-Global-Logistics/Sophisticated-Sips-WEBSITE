@@ -7,6 +7,7 @@ import LeadFinder from "@/components/admin/tabs/LeadFinder";
 import Insights from "@/components/admin/tabs/Insights";
 import VoiceCommand from "@/components/admin/VoiceCommand";
 import Help from "@/components/admin/Help";
+import OwnerKaiStage from "@/components/ai/OwnerKaiStage";
 import { forecastSupplies } from "@/lib/ai/forecast";
 
 const TABS = ["Daily Summary", "Pipeline", "Lead Finder", "Approval Queue", "Marketing", "Insights", "Menu Editor", "Payments", "Growth Ideas"] as const;
@@ -31,7 +32,7 @@ export default function OwnerDashboard() {
 
   const load = useCallback(async () => {
     const [l, d, m, e, p] = await Promise.all([
-      sb.from("leads").select("*").order("created_at", { ascending: false }).limit(50),
+      sb.from("leads").select("*, booking_requests(notes)").order("created_at", { ascending: false }).limit(50),
       sb.from("email_drafts").select("*").order("created_at", { ascending: false }).limit(30),
       sb.from("menu_items").select("*").order("category").order("sort"),
       sb.from("events").select("*").order("event_date", { ascending: true }).limit(30),
@@ -203,31 +204,13 @@ export default function OwnerDashboard() {
           </div>
         </div>
 
-        <div className="kai">
-          <div className="kai-head">
-            <div className="kai-orb" aria-hidden="true">K</div>
-            <div>
-              <div className="kai-title">KAI</div>
-              <div className="kai-sub">Your business assistant</div>
-            </div>
-          </div>
-          <p className="kai-say">
-            Soon you&apos;ll just tell me: <b>&ldquo;change the mocha to $6.75,&rdquo;</b> <b>&ldquo;print 50 flyers,&rdquo;</b> or <b>&ldquo;show tomorrow&apos;s orders.&rdquo;</b> Voice is on the way — for now, every job has a button.
-          </p>
-          <div className="kai-actions">
-            <a href="/owner/menu"><span className="ico">☕</span> Edit menu &amp; prices</a>
-            <a href="/menu/print" target="_blank" rel="noreferrer"><span className="ico">🖨</span> Print Menu Flyer</a>
-            <button onClick={() => setTab("Payments")}><span className="ico">🧾</span> Today&apos;s orders &amp; invoices</button>
-            <button onClick={() => { setTab("Daily Summary"); dailyBriefing(); }}><span className="ico">✦</span> Ask for a briefing</button>
-          </div>
-          <div className="kai-note">Manual controls always work — even if the AI is unavailable.</div>
-        </div>
+        <OwnerKaiStage />
 
         <div className="qa" role="navigation" aria-label="Quick actions">
           <button onClick={() => setTab("Payments")}><span>🧾</span>Create invoice</button>
           <button onClick={() => setTab("Approval Queue")}><span>✉️</span>Approve emails{pending.length > 0 ? ` (${pending.length})` : ""}</button>
           <button onClick={() => setTab("Payments")}><span>💳</span>Send deposit</button>
-          <button onClick={() => router.push("/owner/menu")}><span>☕</span>Edit menu</button>
+          <button onClick={() => router.push("/owner/menu")}><span>✦</span>Edit menu</button>
           <a className="qa-link" href="/menu/print" target="_blank" rel="noreferrer"><span>🖨</span>Print flyer</a>
           <button onClick={() => setTab("Growth Ideas")}><span>📈</span>Growth report</button>
         </div>
@@ -285,7 +268,7 @@ export default function OwnerDashboard() {
                 <p style={{ marginTop: 8 }}>No events in the next week — nothing to shop for yet.</p>
               ) : (
                 <div className="grid g4" style={{ marginTop: 12 }}>
-                  {[["☕ Beans", `${supplies.beansLb} lb`], ["🥛 Milk", `${supplies.milkGal} gal`], ["🧊 Ice", `${supplies.iceLb} lb`], ["🥤 Cups", `${supplies.cups}`]].map(([k, v]) => (
+                  {[["Beans", `${supplies.beansLb} lb`], ["Milk", `${supplies.milkGal} gal`], ["Ice", `${supplies.iceLb} lb`], ["Cups", `${supplies.cups}`]].map(([k, v]) => (
                     <div key={k} className="stat" style={{ padding: "10px 0", textAlign: "center" }}>
                       <div className="n serif" style={{ fontSize: 24 }}>{v}</div>
                       <div className="l">{k}</div>
@@ -310,7 +293,13 @@ export default function OwnerDashboard() {
               <div key={l.id} className="lead">
                 <div style={{ minWidth: 170 }}>
                   <div style={{ fontWeight: 500 }}>{l.name}</div>
-                  <div style={{ fontSize: 12.5, opacity: .65 }}>{l.event_type} · {l.event_date} · {l.guest_count} guests · score {l.score}</div>
+                  <div style={{ fontSize: 12.5, opacity: .65 }}>
+                    {[l.event_type, l.event_date, l.guest_count ? `${l.guest_count} guests` : null, `score ${l.score}`]
+                      .filter(Boolean).join(" · ")}
+                  </div>
+                  {l.booking_requests?.notes && (
+                    <p style={{ marginTop: 6, maxWidth: 480, whiteSpace: "pre-wrap" }}>{l.booking_requests.notes}</p>
+                  )}
                 </div>
                 <span className={`badge ${l.status === "hot" ? "b-hot" : l.status === "new" ? "b-new" : "b-ok"}`}>{l.status}</span>
                 <span className="mi-price" style={{ fontSize: 14 }}>{usd(l.est_value_cents || 0)}</span>

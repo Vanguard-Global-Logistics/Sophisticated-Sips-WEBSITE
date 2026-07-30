@@ -5,10 +5,7 @@ import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
-const SYSTEM = `You are the Sophisticated Sips AI Concierge — a genuinely skilled luxury event consultant for Sophisticated Sips, a family-owned mobile espresso trailer in Florida owned by Amy Lavold. Help visitors plan coffee catering events, then guide them toward a quote.
-
-Menu: Shaken Espresso $6/$7, Iced Latte $7/$8, Iced Macchiato $7/$8, Americano $4/$5, Café Latte $6/$7, Espresso Shot $2/$3, Red Bull Italian Cream Soda $7, Italian Soda $5, Dirty Soda $6, Hot Chocolate $5, Hot Tea $3, Red Bull $4, Soda $3, Water $2. Signature: Golden Pulse Latte $7.50, Golden Pulse Crepe $12, Oreo Artisan Cheesecake $11, Peppermint Pulse Cheesecake $11.
-Packages: The Espresso Hour (≤50 guests, 2 hrs, ~$450 base), The Golden Event (weddings/galas, 3–4 hrs, dessert + crepe station, ~$950), Corporate Perk (offices, per-cup or flat-rate, ~$600).
+const SYSTEM = `You are Kai, the Sophisticated Sips AI Concierge — a genuinely skilled luxury event consultant for Sophisticated Sips, a family-owned mobile espresso trailer in Florida owned by Amy Lavold. Help visitors plan coffee catering events, then guide them toward a quote.
 
 How to consult:
 - Guest estimator: weddings ≈ 85% of invites attend; corporate ≈ 70–80% of headcount; schools = staff count.
@@ -25,6 +22,40 @@ Lead handoff:
 - If you're unsure about anything (availability, dietary accommodations, unusual requests), say Amy will personally confirm the details.
 
 Rules: warm, concise (2–5 short sentences), premium tone. Never state real availability. Stay on Sophisticated Sips topics only; politely decline anything else.`;
+
+const FALLBACK_CATALOG = {
+  notice: "The live catalog is temporarily unavailable. Do not state exact prices; offer a rough estimate and say Amy will confirm.",
+  service_area: "Florida",
+  menu: ["espresso drinks", "non-espresso drinks", "crepes", "artisan cheesecake"],
+  packages: ["The Espresso Hour", "The Golden Event", "Corporate Perk"],
+};
+
+async function groundedSystem() {
+  const db = supabaseAdmin();
+  if (!db) return `${SYSTEM}\n\nCURRENT CATALOG:\n${JSON.stringify(FALLBACK_CATALOG)}`;
+
+  const [menu, packages, settings] = await Promise.all([
+    db.from("menu_items").select("category,name,price_label,description,is_signature,sold_out").eq("active", true).order("category").order("sort"),
+    db.from("catering_packages").select("name,tag,description,bullet_points,base_price_cents").eq("active", true).order("sort"),
+    db.from("business_settings").select("service_area,quote_rules,deposit_percent").eq("id", 1).maybeSingle(),
+  ]);
+  if (menu.error || packages.error || settings.error) {
+    console.error("concierge catalog:", menu.error || packages.error || settings.error);
+    return `${SYSTEM}\n\nCURRENT CATALOG:\n${JSON.stringify(FALLBACK_CATALOG)}`;
+  }
+
+  return `${SYSTEM}
+
+CURRENT CATALOG AND BUSINESS RULES:
+${JSON.stringify({
+  as_of: new Date().toISOString(),
+  menu: menu.data || [],
+  packages: packages.data || [],
+  settings: settings.data,
+})}
+
+Use this catalog as the source of truth. Never recommend a sold-out item. Prices are menu/package starting points, not a final event quote.`;
+}
 
 const TOOLS = [{
   name: "save_lead",
@@ -82,10 +113,12 @@ export async function POST(req: Request) {
     if (clean.length === 0 || clean[clean.length - 1].role !== "user")
       return NextResponse.json({ error: "invalid conversation" }, { status: 400 });
 
+    const system = await groundedSystem();
+
     // Agent loop: at most 2 rounds (one tool call + final reply).
     let convo: any[] = clean;
     for (let round = 0; round < 3; round++) {
-      const data = await askClaudeRaw({ system: SYSTEM, messages: convo, tools: TOOLS, max_tokens: 700 });
+      const data = await askClaudeRaw({ system, messages: convo, tools: TOOLS, max_tokens: 700 });
       const toolUse = (data.content || []).find((c: any) => c.type === "tool_use");
       const text = (data.content || []).filter((c: any) => c.type === "text").map((c: any) => c.text).join("\n");
 

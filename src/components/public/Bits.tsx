@@ -23,17 +23,6 @@ export function Beans({ n = 8 }: { n?: number }) {
   );
 }
 
-export function CupHero() {
-  return (
-    <div className="cup-stage" aria-hidden="true">
-      <div className="steam" style={{ left: 62 }} />
-      <div className="steam" style={{ left: 92, animationDelay: "1.1s" }} />
-      <div className="steam" style={{ left: 120, animationDelay: "2.2s" }} />
-      <div className="saucer" /><div className="cup" />
-    </div>
-  );
-}
-
 export function PackageCards({ packages }: { packages: any[] }) {
   return (
     <div className="grid g3">
