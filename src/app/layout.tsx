@@ -40,8 +40,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${outfit.variable} ${script.variable}`}>
-      <body>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${outfit.variable} ${script.variable}`}
+      suppressHydrationWarning
+    >
+      <body suppressHydrationWarning>
         {process.env.NEXT_PUBLIC_APP_ENV !== "production" && (
           <div role="status" className="staging-banner no-print" style={{
             background: "repeating-linear-gradient(45deg,#C9A45C,#C9A45C 14px,#B0713E 14px,#B0713E 28px)",
