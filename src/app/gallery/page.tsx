@@ -1,61 +1,80 @@
 import fs from "fs";
 import path from "path";
-import { SecHead } from "@/components/public/Bits";
+import Link from "next/link";
 
-export const metadata = { title: "Gallery — Sophisticated Sips" };
+export const metadata = {
+  title: "Gallery — Sophisticated Sips",
+  description: "See the Sophisticated Sips mobile espresso trailer, handcrafted drinks, and luxury event presentation.",
+};
 
-/** Reads real photos from /public/gallery at build/request time.
- *  Name files like: "01 - Golden hour trailer.jpg" — the caption comes from the filename. */
+const FRIENDLY_CAPTIONS: Record<string, string> = {
+  "01-latte-art": "The art in every cup",
+  "02-trailer-event": "The trailer in its element",
+  "03-barista-pour": "Crafted in front of your guests",
+  "04-bottle-display": "A beautifully styled flavor bar",
+  "05-espresso-pour": "Espresso pulled fresh",
+  "hero-trailer": "A complete mobile café experience",
+  "signature-drinks": "Signature sips made to impress",
+};
+
 export default function Gallery() {
   const dir = path.join(process.cwd(), "public", "gallery");
-  let photos: { src: string; caption: string; wide: boolean }[] = [];
+  let photos: { src: string; caption: string }[] = [];
   try {
     photos = fs.readdirSync(dir)
-      .filter((f: string) => /\.(jpe?g|png|webp|avif)$/i.test(f))
+      .filter((file: string) => /\.(jpe?g|png|webp|avif)$/i.test(file))
       .sort()
-      .map((f: string, i: number) => ({
-        src: `/gallery/${f}`,
-        caption: f.replace(/^\d+\s*-\s*/, "").replace(/\.[^.]+$/, ""),
-        wide: i % 5 === 0,
-      }));
+      .map((file: string) => {
+        const key = file.replace(/\.[^.]+$/, "");
+        return {
+          src: `/gallery/${file}`,
+          caption: FRIENDLY_CAPTIONS[key] || key.replace(/^\d+\s*-\s*/, "").replaceAll("-", " "),
+        };
+      });
   } catch {}
 
   return (
-    <div className="section">
-      <div className="wrap">
-        <SecHead kicker="Gallery" title="The trailer in its element"
-          sub="Real events, real pours — the Sophisticated Sips experience across Florida."  as="h1"/>
-        {photos.length === 0 ? (
-          /* No photos on disk yet → branded "what to expect" tiles (no fake event claims).
-             To show real photos: drop images into /public/gallery named like
-             "01 - Golden hour trailer.jpg" — the filename becomes the caption. */
-          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))" }}>
-            {[
-              ["✦", "The espresso bar", "linear-gradient(150deg,#1A4E4B,#0A2423)", true],
-              ["✨", "Golden Pulse Latte", "linear-gradient(150deg,#6E4A22,#2B1D12)", false],
-              ["🥞", "The crepe station", "linear-gradient(150deg,#8A5A2E,#2B1D12)", false],
-              ["🍰", "Artisan dessert display", "linear-gradient(150deg,#5A3A1E,#0A2423)", false],
-              ["🚐", "The trailer, event-ready", "linear-gradient(150deg,#0F3433,#2B1D12)", true],
-              ["🥤", "Iced signature drinks", "linear-gradient(150deg,#123B3A,#3A2110)", false],
-            ].map(([e, t, g, wide]) => (
-              <div key={t as string} className={`tile ${wide ? "wide" : ""}`} style={{ background: g as string }}>
-                <span style={{ fontSize: 34, position: "absolute", top: 16, left: 16 }}>{e}</span>
-                <b>{t}</b>
-              </div>
-            ))}
+    <div className="lux-page">
+      <header className="lux-hero">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="lux-hero__media" src="/gallery/03-barista-pour.jpg" alt="" style={{ objectPosition: "center 48%" }} />
+        <div className="lux-hero__shade" />
+        <div className="lux-hero__content">
+          <p className="lux-kicker">A glimpse of our events</p>
+          <h1>Beautifully<br />served</h1>
+          <span className="lux-script">because every detail matters.</span>
+          <p className="lux-lead">
+            Real Sophisticated Sips photography—our drinks, our trailer, and the presentation
+            Amy brings to every event.
+          </p>
+        </div>
+      </header>
+
+      <section className="lux-section lux-section--deep">
+        <div className="wrap">
+          <div className="lux-section__head">
+            <p className="lux-kicker">The Sophisticated Sips experience</p>
+            <h2 className="lux-title">Coffee worth photographing</h2>
+            <div className="lux-gold-rule" aria-hidden="true">✦</div>
           </div>
-        ) : (
-          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))" }}>
-            {photos.map((p) => (
-              <figure key={p.src} className={`tile ${p.wide ? "wide" : ""}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.src} alt={p.caption} loading="lazy" decoding="async" />
-                <b>{p.caption}</b>
-              </figure>
-            ))}
+          {photos.length ? (
+            <div className="gallery-lux-grid">
+              {photos.map((photo) => (
+                <figure key={photo.src}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo.src} alt={photo.caption} loading="lazy" decoding="async" />
+                  <figcaption>{photo.caption}</figcaption>
+                </figure>
+              ))}
+            </div>
+          ) : (
+            <p className="lux-copy" style={{ textAlign: "center" }}>Amy&apos;s event gallery is being prepared.</p>
+          )}
+          <div className="lux-actions" style={{ justifyContent: "center" }}>
+            <Link href="/book" className="btn btn-lux btn-gold">Bring This Experience to My Event</Link>
           </div>
-        )}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
