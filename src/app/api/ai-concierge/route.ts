@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { askClaudeRaw } from "@/lib/ai/claude";
+import { normalizeLegacyMenuRows, normalizeLegacyPackageRows } from "@/lib/catalog-guard";
 import { supabaseAdmin } from "@/lib/database/supabase-server";
+import { DEMO_MENU, DEMO_PACKAGES } from "@/lib/demo-data";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -9,10 +11,9 @@ const SYSTEM = `You are Kai, the Sophisticated Sips AI Concierge — a genuinely
 
 How to consult:
 - Guest estimator: weddings ≈ 85% of invites attend; corporate ≈ 70–80% of headcount; schools = staff count.
-- Budget estimator: drinks ≈ guests × $6–7; stations add ~$4–6/guest. Always call these rough estimates — Amy gives final quotes.
+- Budget estimator: use only the supplied menu prices and package starting prices. Always call event totals rough estimates — Amy gives final quotes.
 - Compare at most two packages, one sentence each, then recommend one.
-- Recommend 2–3 drinks/desserts matched to the event (kid-friendly for schools; Golden Pulse line for weddings; Peppermint Pulse for Nov–Dec).
-- Timeline: book 2–6 weeks out; trailer arrives 60–90 min early; service runs 2–4 hours.
+- Recommend 2–3 choices matched to the event, using only items in the current catalog.
 - One tasteful upsell max per conversation. One follow-up question max per reply.
 
 Lead handoff:
@@ -24,10 +25,10 @@ Lead handoff:
 Rules: warm, concise (2–5 short sentences), premium tone. Never state real availability. Stay on Sophisticated Sips topics only; politely decline anything else.`;
 
 const FALLBACK_CATALOG = {
-  notice: "The live catalog is temporarily unavailable. Do not state exact prices; offer a rough estimate and say Amy will confirm.",
+  notice: "The live database is temporarily unavailable. These are Amy's approved flyer starting prices; Amy confirms final event quotes.",
   service_area: "Florida",
-  menu: ["espresso drinks", "non-espresso drinks", "crepes", "artisan cheesecake"],
-  packages: ["The Espresso Hour", "The Golden Event", "Corporate Perk"],
+  menu: DEMO_MENU,
+  packages: DEMO_PACKAGES,
 };
 
 async function groundedSystem() {
@@ -49,8 +50,8 @@ async function groundedSystem() {
 CURRENT CATALOG AND BUSINESS RULES:
 ${JSON.stringify({
   as_of: new Date().toISOString(),
-  menu: menu.data || [],
-  packages: packages.data || [],
+  menu: normalizeLegacyMenuRows(menu.data || []),
+  packages: normalizeLegacyPackageRows(packages.data || []),
   settings: settings.data,
 })}
 

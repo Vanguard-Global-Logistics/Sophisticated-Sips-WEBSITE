@@ -24,7 +24,7 @@ type Item = {
   photo_url: string | null;
 };
 
-const CATS = ["Iced Espresso", "Hot Espresso", "Non-Espresso", "Signature"];
+const CATS = ["Iced Espresso", "Hot Espresso", "Non-Espresso", "Crepes", "Signature"];
 const EF: (keyof Item)[] = ["category", "name", "price_label", "description", "is_signature", "sort", "active", "sold_out", "photo_url"];
 const sig = (it: Partial<Item>) => JSON.stringify(EF.map((k) => (it as any)[k] ?? ((it as any)[k] === false ? false : "")));
 const blankNew = (): Omit<Item, "id"> => ({ category: "Signature", name: "", price_label: "", description: "", is_signature: true, sort: 100, active: true, sold_out: false, photo_url: "" });
@@ -139,16 +139,16 @@ export default function MenuEditor() {
         <div className="morning">
           <div>
             <div className="sec-kicker">Menu editor</div>
-            <h1 className="serif">Your menu ✦</h1>
+            <h1 className="serif">Your menu</h1>
             <p style={{ fontSize: 14, opacity: .7, marginTop: 6 }}>
               Edit prices, descriptions, availability and order. Changes go live on the public menu the moment you save.
             </p>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
             <a className="mini-btn" href="/owner">← Dashboard</a>
-            <a className="mini-btn" href="/menu" target="_blank" rel="noreferrer">👁 Preview public menu</a>
-            <a className="mini-btn gold" href="/menu/print" target="_blank" rel="noreferrer">🖨 Print flyer</a>
-            <button className="mini-btn" onClick={undoLast} disabled={busy || history.length === 0}>↩ Undo last change</button>
+            <a className="mini-btn" href="/menu" target="_blank" rel="noreferrer">Preview public menu</a>
+            <a className="mini-btn gold" href="/menu/print" target="_blank" rel="noreferrer">Print flyer</a>
+            <button className="mini-btn" onClick={undoLast} disabled={busy || history.length === 0}>Undo last change</button>
           </div>
         </div>
 
@@ -231,7 +231,7 @@ export default function MenuEditor() {
                 <h2 id="owner-menu-preview-title" className="serif">Exactly what customers will see</h2>
                 <p>Only items marked Available appear here, on the public Menu page, and on the printable flyer.</p>
               </div>
-              <a className="mini-btn gold" href="/menu/print" target="_blank" rel="noreferrer">🖨 Open printable flyer</a>
+              <a className="mini-btn gold" href="/menu/print" target="_blank" rel="noreferrer">Open printable flyer</a>
             </div>
             <BrandedMenu items={items.filter((item) => item.active)} variant="preview" />
           </section>
