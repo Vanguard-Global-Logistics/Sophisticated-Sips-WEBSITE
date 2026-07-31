@@ -27,7 +27,7 @@ export default function ContactPage() {
         <div className="wrap lux-form-layout">
           <div className="lux-form-intro">
             <p className="lux-kicker">A personal reply from Amy</p>
-            <h1>Start a conversation</h1>
+            <h2>Start a conversation</h2>
             <p>
               Tell Amy what you are planning and what matters most. For immediate planning help,
               Kai can compare current packages, estimate guest needs, and help build your menu.

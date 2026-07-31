@@ -498,7 +498,7 @@ a,button{font-family:inherit}
 @media print{
   @page{size:letter;margin:.5in}
   html,body{background:#fff !important}
-  .no-print,.nav,.fab,.chat,.foot,.foot2,.skip-link,.staging-banner,.flyer-toolbar{display:none !important}
+  .no-print,.nav,.fab,.chat,.foot,.foot2,.lux-footer,.skip-link,.staging-banner,.flyer-toolbar{display:none !important}
   .flyer-root{padding:0 !important;display:block !important;min-height:0}
   .flyer-page{width:auto !important;max-width:none;min-height:0 !important;box-shadow:none !important;
     border-radius:0;background:#fff !important}
@@ -636,7 +636,7 @@ a,button{font-family:inherit}
 @media print{
   @page{size:Letter;margin:.22in}
   html,body{background:#fff!important}
-  .nav,.foot,.foot2,.fab,.chat,.staging-banner,.no-print{display:none!important}
+  .nav,.foot,.foot2,.lux-footer,.fab,.chat,.staging-banner,.no-print{display:none!important}
   .dynamic-menu-print{padding:0!important;display:block!important;min-height:0;background:#fff!important}
   .dynamic-menu-print>.brand-menu{width:100%!important;min-height:10.55in!important;max-width:none!important;border-radius:0;box-shadow:none!important}
   .dynamic-menu-print>.brand-menu .brand-menu__frame{min-height:10.55in!important;padding:.28in .32in .22in!important}
@@ -881,7 +881,7 @@ a,button{font-family:inherit}
 .story-statement span{display:block;color:#cfc3b1;font-size:12px;line-height:1.5;margin-top:7px}
 .lux-form-layout{display:grid;grid-template-columns:minmax(280px,.75fr) minmax(0,1.25fr);gap:42px;align-items:start}
 .lux-form-intro{position:sticky;top:104px}
-.lux-form-intro h1{font-family:var(--font-serif),serif;font-size:clamp(45px,6vw,70px);font-weight:450;
+.lux-form-intro h1,.lux-form-intro h2{font-family:var(--font-serif),serif;font-size:clamp(45px,6vw,70px);font-weight:450;
   text-transform:uppercase;line-height:.98;color:#fff8eb}
 .lux-form-intro p{color:#d6cab8;line-height:1.7;margin-top:17px}
 .lux-form-media{height:245px;margin-top:26px;overflow:hidden;border:1px solid rgba(201,164,92,.5)}
@@ -966,7 +966,7 @@ a,button{font-family:inherit}
 @media print{
   @page{size:Letter;margin:.18in}
   html,body{background:#fff!important}
-  .nav,.foot,.foot2,.fab,.chat,.staging-banner,.no-print{display:none!important}
+  .nav,.foot,.foot2,.lux-footer,.fab,.chat,.staging-banner,.no-print{display:none!important}
   .dynamic-menu-print{padding:0!important;display:block!important;min-height:0;background:#fff!important}
   .dynamic-menu-print>.brand-menu{width:100%!important;max-width:none!important;border-radius:0;box-shadow:none!important}
   .dynamic-menu-print>.brand-menu .brand-menu__frame{padding:.22in .25in .18in!important}
@@ -995,9 +995,9 @@ a,button{font-family:inherit}
   .brand-menu__item-line h3,.brand-menu__item-line strong{font-size:8px!important;width:auto!important}
   .brand-menu__item-copy>p{font-size:6px!important;line-height:1.13!important;margin-top:1px!important}
   .brand-menu__sold{font-size:5.5px!important}
-  .brand-menu__footer{margin-top:6px!important;padding-top:5px!important}
+  .brand-menu__footer{flex-direction:row!important;margin-top:6px!important;padding-top:5px!important}
   .brand-menu__footer strong{font-size:14px!important}
   .brand-menu__footer span,.brand-menu__footer a{font-size:6px!important}
-  .brand-menu__footer img{width:40px!important;height:40px!important}
+  .brand-menu__footer img{width:44px!important;height:44px!important}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }

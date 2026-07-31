@@ -31,7 +31,7 @@ export default function Book() {
         <div className="wrap lux-form-layout">
           <div className="lux-form-intro">
             <p className="lux-kicker">Two minutes to begin</p>
-            <h1>Tell us about your event</h1>
+            <h2>Tell us about your event</h2>
             <p>
               Your date, location, guest count, and vision are enough to start. Amy will follow up
               with the best-fit experience and any helpful questions.

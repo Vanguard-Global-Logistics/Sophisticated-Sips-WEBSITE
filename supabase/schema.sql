@@ -178,29 +178,32 @@ create policy "owner read owners" on owners for select using (is_owner());
 -- Seed data
 -- ============================================================
 insert into menu_items (category, name, price_label, description, is_signature, sort) values
-('Iced Espresso','Shaken Espresso','16 oz $6 · 24 oz $7','Double shots shaken over ice until silky and frothed.',false,10),
-('Iced Espresso','Iced Latte','16 oz $7 · 24 oz $8','Espresso and cold milk over ice, finished your way.',false,20),
-('Iced Espresso','Iced Macchiato','16 oz $7 · 24 oz $8','Layered espresso poured slow over vanilla milk.',false,30),
-('Hot Espresso','Americano','12 oz $4 · 16 oz $5','Rich espresso lengthened with hot water.',false,10),
-('Hot Espresso','Café Latte','12 oz $6 · 16 oz $7','Velvet-steamed milk over a double shot.',false,20),
-('Hot Espresso','Espresso Shot','1 shot $2 · 2 shots $3','Pulled fresh, crema-crowned.',false,30),
-('Non-Espresso','Red Bull Italian Cream Soda','$7','Sparkling energy with sweet cream and syrup.',false,10),
-('Non-Espresso','Italian Soda','$5','Sparkling water with artisan flavor syrups.',false,20),
-('Non-Espresso','Dirty Soda','$6','Soda, cream, and flavor — the fun one.',false,30),
-('Non-Espresso','Hot Chocolate','$5','Real cocoa, steamed milk, whipped topping.',false,40),
-('Non-Espresso','Hot Tea','$3','A curated selection of premium teas.',false,50),
-('Non-Espresso','Red Bull','$4','Chilled, classic or sugar-free.',false,60),
-('Non-Espresso','Soda Pop Can','$3','Assorted favorites, ice cold.',false,70),
-('Non-Espresso','Water','$2','Bottled and chilled.',false,80),
-('Signature','Golden Pulse Latte','$7.50','Our house latte with a champagne-gold turmeric-honey finish.',true,10),
-('Signature','Golden Pulse Crepe','$12','Warm crepe, caramelized honey butter, gold dusting.',true,20),
-('Signature','Oreo Artisan Cheesecake','$11','Hand-finished cheesecake on a dark cookie crust.',true,30),
-('Signature','Peppermint Pulse Cheesecake','$11','Cool peppermint over velvet cheesecake.',true,40);
+('Iced Espresso','Shaken Espresso','16 oz $5 · 20 oz $5.50','Your refreshing pick-me-up, similar to a crisp iced coffee.',false,10),
+('Iced Espresso','Iced Latte','16 oz $6 · 20 oz $6.50','Smooth espresso perfectly blended with chilled milk.',false,20),
+('Iced Espresso','Iced Macchiato','16 oz $6 · 20 oz $6.50','A beautifully layered iced latte—a true work of art in a cup.',false,30),
+('Hot Espresso','Americano','12 oz $4 · 16 oz $4.50','A bold and invigorating classic, just like a traditional coffee.',false,10),
+('Hot Espresso','Café Latte','12 oz $5.50 · 16 oz $6','Rich espresso harmoniously combined with velvety steamed milk.',false,20),
+('Hot Espresso','Espresso Shot','1 shot $2 · 2 shots $3','Pure, concentrated perfection.',false,30),
+('Non-Espresso','Red Bull Italian Cream Soda','20 oz $7','The ultimate energy boost meets a sweet, creamy fizz.',false,10),
+('Non-Espresso','Italian Soda','16 oz $4','Club soda, your favorite flavor, cream, and a swirl of whipped cream.',false,20),
+('Non-Espresso','Hot Chocolate','12 oz $4','Warm milk, fluffy marshmallows, peppermint, and whipped cream.',false,30),
+('Non-Espresso','Hot Tea','12 oz $2','A soothing, aromatic selection of available flavors.',false,40),
+('Non-Espresso','Red Bull','$4','A chilled 8.4 oz can.',false,50),
+('Non-Espresso','Water','$1','Crisp, refreshing hydration.',false,60),
+('Crepes','Nutella Crepe','$7','The classic, simply irresistible.',false,10),
+('Crepes','Banana Nutella Crepe','$8','Sweet bananas and rich Nutella.',false,20),
+('Crepes','Strawberry Nutella Crepe','$9','Fresh strawberries paired with creamy Nutella.',false,30),
+('Crepes','Strawberry-Banana Crepe','$10','A fresh, flavorful fruit duo.',false,40),
+('Crepes','Banana Cheesecake Crepe','$8','Bananas blended with creamy cheesecake filling.',false,50),
+('Crepes','Strawberry Cheesecake Crepe','$9','Juicy strawberries meet decadent cheesecake.',false,60),
+('Signature','Lavender Honey Latte','Small $7 · Medium $8','Lavender, honey, and soft cinnamon over espresso and milk. Served iced or hot.',true,10),
+('Signature','Biscoff Latte','Small $7 · Medium $8','Espresso, milk, Biscoff cookie butter, and whipped cream. Served iced or hot.',true,20),
+('Signature','S’more Latte','Small $7 · Medium $8','Chocolate, toasted marshmallow, cold foam, and graham cracker. Served iced or hot.',true,30);
 
 insert into catering_packages (name, tag, description, bullet_points, base_price_cents, sort) values
-('The Espresso Hour','Most booked','Full espresso bar service for up to 50 guests. Iced and hot menu, two baristas, styled trailer setup.', array['2 hours of service','Full espresso + non-espresso menu','Custom cup sleeves available'], 45000, 10),
-('The Golden Event','Weddings & galas','Our signature luxury experience: espresso bar, signature Golden Pulse menu, dessert display, and crepe station.', array['3–4 hours of service','Signature drinks + dessert bar','Crepe add-on station','Champagne-gold styling'], 95000, 20),
-('Corporate Perk','Offices & appreciation days','Turn a Tuesday into the best day of the quarter. Branded menu boards, fast lines, invoice-friendly billing.', array['Per-cup or flat-rate billing','Company-branded menu option','Recurring visit scheduling'], 60000, 30);
+('The Signature Bar','Up to 50 guests','A luxury coffee experience with unlimited handcrafted drinks and a professional espresso bar.', array['Fresh roasted espresso','Hot & iced beverages','Premium syrups and milk choices','Setup and breakdown'], 49900, 10),
+('The Paris Experience','Up to 100 guests','Everything in The Signature Bar, plus a live gourmet crepe station made fresh for every guest.', array['Unlimited handcrafted drinks','Unlimited fresh crepes','Elegant menu displays','Luxury presentation'], 99900, 20),
+('The Grand Experience','Up to 200 guests','The flagship experience with Amy’s signature latte collection and the highest level of presentation.', array['Luxury coffee cart','Premium décor and floral accents','Personalized drink names','Priority staffing and professional setup'], 199900, 30);
 -- Query-path indexes (dashboard + webhook lookups). Safe to run anytime.
 create index if not exists idx_leads_status on leads(status);
 create index if not exists idx_leads_contact_email on leads(contact_email);
