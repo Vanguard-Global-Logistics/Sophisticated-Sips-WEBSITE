@@ -25,7 +25,7 @@ export const DEMO_MENU = [
 ];
 
 export const DEMO_PACKAGES = [
-  { id: "p1", name: "The Signature Bar", tag: "Up to 50 guests", description: "A luxury coffee experience with unlimited handcrafted drinks and a professional espresso bar.", bullet_points: ["Fresh roasted espresso", "Hot & iced beverages", "Premium syrups and milk choices", "Setup and breakdown"], base_price_cents: 49900 },
-  { id: "p2", name: "The Paris Experience", tag: "Up to 100 guests", description: "Everything in The Signature Bar, plus a live gourmet crepe station made fresh for every guest.", bullet_points: ["Unlimited handcrafted drinks", "Unlimited fresh crepes", "Elegant menu displays", "Luxury presentation"], base_price_cents: 99900 },
-  { id: "p3", name: "The Grand Experience", tag: "Up to 200 guests", description: "The flagship experience with Amy’s signature latte collection and the highest level of presentation.", bullet_points: ["Luxury coffee cart", "Premium décor and floral accents", "Personalized drink names", "Priority staffing and professional setup"], base_price_cents: 199900 },
+  { id: "p1", name: "The Signature Bar", tag: "Up to 50 guests", description: "A luxury coffee experience with unlimited handcrafted drinks and a professional espresso bar.", bullet_points: ["Fresh roasted espresso", "Hot & iced beverages", "Premium syrups and milk choices", "Setup and breakdown"], base_price_cents: 49900, sort: 10 },
+  { id: "p2", name: "The Paris Experience", tag: "Up to 100 guests", description: "Everything in The Signature Bar, plus a live gourmet crepe station made fresh for every guest.", bullet_points: ["Unlimited handcrafted drinks", "Unlimited fresh crepes", "Elegant menu displays", "Luxury presentation"], base_price_cents: 99900, sort: 20 },
+  { id: "p3", name: "The Grand Experience", tag: "Up to 200 guests", description: "The flagship experience with Amy’s signature latte collection and the highest level of presentation.", bullet_points: ["Luxury coffee cart", "Premium décor and floral accents", "Personalized drink names", "Priority staffing and professional setup"], base_price_cents: 199900, sort: 30 },
 ];

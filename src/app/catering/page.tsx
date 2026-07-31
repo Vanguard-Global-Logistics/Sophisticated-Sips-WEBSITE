@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { normalizeLegacyPackageRows } from "@/lib/catalog-guard";
 import { supabaseServer } from "@/lib/database/supabase-server";
 import { DEMO_PACKAGES } from "@/lib/demo-data";
 
@@ -28,7 +29,7 @@ export default async function Catering() {
   let packages = DEMO_PACKAGES as CateringPackage[];
   if (sb) {
     const { data } = await sb.from("catering_packages").select("*").eq("active", true).order("sort");
-    if (data?.length) packages = data;
+    if (data?.length) packages = normalizeLegacyPackageRows(data);
   }
 
   return (
@@ -44,7 +45,7 @@ export default async function Catering() {
         <div className="lux-hero__shade" />
         <div className="lux-hero__content">
           <p className="lux-kicker">Mobile espresso & crepe experience</p>
-          <h1>Make it<br />unforgettable</h1>
+          <h1 className="lux-title-long">Make it<br />unforgettable</h1>
           <span className="lux-script">one handcrafted sip at a time.</span>
           <p className="lux-lead">
             Weddings, corporate events, baby showers, grand openings, and private celebrations—

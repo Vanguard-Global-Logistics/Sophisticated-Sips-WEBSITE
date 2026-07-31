@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { askClaude } from "@/lib/ai/claude";
+import { normalizeLegacyMenuRows } from "@/lib/catalog-guard";
 import { requireOwner, supabaseAdmin } from "@/lib/database/supabase-server";
 
 export const runtime = "nodejs";
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
       messages: [{
         role: "user",
         content: `Channel: ${channel}. Month: ${month}. Demand lately: ${topTypes}.${theme ? ` Theme Amy wants: ${String(theme).slice(0, 200)}.` : ""}
-Real menu: ${(menu || []).map((m: any) => `${m.name} (${m.price_label})`).join(", ")}.
+Real menu: ${normalizeLegacyMenuRows(menu || []).map((m) => `${m.name} (${m.price_label})`).join(", ")}.
 
 Write 3 ready-to-post drafts for this channel. For each: a hook line, the post body (channel-appropriate length), and 4–6 hashtags where the channel uses them. Number them 1–3, plain text.`,
       }],

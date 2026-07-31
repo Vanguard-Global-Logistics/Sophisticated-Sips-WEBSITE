@@ -945,6 +945,7 @@ a,button{font-family:inherit}
   .lux-hero__shade{background:linear-gradient(180deg,rgba(3,9,7,.18),rgba(3,9,7,.88) 55%,#030907 100%)}
   .lux-hero__content{padding:170px 22px 54px}
   .lux-hero h1{font-size:clamp(45px,13vw,68px)}
+  .lux-hero h1.lux-title-long{font-size:clamp(33px,10vw,48px);letter-spacing:-.01em}
   .lux-section{padding:56px 0}
   .lux-section__head{text-align:left}
   .lux-gold-rule{justify-content:flex-start}
