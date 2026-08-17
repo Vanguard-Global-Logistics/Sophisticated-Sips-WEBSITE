@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { askClaudeRaw } from "@/lib/ai/claude";
+import { askClaudeRaw, ClaudeError, NO_API_KEY } from "@/lib/ai/claude";
 import { normalizeLegacyMenuRows, normalizeLegacyPackageRows } from "@/lib/catalog-guard";
 import { supabaseAdmin } from "@/lib/database/supabase-server";
 import { DEMO_MENU, DEMO_PACKAGES } from "@/lib/demo-data";
@@ -158,6 +158,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply: "I'm having a quiet moment — please try again." });
   } catch (e) {
     console.error("concierge:", e);
-    return NextResponse.json({ error: "AI unavailable" }, { status: 502 });
+    // Surface why Kai is down. The status is safe to expose; the key is not,
+    // and without it a misconfigured deployment is indistinguishable from a
+    // rate limit — both just read as "I'm having a quiet moment".
+    const status = e instanceof ClaudeError ? e.status : -1;
+    const reply =
+      status === NO_API_KEY || status === 401
+        ? "I'm not connected to my brain right now — Amy needs to add the AI key. Meanwhile, head to /book and she'll take care of you personally."
+        : status === 429
+          ? "I'm getting a lot of questions right now — give me a minute, or head to /book and Amy will take it from there."
+          : "I couldn't reach my notes just now. Head to /book and Amy will take care of you personally.";
+    return NextResponse.json({ reply, code: status }, { status: 200 });
   }
 }
