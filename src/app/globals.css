@@ -440,7 +440,7 @@ a,button{font-family:inherit}
   .kai-presence-public{margin-right:0}
   .chat.kai-window{grid-template-columns:1fr;height:min(720px,84dvh)}
   .kai-portrait-window{height:230px;border-right:0;border-bottom:1px solid var(--line)}
-  .kai-portrait-window img{height:195%;bottom:-72%}
+  .kai-portrait-window img{height:150%;top:0;bottom:auto}
 }
 @media(max-width:560px){
   .kai-prompt-row{display:grid;grid-template-columns:1fr 46px}
