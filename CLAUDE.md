@@ -33,6 +33,17 @@ npm test             # vitest — expect 5/5
 7. **AI grounding:** every AI feature is grounded in real DB data and prompt-forbidden from inventing testimonials/stats/availability/prices. The concierge saves leads only with explicit consent via its `save_lead` tool. Keep it that way in any prompt edits.
 8. **No new dependencies or features without explicitly asking William first.** The mission is verify → fix → ship.
 
+## Brand assets and generated media
+**Real assets before generated ones, always.** This repo ships real photography of the business; reaching for an image generator when a genuine photo exists produces off-brand work and costs money. Check `public/gallery/` first: `hero-trailer.jpg` (the trailer at dusk, also the homepage hero), `01-latte-art`, `02-trailer-event`, `03-barista-pour`, `04-bottle-display`, `05-espresso-pour`, `signature-drinks`. Kai's likeness is `public/brand/kai-ai-assistant.png`. Generate only to fill a genuine gap, and anchor it to a real photo as reference.
+
+**Never describe the palette from memory — read it from `globals.css`.** The tokens are the source of truth: `--teal:#0F3433`, `--teal-deep:#0A2423`, `--gold:#C9A45C`, `--gold-light:#EBD6A0`, `--cream:#F6EFE3`, `--espresso:#2B1D12`, `--ink:#14100C`, `--caramel:#B0713E`. It is a deep **teal**, not green. Pass the hex values into any generation prompt rather than colour adjectives, which drift.
+
+**Higgsfield (via MCP) is the media pipeline.** Standing assets: the `Sips-Kai` character element (`f09c9e33-5748-4393-b719-083d86acc5b5`) locks his face and apron across scenes; the `Kai-Voice` voice element (`43246dfc-e395-4e68-b875-b6fe0772b25d`) is his cloned voice. Reuse them instead of re-creating — the voice clone alone costs 40 credits.
+
+**Credit discipline.** Every generation spends the owner's money. Preflight with `get_cost:true` before *any* paid call — including voice cloning, which is not free — and quote the real ledger from the `transactions` tool rather than your own arithmetic. Higgsfield has no dedicated lip-sync model; audio-driven talking video comes from a base render plus a `seedance_2_0_mini` repair pass, and that repair returns **picture only**.
+
+**Verify media instead of asserting it.** `sandbox_exec` is a Higgsfield cloud shell with ffmpeg/ffprobe that can reach generated media (the local environment cannot). Use it to confirm streams exist before wiring anything up, and to mux audio onto silent footage with `-c:v copy` — free, and far cheaper than re-rendering.
+
 ## Conventions
 - TypeScript strict; pragmatic `any` is accepted at supabase-result edges (no generated DB types yet — generating them is a welcome improvement if it stays zero-behavior-change).
 - API routes: `NextResponse.json({ error })` with proper status codes; owner routes start with the `ownerEmail()` gate; sensitive actions call `logAdmin()`.
