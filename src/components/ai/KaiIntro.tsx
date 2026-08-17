@@ -15,9 +15,11 @@ import { usePathname } from "next/navigation";
  * is moved along automatically — the site is never held hostage to the intro.
  */
 
-// Both pre-rendered on Higgsfield. Swap these two lines to change the greeting.
-const KAI_STILL_SRC =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_034009_0aeb113f-ca62-4ced-b66d-41cb7b8a03c9.png";
+// Amy's real trailer, served from this repo — not a generated approximation.
+// Generated versions kept getting the colour wrong (teal instead of the actual
+// forest green, daylight instead of dusk), and the real photograph is both
+// correct by definition and faster to load than a remote file.
+const KAI_STILL_SRC = "/gallery/hero-trailer.jpg";
 const KAI_VOICE_SRC =
   "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_035126_440eb080-e2ab-4fa0-a3e4-ebe4ee8df0eb.wav";
 
@@ -81,7 +83,7 @@ export default function KaiIntro() {
   return (
     <div className={`kai-intro ${leaving ? "leaving" : ""}`} role="dialog" aria-label="Welcome from Kai">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="kai-intro-still" src={KAI_STILL_SRC} alt="Kai welcoming you at the Sophisticated Sips espresso trailer" />
+      <img className="kai-intro-still" src={KAI_STILL_SRC} alt="The Sophisticated Sips mobile espresso trailer at dusk" />
       <div className="kai-intro-veil" aria-hidden="true" />
 
       <audio ref={audioRef} src={KAI_VOICE_SRC} preload="auto" onEnded={finish} onError={() => setPlaying(false)} />
