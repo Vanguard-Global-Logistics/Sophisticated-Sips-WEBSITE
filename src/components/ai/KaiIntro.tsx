@@ -3,33 +3,40 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 /**
- * KaiIntro — Kai's pre-rendered welcome, played full-screen when a visitor lands.
+ * KaiIntro — Kai's welcome, played full-screen when a visitor lands.
  *
- * Same shape as jarvis-web's intro: autoplay, a always-available Skip, fade to the
- * site when it ends, and a replay affordance. Shown once per browser session so
- * returning visitors are not made to sit through it again.
+ * Deliberately a still frame with his voice over it, not a talking video.
+ * Generated lip sync kept landing out of step, and a mouth that misses the
+ * words reads as cheap in a way a portrait never does. A slow push-in keeps
+ * it feeling alive, and the voice carries the greeting.
  *
- * Browsers block autoplay that has sound, so it starts muted with a visible
- * "Tap for sound" control — the first tap unmutes and restarts from the top so
- * nothing of the greeting is missed.
+ * Browsers block autoplay that has sound, so the greeting waits behind a
+ * "Tap for sound" control. Anyone who ignores it still gets the visual and
+ * is moved along automatically — the site is never held hostage to the intro.
  */
 
-// Pre-rendered on Higgsfield and served from their CDN. Swap this one line to
-// replace the greeting; nothing else needs to change.
-const KAI_INTRO_SRC =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_035300_39f40856-a7a8-4b7b-9d8f-7ea3de4b797b.mp4";
+// Both pre-rendered on Higgsfield. Swap these two lines to change the greeting.
+const KAI_STILL_SRC =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_034009_0aeb113f-ca62-4ced-b66d-41cb7b8a03c9.png";
+const KAI_VOICE_SRC =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_035126_440eb080-e2ab-4fa0-a3e4-ebe4ee8df0eb.wav";
+
+const GREETING_TEXT =
+  "Hello, I'm Kai — your Sophisticated Sips concierge. Tell me about your event, and I'll help you plan something unforgettable.";
 
 const SEEN_KEY = "ss-kai-intro-v1";
 export const INTRO_DONE_EVENT = "ss:kai-intro-done";
 export const INTRO_ACTIVE_KEY = "ss-kai-intro-active";
 
+const SILENT_MS = 6500;   // long enough to read the line, short enough not to nag
+const MAX_MS = 20000;     // hard ceiling, whatever happens
+
 export default function KaiIntro() {
   const pathname = usePathname();
   const [show, setShow] = useState(false);
   const [leaving, setLeaving] = useState(false);
-  const [muted, setMuted] = useState(true);
-  const [failed, setFailed] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const doneRef = useRef(false);
 
   // Homepage only, once per session, never in the owner area.
@@ -46,56 +53,48 @@ export default function KaiIntro() {
   const finish = useCallback(() => {
     if (doneRef.current) return;
     doneRef.current = true;
+    audioRef.current?.pause();
     setLeaving(true);
     try { sessionStorage.removeItem(INTRO_ACTIVE_KEY); } catch {}
     window.dispatchEvent(new CustomEvent(INTRO_DONE_EVENT));
     window.setTimeout(() => setShow(false), 700);
   }, []);
 
-  // Safety net: never trap a visitor behind the overlay if the file stalls.
+  // Move visitors along on their own: quickly if they never asked for sound,
+  // and at a hard ceiling regardless so nothing can strand them here.
   useEffect(() => {
     if (!show) return;
-    const t = window.setTimeout(finish, 20000);
-    return () => window.clearTimeout(t);
-  }, [show, finish]);
+    const quiet = window.setTimeout(() => { if (!playing) finish(); }, SILENT_MS);
+    const ceiling = window.setTimeout(finish, MAX_MS);
+    return () => { window.clearTimeout(quiet); window.clearTimeout(ceiling); };
+  }, [show, playing, finish]);
 
-  // If the video can't load at all, get out of the way immediately.
-  useEffect(() => {
-    if (failed) finish();
-  }, [failed, finish]);
-
-  const unmute = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = false;
-    v.volume = 1;
-    setMuted(false);
-    try { v.currentTime = 0; } catch {}
-    void v.play().catch(() => {});
+  const playGreeting = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.currentTime = 0;
+    void a.play().then(() => setPlaying(true)).catch(() => finish());
   };
 
   if (!show) return null;
 
   return (
     <div className={`kai-intro ${leaving ? "leaving" : ""}`} role="dialog" aria-label="Welcome from Kai">
-      <video
-        ref={videoRef}
-        className="kai-intro-video"
-        src={KAI_INTRO_SRC}
-        autoPlay
-        muted
-        playsInline
-        preload="auto"
-        onEnded={finish}
-        onError={() => setFailed(true)}
-      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="kai-intro-still" src={KAI_STILL_SRC} alt="Kai welcoming you at the Sophisticated Sips espresso trailer" />
       <div className="kai-intro-veil" aria-hidden="true" />
-      {muted && (
-        <button className="kai-intro-sound" onClick={unmute}>
-          🔊 Tap for sound
-        </button>
+
+      <audio ref={audioRef} src={KAI_VOICE_SRC} preload="auto" onEnded={finish} onError={() => setPlaying(false)} />
+
+      <div className="kai-intro-copy">
+        <span className="kai-intro-name">Kai · Your Concierge</span>
+        <p>{GREETING_TEXT}</p>
+      </div>
+
+      {!playing && (
+        <button className="kai-intro-sound" onClick={playGreeting}>🔊 Hear Kai</button>
       )}
-      <button className="kai-intro-skip" onClick={finish}>Skip intro ▸</button>
+      <button className="kai-intro-skip" onClick={finish}>Skip ▸</button>
     </div>
   );
 }

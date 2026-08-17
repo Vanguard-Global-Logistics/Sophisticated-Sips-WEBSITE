@@ -187,6 +187,16 @@ a,button{font-family:inherit}
   justify-content:center;opacity:1;transition:opacity .7s ease}
 .kai-intro.leaving{opacity:0;pointer-events:none}
 .kai-intro-video{width:100%;height:100%;object-fit:cover}
+/* Slow push-in keeps a still frame feeling alive without faking a performance. */
+.kai-intro-still{width:100%;height:100%;object-fit:cover;animation:kaiPushIn 14s ease-out forwards}
+@keyframes kaiPushIn{from{transform:scale(1.04)}to{transform:scale(1.13)}}
+.kai-intro-copy{position:absolute;z-index:2;left:50%;transform:translateX(-50%);
+  bottom:calc(120px + env(safe-area-inset-bottom));width:min(680px,calc(100vw - 44px));text-align:center}
+.kai-intro-name{display:inline-block;font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold-light);margin-bottom:12px}
+.kai-intro-copy p{font-family:var(--font-serif),serif;font-size:clamp(19px,3.2vw,30px);line-height:1.4;
+  color:var(--cream);text-shadow:0 2px 24px rgba(0,0,0,.85)}
+@media(prefers-reduced-motion:reduce){.kai-intro-still{animation:none}}
 /* Vignette so the gold controls stay legible over any frame of the video. */
 .kai-intro-veil{position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(5,4,3,.75) 100%)}
