@@ -5,21 +5,17 @@ import { usePathname } from "next/navigation";
 /**
  * KaiIntro — Kai's welcome, played full-screen when a visitor lands.
  *
- * The video and the voice are two separate files: the lip-sync repair that
- * produced this footage returns picture only. Rather than pay to re-render a
- * combined track, both elements are started from zero on the same tap, which
- * keeps them aligned for a clip this short.
- *
- * Browsers block autoplay that has sound, so the picture starts muted and the
- * voice waits behind "Hear Kai". Anyone who ignores it still sees the greeting
- * and is moved along automatically — the site is never held behind the intro.
+ * Browsers block autoplay that has sound, so it starts muted behind a visible
+ * "Hear Kai" control; tapping unmutes and restarts from the top so none of the
+ * greeting is missed. Anyone who ignores it still sees the picture and is moved
+ * along automatically — the site is never held behind the intro.
  */
 
-// Pre-rendered on Higgsfield. Picture and voice are deliberately separate.
+// One file carrying both streams: the lip-sync repair returned picture only,
+// so Kai's voice was muxed onto it with ffmpeg (video copied untouched).
+// Verified as h264 video + aac stereo audio before being wired up here.
 const KAI_VIDEO_SRC =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_040806_d2f95ef5-ad16-4617-82b1-aa12aed414a5.mp4";
-const KAI_VOICE_SRC =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_035126_440eb080-e2ab-4fa0-a3e4-ebe4ee8df0eb.wav";
+  "https://d2ol7oe51mr4n9.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/53c5ddea-107d-4787-9177-f8c46d178a82.mp4";
 // Shown until the video can paint, and as the fallback if it never loads.
 const KAI_POSTER_SRC = "/gallery/hero-trailer.jpg";
 
@@ -40,7 +36,6 @@ export default function KaiIntro() {
   const [playing, setPlaying] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const doneRef = useRef(false);
 
   // Homepage only, once per session, never in the owner area.
@@ -57,7 +52,7 @@ export default function KaiIntro() {
   const finish = useCallback(() => {
     if (doneRef.current) return;
     doneRef.current = true;
-    audioRef.current?.pause();
+
     videoRef.current?.pause();
     setLeaving(true);
     try { sessionStorage.removeItem(INTRO_ACTIVE_KEY); } catch {}
@@ -72,14 +67,14 @@ export default function KaiIntro() {
     return () => { window.clearTimeout(quiet); window.clearTimeout(ceiling); };
   }, [show, playing, finish]);
 
-  /** Restart picture and voice together so they stay in step. */
+  /** Unmute and restart from the top so none of the greeting is missed. */
   const playGreeting = () => {
-    const a = audioRef.current;
     const v = videoRef.current;
-    if (!a) return;
-    try { a.currentTime = 0; } catch {}
-    if (v && !videoFailed) { try { v.currentTime = 0; } catch {} void v.play().catch(() => {}); }
-    void a.play().then(() => setPlaying(true)).catch(() => finish());
+    if (!v || videoFailed) return;
+    v.muted = false;
+    v.volume = 1;
+    try { v.currentTime = 0; } catch {}
+    void v.play().then(() => setPlaying(true)).catch(() => finish());
   };
 
   if (!show) return null;
@@ -99,13 +94,11 @@ export default function KaiIntro() {
           muted
           playsInline
           preload="auto"
+          onEnded={finish}
           onError={() => setVideoFailed(true)}
         />
       )}
       <div className="kai-intro-veil" aria-hidden="true" />
-
-      {/* The voice track: the repaired footage carries no audio of its own. */}
-      <audio ref={audioRef} src={KAI_VOICE_SRC} preload="auto" onEnded={finish} onError={() => setPlaying(false)} />
 
       <div className="kai-intro-copy">
         <span className="kai-intro-name">Kai · Your Concierge</span>
