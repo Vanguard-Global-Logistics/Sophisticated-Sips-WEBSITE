@@ -16,6 +16,11 @@ How to consult:
 - Recommend 2–3 choices matched to the event, using only items in the current catalog.
 - One tasteful upsell max per conversation. One follow-up question max per reply.
 
+Public appearances (walk-up locations, separate from private catered events):
+- If UPCOMING PUBLIC APPEARANCES below is non-empty, you may proactively mention the soonest one early in the conversation — visitors often just want to know where to find the truck in person, not book a private event.
+- If it's empty, say Amy doesn't have a public appearance scheduled right now, and offer to help book a private event instead.
+- Never invent a location, date, or time — only use what's listed.
+
 Lead handoff:
 - When the visitor seems ready, offer: "I can pass your details straight to Amy, or you can use the booking form at /book."
 - If they share their name AND email and agree to be contacted, call the save_lead tool ONCE with everything you know. After saving, confirm warmly that Amy will personally follow up.
@@ -31,18 +36,32 @@ const FALLBACK_CATALOG = {
   packages: DEMO_PACKAGES,
 };
 
+async function upcomingAppearances(db: NonNullable<ReturnType<typeof supabaseAdmin>>) {
+  const today = new Date().toISOString().slice(0, 10);
+  const { data, error } = await db
+    .from("public_appearances")
+    .select("location_name,address,event_date,start_time,end_time,notes")
+    .eq("active", true)
+    .gte("event_date", today)
+    .order("event_date", { ascending: true })
+    .limit(10);
+  if (error) { console.error("concierge appearances:", error); return []; }
+  return data || [];
+}
+
 async function groundedSystem() {
   const db = supabaseAdmin();
-  if (!db) return `${SYSTEM}\n\nCURRENT CATALOG:\n${JSON.stringify(FALLBACK_CATALOG)}`;
+  if (!db) return `${SYSTEM}\n\nCURRENT CATALOG:\n${JSON.stringify(FALLBACK_CATALOG)}\n\nUPCOMING PUBLIC APPEARANCES:\n[]`;
 
   const [menu, packages, settings] = await Promise.all([
     db.from("menu_items").select("category,name,price_label,description,is_signature,sold_out").eq("active", true).order("category").order("sort"),
     db.from("catering_packages").select("name,tag,description,bullet_points,base_price_cents").eq("active", true).order("sort"),
     db.from("business_settings").select("service_area,quote_rules,deposit_percent").eq("id", 1).maybeSingle(),
   ]);
+  const appearances = await upcomingAppearances(db);
   if (menu.error || packages.error || settings.error) {
     console.error("concierge catalog:", menu.error || packages.error || settings.error);
-    return `${SYSTEM}\n\nCURRENT CATALOG:\n${JSON.stringify(FALLBACK_CATALOG)}`;
+    return `${SYSTEM}\n\nCURRENT CATALOG:\n${JSON.stringify(FALLBACK_CATALOG)}\n\nUPCOMING PUBLIC APPEARANCES:\n${JSON.stringify(appearances)}`;
   }
 
   return `${SYSTEM}
@@ -54,6 +73,9 @@ ${JSON.stringify({
   packages: normalizeLegacyPackageRows(packages.data || []),
   settings: settings.data,
 })}
+
+UPCOMING PUBLIC APPEARANCES:
+${JSON.stringify(appearances)}
 
 Use this catalog as the source of truth. Never recommend a sold-out item. Prices are menu/package starting points, not a final event quote.`;
 }

@@ -113,6 +113,19 @@ create table if not exists suppression_list (
   created_at timestamptz default now()
 );
 
+-- ---------- public_appearances (walk-up locations, separate from private bookings) ----------
+create table if not exists public_appearances (
+  id uuid primary key default gen_random_uuid(),
+  location_name text not null,
+  address text,
+  event_date date not null,
+  start_time text,
+  end_time text,
+  notes text,
+  active boolean default true,
+  sort int default 100
+);
+
 -- ---------- events (confirmed bookings) ----------
 create table if not exists events (
   id uuid primary key default gen_random_uuid(),
@@ -159,9 +172,12 @@ alter table suppression_list enable row level security;
 alter table events enable row level security;
 alter table payments enable row level security;
 alter table owners enable row level security;
+alter table public_appearances enable row level security;
 
 create policy "public read menu" on menu_items for select using (active = true or is_owner());
 create policy "public read packages" on catering_packages for select using (active = true or is_owner());
+create policy "public read appearances" on public_appearances for select using (active = true or is_owner());
+create policy "owner write appearances" on public_appearances for all using (is_owner()) with check (is_owner());
 
 create policy "owner all bookings" on booking_requests for all using (is_owner()) with check (is_owner());
 create policy "owner all leads" on leads for all using (is_owner()) with check (is_owner());

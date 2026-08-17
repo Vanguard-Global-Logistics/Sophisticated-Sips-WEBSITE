@@ -211,6 +211,7 @@ export default function OwnerDashboard() {
           <button onClick={() => setTab("Approval Queue")}><span>✉️</span>Approve emails{pending.length > 0 ? ` (${pending.length})` : ""}</button>
           <button onClick={() => setTab("Payments")}><span>💳</span>Send deposit</button>
           <button onClick={() => router.push("/owner/menu")}><span>✦</span>Edit menu</button>
+          <button onClick={() => router.push("/owner/appearances")}><span>📍</span>Where you&apos;ll be</button>
           <a className="qa-link" href="/menu/print" target="_blank" rel="noreferrer"><span>🖨</span>Print flyer</a>
           <button onClick={() => setTab("Growth Ideas")}><span>📈</span>Growth report</button>
         </div>

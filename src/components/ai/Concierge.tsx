@@ -1,25 +1,40 @@
 "use client";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 type Msg = { role: "user" | "assistant"; content: string };
+type Appearance = {
+  location_name: string;
+  address: string | null;
+  event_date: string;
+  start_time: string | null;
+  end_time: string | null;
+} | null;
 
-const GREETING: Msg = {
-  role: "assistant",
-  content: "Hi, I'm Kai, your Sophisticated Sips AI Concierge. I can help you plan your event, estimate guest needs, compare packages, build a menu, and pass the details directly to Amy. ✦",
-};
 const CHIPS = [
   "Plan a corporate event", "Estimate my budget", "Compare packages",
   "Build a drink menu", "Holiday event ideas", "Check available dates",
 ];
 const STORE_KEY = "ss-concierge-v1";
+const GREETED_KEY = "ss-kai-greeted-v1";
 
-export default function Concierge() {
+function formatAppearance(a: Appearance): string {
+  if (!a) return "";
+  const date = new Date(`${a.event_date}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const time = a.start_time ? ` from ${a.start_time}${a.end_time ? ` to ${a.end_time}` : ""}` : "";
+  return ` I'll also be at ${a.location_name} on ${date}${time} if you'd like to stop by in person!`;
+}
+
+export default function Concierge({ nextAppearance = null }: { nextAppearance?: Appearance }) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [input, setInput] = useState("");
-  const [msgs, setMsgs] = useState<Msg[]>([GREETING]);
+  const greeting: Msg = useMemo(() => ({
+    role: "assistant",
+    content: `Hi, I'm Kai, your Sophisticated Sips AI Concierge. I can help you plan your event, estimate guest needs, compare packages, build a menu, and pass the details directly to Amy.${formatAppearance(nextAppearance)} ✦`,
+  }), [nextAppearance]);
+  const [msgs, setMsgs] = useState<Msg[]>([greeting]);
   const [typed, setTyped] = useState(0); // typewriter cursor for the latest assistant reply
   const bodyRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -35,6 +50,17 @@ export default function Concierge() {
   useEffect(() => {
     try { sessionStorage.setItem(STORE_KEY, JSON.stringify(msgs.slice(-24))); } catch {}
   }, [msgs]);
+
+  // Greet visitors on landing instead of waiting for a click — once per browser session.
+  useEffect(() => {
+    if (pathname?.startsWith("/owner")) return;
+    try { if (sessionStorage.getItem(GREETED_KEY)) return; } catch {}
+    const t = window.setTimeout(() => {
+      setOpen(true);
+      try { sessionStorage.setItem(GREETED_KEY, "1"); } catch {}
+    }, 1800);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
 
   // Typewriter reveal for the newest assistant message.
   const last = msgs[msgs.length - 1];
@@ -86,6 +112,11 @@ export default function Concierge() {
 
   return (
     <>
+      {!open && (
+        <button className="fab" onClick={() => setOpen(true)} aria-label="Open Kai, the AI Concierge">
+          <Image src="/brand/kai-ai-assistant.png" alt="" width={40} height={84} priority />
+        </button>
+      )}
       {open && (
         <div className="chat kai-window" role="dialog" aria-label="Kai AI Concierge">
           <div className="kai-portrait-window">

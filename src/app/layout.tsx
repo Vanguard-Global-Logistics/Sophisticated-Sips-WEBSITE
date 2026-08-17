@@ -4,6 +4,7 @@ import "./globals.css";
 import Nav from "@/components/public/Nav";
 import Concierge from "@/components/ai/Concierge";
 import Link from "next/link";
+import { supabaseAdmin } from "@/lib/database/supabase-server";
 
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -38,7 +39,23 @@ export const viewport: Viewport = {
   themeColor: "#0A2423",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+async function nextAppearance() {
+  const db = supabaseAdmin();
+  if (!db) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  const { data } = await db
+    .from("public_appearances")
+    .select("location_name,address,event_date,start_time,end_time")
+    .eq("active", true)
+    .gte("event_date", today)
+    .order("event_date", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return data;
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const appearance = await nextAppearance();
   return (
     <html lang="en" className={`${fraunces.variable} ${outfit.variable} ${script.variable}`}>
       <body>
@@ -78,7 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span>Family-owned by Amy Lavold</span>
           </div>
         </footer>
-        <Concierge />
+        <Concierge nextAppearance={appearance} />
       </body>
     </html>
   );
