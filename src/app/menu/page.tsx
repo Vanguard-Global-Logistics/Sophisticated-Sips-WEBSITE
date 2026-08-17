@@ -1,6 +1,5 @@
 import Link from "next/link";
 import BrandedMenu, { type BrandedMenuItem } from "@/components/public/BrandedMenu";
-import { normalizeLegacyMenuRows } from "@/lib/catalog-guard";
 import { supabaseServer } from "@/lib/database/supabase-server";
 import { DEMO_MENU } from "@/lib/demo-data";
 
@@ -19,7 +18,9 @@ async function activeMenu(): Promise<BrandedMenuItem[]> {
     .eq("active", true)
     .order("category")
     .order("sort");
-  return data?.length ? normalizeLegacyMenuRows(data) : DEMO_MENU;
+  // The owner-managed catalog is the source of truth. Running launch-data
+  // migrations here would replace edits already made in the dashboard.
+  return data?.length ? data : DEMO_MENU;
 }
 
 export default async function MenuPage() {

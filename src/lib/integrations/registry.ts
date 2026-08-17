@@ -5,6 +5,7 @@
  *  value is ever read out or exposed — presence is checked, never content. */
 
 import type { IntegrationStatus } from "./types";
+import { hasClaudeApiKey } from "../ai/claude";
 import { isGoogleConfigured } from "./google";
 
 function hasSquare(): boolean {
@@ -14,10 +15,6 @@ function hasSquare(): boolean {
 
 function hasResend(): boolean {
   return !!process.env.RESEND_API_KEY;
-}
-
-function hasAnthropic(): boolean {
-  return !!process.env.ANTHROPIC_API_KEY;
 }
 
 /** Status of all providers. Google services share a single OAuth credential set
@@ -66,9 +63,9 @@ export function integrationStatuses(): IntegrationStatus[] {
     {
       id: "anthropic",
       label: "Anthropic",
-      connected: hasAnthropic(),
+      connected: hasClaudeApiKey(),
       category: "ai",
-      note: hasAnthropic() ? undefined : "Set ANTHROPIC_API_KEY to connect.",
+      note: hasClaudeApiKey() ? undefined : "Set ANTHROPIC_API_KEY_KAI to connect.",
     },
   ];
 }

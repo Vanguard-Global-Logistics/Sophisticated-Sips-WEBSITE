@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { askClaudeRaw, ClaudeError, NO_API_KEY } from "@/lib/ai/claude";
-import { normalizeLegacyMenuRows, normalizeLegacyPackageRows } from "@/lib/catalog-guard";
 import { supabaseAdmin } from "@/lib/database/supabase-server";
 import { DEMO_MENU, DEMO_PACKAGES } from "@/lib/demo-data";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
@@ -69,8 +68,8 @@ async function groundedSystem() {
 CURRENT CATALOG AND BUSINESS RULES:
 ${JSON.stringify({
   as_of: new Date().toISOString(),
-  menu: normalizeLegacyMenuRows(menu.data || []),
-  packages: normalizeLegacyPackageRows(packages.data || []),
+  menu: menu.data || [],
+  packages: packages.data || [],
   settings: settings.data,
 })}
 

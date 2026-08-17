@@ -1,9 +1,9 @@
 /** Static fallback content so public pages render fully before Supabase is configured.
  *  Mirrors the seed data in supabase/schema.sql. */
 export const DEMO_MENU = [
-  { id: "d1", category: "Iced Espresso", name: "Shaken Espresso", price_label: "16 oz $5 · 20 oz $5.50", description: "Your refreshing pick-me-up, similar to a crisp iced coffee.", is_signature: false, sort: 10 },
-  { id: "d2", category: "Iced Espresso", name: "Iced Latte", price_label: "16 oz $6 · 20 oz $6.50", description: "Smooth espresso perfectly blended with chilled milk.", is_signature: false, sort: 20 },
-  { id: "d3", category: "Iced Espresso", name: "Iced Macchiato", price_label: "16 oz $6 · 20 oz $6.50", description: "A beautifully layered iced latte—a true work of art in a cup.", is_signature: false, sort: 30 },
+  { id: "d1", category: "Iced Espresso", name: "Shaken Espresso", price_label: "16 oz $5 · 24 oz $6", description: "Your refreshing pick-me-up, similar to a crisp iced coffee.", is_signature: false, sort: 10 },
+  { id: "d2", category: "Iced Espresso", name: "Iced Latte", price_label: "16 oz $6 · 24 oz $7", description: "Smooth espresso perfectly blended with chilled milk.", is_signature: false, sort: 20 },
+  { id: "d3", category: "Iced Espresso", name: "Iced Macchiato", price_label: "16 oz $6 · 24 oz $7", description: "A beautifully layered iced latte—a true work of art in a cup.", is_signature: false, sort: 30 },
   { id: "d4", category: "Hot Espresso", name: "Americano", price_label: "12 oz $4 · 16 oz $4.50", description: "A bold and invigorating classic, just like a traditional coffee.", is_signature: false, sort: 10 },
   { id: "d5", category: "Hot Espresso", name: "Café Latte", price_label: "12 oz $5.50 · 16 oz $6", description: "Rich espresso harmoniously combined with velvety steamed milk.", is_signature: false, sort: 20 },
   { id: "d6", category: "Hot Espresso", name: "Espresso Shot", price_label: "1 shot $2 · 2 shots $3", description: "Pure, concentrated perfection.", is_signature: false, sort: 30 },
