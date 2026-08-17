@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { INTRO_ACTIVE_KEY, INTRO_DONE_EVENT } from "@/components/ai/KaiIntro";
 
 type Msg = { role: "user" | "assistant"; content: string };
 type Appearance = {
@@ -52,13 +53,27 @@ export default function Concierge({ nextAppearance = null }: { nextAppearance?: 
   }, [msgs]);
 
   // Greet visitors on landing instead of waiting for a click — once per browser session.
+  // When Kai's intro video is playing, wait for it to finish rather than opening
+  // the chat behind it, so the two greetings don't talk over each other.
   useEffect(() => {
     if (pathname?.startsWith("/owner")) return;
     try { if (sessionStorage.getItem(GREETED_KEY)) return; } catch {}
-    const t = window.setTimeout(() => {
+
+    const openChat = () => {
       setOpen(true);
       try { sessionStorage.setItem(GREETED_KEY, "1"); } catch {}
-    }, 1800);
+    };
+
+    let introActive = false;
+    try { introActive = Boolean(sessionStorage.getItem(INTRO_ACTIVE_KEY)); } catch {}
+
+    if (introActive) {
+      const onIntroDone = () => window.setTimeout(openChat, 600);
+      window.addEventListener(INTRO_DONE_EVENT, onIntroDone);
+      return () => window.removeEventListener(INTRO_DONE_EVENT, onIntroDone);
+    }
+
+    const t = window.setTimeout(openChat, 1800);
     return () => window.clearTimeout(t);
   }, [pathname]);
 
