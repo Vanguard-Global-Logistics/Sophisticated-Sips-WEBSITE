@@ -17,9 +17,18 @@ export class ClaudeError extends Error {
 /** Status used when the key is absent, so no request is attempted at all. */
 export const NO_API_KEY = 0;
 
+/** Prefer Kai's recovered production key while keeping older deployments valid. */
+export function claudeApiKey(): string | undefined {
+  return process.env.ANTHROPIC_API_KEY_KAI || process.env.ANTHROPIC_API_KEY;
+}
+
+export function hasClaudeApiKey(): boolean {
+  return !!claudeApiKey();
+}
+
 function headers() {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) throw new ClaudeError(NO_API_KEY, "ANTHROPIC_API_KEY is not set");
+  const key = claudeApiKey();
+  if (!key) throw new ClaudeError(NO_API_KEY, "Anthropic API key is not set");
   return {
     "Content-Type": "application/json",
     "x-api-key": key,

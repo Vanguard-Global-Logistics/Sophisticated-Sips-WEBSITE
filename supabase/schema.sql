@@ -194,9 +194,9 @@ create policy "owner read owners" on owners for select using (is_owner());
 -- Seed data
 -- ============================================================
 insert into menu_items (category, name, price_label, description, is_signature, sort) values
-('Iced Espresso','Shaken Espresso','16 oz $5 · 20 oz $5.50','Your refreshing pick-me-up, similar to a crisp iced coffee.',false,10),
-('Iced Espresso','Iced Latte','16 oz $6 · 20 oz $6.50','Smooth espresso perfectly blended with chilled milk.',false,20),
-('Iced Espresso','Iced Macchiato','16 oz $6 · 20 oz $6.50','A beautifully layered iced latte—a true work of art in a cup.',false,30),
+('Iced Espresso','Shaken Espresso','16 oz $5 · 24 oz $6','Your refreshing pick-me-up, similar to a crisp iced coffee.',false,10),
+('Iced Espresso','Iced Latte','16 oz $6 · 24 oz $7','Smooth espresso perfectly blended with chilled milk.',false,20),
+('Iced Espresso','Iced Macchiato','16 oz $6 · 24 oz $7','A beautifully layered iced latte—a true work of art in a cup.',false,30),
 ('Hot Espresso','Americano','12 oz $4 · 16 oz $4.50','A bold and invigorating classic, just like a traditional coffee.',false,10),
 ('Hot Espresso','Café Latte','12 oz $5.50 · 16 oz $6','Rich espresso harmoniously combined with velvety steamed milk.',false,20),
 ('Hot Espresso','Espresso Shot','1 shot $2 · 2 shots $3','Pure, concentrated perfection.',false,30),

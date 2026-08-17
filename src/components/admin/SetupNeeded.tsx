@@ -5,7 +5,7 @@ const VARS: [string, string][] = [
   ["NEXT_PUBLIC_SUPABASE_ANON_KEY", "Supabase → Settings → API → anon public key"],
   ["SUPABASE_SERVICE_ROLE_KEY", "Supabase → Settings → API → service_role key (server-only)"],
   ["OWNER_EMAIL", "Amy's login email — must match the Supabase Auth user"],
-  ["ANTHROPIC_API_KEY", "console.anthropic.com → API Keys (for the AI features)"],
+  ["ANTHROPIC_API_KEY_KAI", "Claude Console → API Keys (for Kai's AI features)"],
   ["RESEND_API_KEY", "resend.com → API Keys (for email)"],
   ["SQUARE_ACCESS_TOKEN", "developer.squareup.com → your app (Sandbox for staging)"],
   ["SQUARE_LOCATION_ID", "developer.squareup.com → Locations"],

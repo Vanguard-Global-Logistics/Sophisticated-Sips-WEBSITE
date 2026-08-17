@@ -47,7 +47,7 @@ describe("catalog runtime guard", () => {
   it("replaces untouched legacy menu content with Amy's complete flyer catalog", () => {
     const menu = normalizeLegacyMenuRows(legacyMenu);
     expect(menu).toHaveLength(DEMO_MENU.length);
-    expect(menu.find((item) => item.name === "Shaken Espresso")?.price_label).toBe("16 oz $5 · 20 oz $5.50");
+    expect(menu.find((item) => item.name === "Shaken Espresso")?.price_label).toBe("16 oz $5 · 24 oz $6");
     expect(menu.some((item) => item.name === "Dirty Soda")).toBe(false);
     expect(menu.filter((item) => item.category === "Crepes")).toHaveLength(6);
   });

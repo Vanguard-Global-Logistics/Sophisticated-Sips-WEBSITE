@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasClaudeApiKey } from "@/lib/ai/claude";
 import { ownerEmail, supabaseAdmin } from "@/lib/database/supabase-server";
 
 export const runtime = "nodejs";
@@ -31,7 +32,7 @@ export async function GET() {
       configured: !!process.env.RESEND_API_KEY,
       from: process.env.OUTREACH_FROM || null, // an address, not a secret
     },
-    ai: { configured: !!process.env.ANTHROPIC_API_KEY },
+    ai: { configured: hasClaudeApiKey() },
     weather: { configured: !!process.env.BUSINESS_LAT && !!process.env.BUSINESS_LON },
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || null,
     owners: (owners || []).map((o) => o.email),

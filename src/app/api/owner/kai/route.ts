@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { askClaude } from "@/lib/ai/claude";
-import { normalizeLegacyMenuRows } from "@/lib/catalog-guard";
 import { ownerEmail, supabaseAdmin } from "@/lib/database/supabase-server";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
@@ -65,7 +64,7 @@ export async function POST(req: Request) {
     events_this_month_forward: events.data || [],
     payments_this_month: payments.data || [],
     email_draft_statuses: drafts.data || [],
-    menu: normalizeLegacyMenuRows(menu.data || []),
+    menu: menu.data || [],
   };
 
   try {
