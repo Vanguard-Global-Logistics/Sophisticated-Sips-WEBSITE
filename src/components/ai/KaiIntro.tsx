@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 // Pre-rendered on Higgsfield and served from their CDN. Swap this one line to
 // replace the greeting; nothing else needs to change.
 const KAI_INTRO_SRC =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_033054_99f37a32-0554-4c9a-8692-5f0d05b25650.mp4";
+  "https://d8j0ntlcm91z4.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/hf_20260817_035300_39f40856-a7a8-4b7b-9d8f-7ea3de4b797b.mp4";
 
 const SEEN_KEY = "ss-kai-intro-v1";
 export const INTRO_DONE_EVENT = "ss:kai-intro-done";

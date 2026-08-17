@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useKaiSpeech } from "@/lib/useKaiSpeech";
 
 type Message = { role: "user" | "assistant"; content: string };
 type SpeechRecognitionEventLike = {
@@ -36,6 +37,7 @@ export default function OwnerKaiStage() {
   const [listening, setListening] = useState(false);
   const [voiceUnavailable, setVoiceUnavailable] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const speech = useKaiSpeech();
 
   useEffect(() => {
     bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth" });
@@ -55,13 +57,9 @@ export default function OwnerKaiStage() {
         body: JSON.stringify({ messages: next.slice(-12) }),
       });
       const data = await response.json();
-      setMessages((current) => [
-        ...current,
-        {
-          role: "assistant",
-          content: data.reply || data.error || "I couldn't reach the business data just now. Your manual controls still work.",
-        },
-      ]);
+      const reply = data.reply || data.error || "I couldn't reach the business data just now. Your manual controls still work.";
+      setMessages((current) => [...current, { role: "assistant", content: reply }]);
+      speech.speak(reply);
     } catch {
       setMessages((current) => [
         ...current,
@@ -117,6 +115,16 @@ export default function OwnerKaiStage() {
           <button onClick={() => send("What needs my attention today?")}>Today&apos;s priorities</button>
           <button onClick={() => send("Summarize my bookings and pipeline.")}>Bookings &amp; pipeline</button>
           <button onClick={() => send("How is the business performing this month?")}>Business performance</button>
+          {speech.supported && (
+            <button
+              className={speech.enabled ? "on" : ""}
+              aria-pressed={speech.enabled}
+              onClick={() => speech.setEnabled(!speech.enabled)}
+            >
+              {speech.enabled ? "🔊 Kai speaks · on" : "🔇 Kai speaks · off"}
+            </button>
+          )}
+          {speech.speaking && <button onClick={speech.stop}>■ Stop</button>}
         </div>
         <p className="kai-helper">Kai can analyze and prepare work. Sending messages, changing prices, and requesting payments still require Amy&apos;s approval.</p>
       </div>

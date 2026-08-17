@@ -437,6 +437,8 @@ a,button{font-family:inherit}
 .kai-quick button{border:1px solid var(--line);border-radius:99px;background:rgba(246,239,227,.05);color:var(--cream);
   padding:8px 11px;font-size:11.5px;cursor:pointer;min-height:36px}
 .kai-quick button:hover{border-color:var(--gold);color:var(--gold-light)}
+.kai-quick button.on{border-color:var(--gold);color:var(--espresso);font-weight:600;
+  background:linear-gradient(120deg,var(--gold),var(--gold-light))}
 .kai-helper{font-size:11.5px!important;opacity:.6!important;margin-top:9px!important}
 .kai-owner-chat{height:245px;overflow-y:auto;margin-top:16px;padding:12px;border:1px solid rgba(201,164,92,.2);
   border-radius:16px;background:rgba(6,14,12,.46);display:flex;flex-direction:column;gap:9px}
