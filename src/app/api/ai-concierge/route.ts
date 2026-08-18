@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { askClaudeRaw, ClaudeError, NO_API_KEY } from "@/lib/ai/claude";
-import { supabaseAdmin } from "@/lib/database/supabase-server";
+import { supabaseAdmin, supabasePublic } from "@/lib/database/supabase-server";
 import { DEMO_MENU, DEMO_PACKAGES } from "@/lib/demo-data";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
@@ -35,7 +35,7 @@ const FALLBACK_CATALOG = {
   packages: DEMO_PACKAGES,
 };
 
-async function upcomingAppearances(db: NonNullable<ReturnType<typeof supabaseAdmin>>) {
+async function upcomingAppearances(db: NonNullable<ReturnType<typeof supabasePublic>>) {
   const today = new Date().toISOString().slice(0, 10);
   const { data, error } = await db
     .from("public_appearances")
@@ -49,7 +49,7 @@ async function upcomingAppearances(db: NonNullable<ReturnType<typeof supabaseAdm
 }
 
 async function groundedSystem() {
-  const db = supabaseAdmin();
+  const db = supabasePublic();
   if (!db) return `${SYSTEM}\n\nCURRENT CATALOG:\n${JSON.stringify(FALLBACK_CATALOG)}\n\nUPCOMING PUBLIC APPEARANCES:\n[]`;
 
   const [menu, packages, settings] = await Promise.all([
