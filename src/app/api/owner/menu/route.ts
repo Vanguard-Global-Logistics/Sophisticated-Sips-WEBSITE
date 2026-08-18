@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
-import { ownerEmail, supabaseAdmin } from "@/lib/database/supabase-server";
+import { ownerEmail, supabaseServer } from "@/lib/database/supabase-server";
 import { logAdmin } from "@/lib/database/audit";
 
 export const runtime = "nodejs";
@@ -15,9 +15,9 @@ function refreshPublicMenu() {
 
 /**
  * Owner menu CRUD — the manual, AI-independent backbone of the Menu Editor.
- * Uses the service-role client after an owner gate, so it works for both
- * owners-table owners and the OWNER_EMAIL break-glass owner (which RLS alone
- * would not authorize). No Anthropic dependency: pure data in / data out.
+ * Uses the signed-in owner session so the menu editor is not blocked by a
+ * stale service-role key on duplicate Vercel projects. No Anthropic dependency:
+ * pure data in / data out.
  *
  * Reusable across Throne OS: a plain product-catalog CRUD keyed by category.
  */
@@ -69,7 +69,7 @@ function normalize(body: any): { row: Omit<MenuRow, "id">; error?: string } {
 /** GET — full menu, ordered the way the public page and editor expect. */
 export async function GET() {
   if (!(await ownerEmail())) return NextResponse.json({ error: "owner only" }, { status: 401 });
-  const db = supabaseAdmin();
+  const db = await supabaseServer();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   const { data, error } = await db
     .from("menu_items")
@@ -84,7 +84,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const email = await ownerEmail();
   if (!email) return NextResponse.json({ error: "owner only" }, { status: 401 });
-  const db = supabaseAdmin();
+  const db = await supabaseServer();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
   let body: any;
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const email = await ownerEmail();
   if (!email) return NextResponse.json({ error: "owner only" }, { status: 401 });
-  const db = supabaseAdmin();
+  const db = await supabaseServer();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
   let id = str(new URL(req.url).searchParams.get("id"), 60);
