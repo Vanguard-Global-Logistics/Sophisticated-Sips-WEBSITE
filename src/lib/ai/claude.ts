@@ -19,7 +19,11 @@ export const NO_API_KEY = 0;
 
 /** Prefer Kai's recovered production key while keeping older deployments valid. */
 export function claudeApiKey(): string | undefined {
-  return process.env.ANTHROPIC_API_KEY_KAI || process.env.ANTHROPIC_API_KEY;
+  return (
+    process.env.ANTHROPIC_API_KEY_KAI_final ||
+    process.env.ANTHROPIC_API_KEY_KAI ||
+    process.env.ANTHROPIC_API_KEY
+  );
 }
 
 export function hasClaudeApiKey(): boolean {
