@@ -4,10 +4,13 @@ import { cookies } from "next/headers";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
-const URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-// Supabase publishable keys are intended for browser distribution. The environment
-// value remains preferred so the key can be rotated without a code change.
-const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_8apPcpmpfBid2mIdjyTK7Q_7rSyMzx7";
+const RECOVERED_URL = "https://wzzfyvxvsymkenewpbzs.supabase.co";
+const RECOVERED_PUBLISHABLE_KEY = "sb_publishable_8apPcpmpfBid2mIdjyTK7Q_7rSyMzx7";
+
+// Recovery default: all surviving Vercel projects should read Amy's recovered
+// Supabase project, even if an older deployment has a stale public key set.
+const URL = RECOVERED_URL;
+const ANON = RECOVERED_PUBLISHABLE_KEY;
 const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 /** True only when the public Supabase env vars exist. Public pages use this to
@@ -31,6 +34,12 @@ export async function supabaseServer(): Promise<SupabaseClient | null> {
   });
 }
 
+/** Public read client for server routes that do not need service-role powers. */
+export function supabasePublic(): SupabaseClient | null {
+  if (!URL || !ANON) return null;
+  return createClient(URL, ANON, { auth: { persistSession: false } });
+}
+
 /** Service-role client, or null if unconfigured. Server-only; bypasses RLS. */
 export function supabaseAdmin(): SupabaseClient | null {
   if (!URL || !SERVICE) return null;
@@ -46,8 +55,8 @@ export async function ownerEmail(): Promise<string | null> {
   if (!email) return null;
   if (email === process.env.OWNER_EMAIL?.toLowerCase()) return email;
   const admin = supabaseAdmin();
-  if (!admin) return email === process.env.OWNER_EMAIL?.toLowerCase() ? email : null;
-  const { data: row } = await admin.from("owners").select("email").eq("email", email).maybeSingle();
+  const ownerLookup = admin || sb;
+  const { data: row } = await ownerLookup.from("owners").select("email").eq("email", email).maybeSingle();
   return row ? email : null;
 }
 
