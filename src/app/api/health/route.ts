@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/database/supabase-server";
+import { supabasePublic } from "@/lib/database/supabase-server";
 
 export const runtime = "nodejs";
 
@@ -27,7 +27,7 @@ function classifyDatabaseError(error: DatabaseError): string {
 export async function GET() {
   const started = Date.now();
   try {
-    const db = supabaseAdmin();
+    const db = supabasePublic();
     if (!db) return NextResponse.json({ status: "setup", db: "unconfigured", version: "1.0.0-rc.1" }, { status: 200 });
     const { error } = await db.from("menu_items").select("id").limit(1);
     if (error) {
