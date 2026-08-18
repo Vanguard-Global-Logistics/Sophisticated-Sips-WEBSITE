@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { askClaude } from "@/lib/ai/claude";
 import { ownerEmail, supabaseAdmin } from "@/lib/database/supabase-server";
+import {
+  CANCELLATION_POLICY_FULL_TEXT,
+  CANCELLATION_POLICY_URL,
+  POLICY_VERSION,
+} from "@/lib/policies/cancellation";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -15,6 +20,7 @@ Give Amy a direct, practical answer in plain language. Lead with what needs atte
 You may analyze, prioritize, draft ideas, explain dashboard data, and propose changes.
 You cannot claim that an email was sent, a price was changed, a payment was requested, or a booking was confirmed.
 Those actions require Amy's explicit approval through the dashboard controls.
+The approved cancellation, rescheduling, and refund policy is available at ${CANCELLATION_POLICY_URL}, version ${POLICY_VERSION}. Treat it as canonical when Amy asks about terms, deposits, refunds, cancellations, reschedules, weather, no-shows, chargebacks, or customer disputes. Do not weaken it, promise exceptions, or give legal advice. If Amy asks to make an exception, remind her to confirm any exception in writing.
 Protect customer information. Do not repeat email addresses or phone numbers unless Amy explicitly asks for the individual record.
 Keep replies concise: usually 3–7 short paragraphs or a compact list.`;
 
@@ -69,7 +75,7 @@ export async function POST(req: Request) {
 
   try {
     const reply = await askClaude({
-      system: `${SYSTEM}\n\nCURRENT BUSINESS SNAPSHOT:\n${JSON.stringify(snapshot)}`,
+      system: `${SYSTEM}\n\nAPPROVED POLICY:\n${CANCELLATION_POLICY_FULL_TEXT}\n\nCURRENT BUSINESS SNAPSHOT:\n${JSON.stringify(snapshot)}`,
       messages,
       maxTokens: 900,
     });

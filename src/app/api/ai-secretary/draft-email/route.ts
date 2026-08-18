@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { askClaude } from "@/lib/ai/claude";
 import { requireOwner, supabaseAdmin } from "@/lib/database/supabase-server";
+import {
+  CANCELLATION_POLICY_SUMMARY,
+  CANCELLATION_POLICY_URL,
+  POLICY_VERSION,
+} from "@/lib/policies/cancellation";
 
 export const runtime = "nodejs";
 
@@ -30,7 +35,13 @@ export async function POST(req: Request) {
   try {
     const raw = await askClaude({
       maxTokens: 500,
-      system: `You write outreach emails for Amy Lavold, owner of Sophisticated Sips, a family-owned luxury mobile espresso trailer in Florida. Tone: warm, professional, never pushy, 4–6 sentences. Reference only what's provided; never fabricate details about the recipient. Sign as "Amy Lavold — Sophisticated Sips". Do NOT include an unsubscribe line (added automatically at send). Respond ONLY with JSON: {"subject": "...", "body": "..."} — no markdown, no backticks.`,
+      system: `You write outreach emails for Amy Lavold, owner of Sophisticated Sips, a family-owned luxury mobile espresso trailer in Florida. Tone: warm, professional, never pushy, 4–6 sentences. Reference only what's provided; never fabricate details about the recipient. Sign as "Amy Lavold — Sophisticated Sips". Do NOT include an unsubscribe line (added automatically at send).
+
+Approved cancellation/refund policy, version ${POLICY_VERSION}: ${CANCELLATION_POLICY_SUMMARY}
+Policy URL: ${CANCELLATION_POLICY_URL}
+If Amy's requested angle involves cancellation, refunds, rescheduling, deposits, weather, no-shows, or payment disputes, use this approved policy only. Do not promise exceptions, refunds, waivers, or legal conclusions. Tell the client Amy will confirm any approved exception in writing.
+
+Respond ONLY with JSON: {"subject": "...", "body": "..."} — no markdown, no backticks.`,
       messages: [{
         role: "user",
         content: `Lead: ${lead.name}. Event type: ${lead.event_type}. Date: ${lead.event_date}. Guests: ${lead.guest_count}. Source: ${lead.source}.${angle ? ` Angle Amy wants: ${String(angle).slice(0, 300)}` : ""}`,

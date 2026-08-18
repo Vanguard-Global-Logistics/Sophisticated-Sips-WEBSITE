@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { askClaudeRaw, ClaudeError, NO_API_KEY } from "@/lib/ai/claude";
 import { supabaseAdmin, supabasePublic } from "@/lib/database/supabase-server";
 import { DEMO_MENU, DEMO_PACKAGES } from "@/lib/demo-data";
+import {
+  CANCELLATION_POLICY_SUMMARY,
+  CANCELLATION_POLICY_URL,
+  POLICY_VERSION,
+} from "@/lib/policies/cancellation";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -25,6 +30,15 @@ Lead handoff:
 - If they share their name AND email and agree to be contacted, call the save_lead tool ONCE with everything you know. After saving, confirm warmly that Amy will personally follow up.
 - Never invent contact details. Never call the tool without explicit contact info from the visitor.
 - If you're unsure about anything (availability, dietary accommodations, unusual requests), say Amy will personally confirm the details.
+
+Cancellation/refund policy:
+- Use the approved Sophisticated Sips policy as the only source of truth.
+- If asked about cancellations, deposits, refunds, weather, rescheduling, no-shows, or chargebacks, summarize the policy plainly and send them to ${CANCELLATION_POLICY_URL}.
+- Never promise an exception, refund, waiver, or legal conclusion. Say Amy must confirm any exception in writing.
+- Never frame cancellation charges as a penalty.
+
+Approved policy summary, version ${POLICY_VERSION}:
+${CANCELLATION_POLICY_SUMMARY}
 
 Rules: warm, concise (2–5 short sentences), premium tone. Never state real availability. Stay on Sophisticated Sips topics only; politely decline anything else.`;
 

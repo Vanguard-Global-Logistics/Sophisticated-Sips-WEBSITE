@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/database/supabase-server";
 import { sendBookingReceipt } from "@/lib/email/resend";
+import { policyAcknowledgementLine } from "@/lib/policies/cancellation";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -18,8 +19,14 @@ export async function POST(req: Request) {
   const email = String(f.email || "").trim().slice(0, 200);
   if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !f.event_date)
     return NextResponse.json({ error: "Name, valid email, and event date are required." }, { status: 400 });
+  if (f.policy_accepted !== true)
+    return NextResponse.json({ error: "Please accept the cancellation, rescheduling, and refund policy before submitting." }, { status: 400 });
 
   const guests = Math.max(0, Math.min(100000, parseInt(f.guest_count) || 0));
+  const notes = [
+    String(f.notes || "").slice(0, 1800),
+    policyAcknowledgementLine(),
+  ].filter(Boolean).join("\n\n").slice(0, 2000);
   const db = supabaseAdmin();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
@@ -36,7 +43,7 @@ export async function POST(req: Request) {
     package_interest: String(f.package_interest || "").slice(0, 120),
     drink_preferences: String(f.drink_preferences || "").slice(0, 500),
     addons: String(f.addons || "").slice(0, 500),
-    notes: String(f.notes || "").slice(0, 2000),
+    notes,
   }).select("id").single();
   if (error) {
     console.error("booking insert:", error);

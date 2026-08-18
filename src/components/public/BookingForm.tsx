@@ -1,5 +1,7 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
+import { CANCELLATION_POLICY_URL } from "@/lib/policies/cancellation";
 
 const EVENT_TYPES = ["Corporate event","Employee appreciation","School event","Church event","Wedding","Private party","Sporting event","Holiday party","Vendor fair","Grand opening","Real estate event","Other"];
 const PACKAGES = ["Not sure yet","The Espresso Hour","The Golden Event","Corporate Perk"];
@@ -12,7 +14,7 @@ export default function BookingForm() {
     name: "", company: "", email: "", phone: "", event_type: EVENT_TYPES[0],
     event_date: "", event_time: "", location: "", guest_count: "",
     budget_range: "Not sure yet", package_interest: PACKAGES[0],
-    drink_preferences: "", addons: "", notes: "", website: "", // honeypot
+    drink_preferences: "", addons: "", notes: "", policy_accepted: false, website: "", // honeypot
   });
   const set = (k: string) => (e: any) => setF({ ...f, [k]: e.target.value });
 
@@ -21,6 +23,7 @@ export default function BookingForm() {
     if (!f.name || !f.email || !f.event_date) { setErr("Please add at least your name, email, and event date."); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) { setErr("That email doesn't look right — mind double-checking it?"); return; }
     if (f.event_date < new Date().toISOString().slice(0, 10)) { setErr("That event date is in the past — pick an upcoming date."); return; }
+    if (!f.policy_accepted) { setErr("Please review and accept the cancellation, rescheduling, and refund policy before submitting."); return; }
     setBusy(true);
     try {
       const res = await fetch("/api/bookings", {
@@ -64,6 +67,35 @@ export default function BookingForm() {
       <div className="field"><label htmlFor="bf-drink-preferences">Drink preferences</label><input id="bf-drink-preferences" value={f.drink_preferences} onChange={set("drink_preferences")} placeholder="e.g. iced lattes, Golden Pulse bar, kid-friendly options" /></div>
       <div className="field"><label htmlFor="bf-dessert-crepe-add-ons">Dessert / crepe add-ons</label><input id="bf-dessert-crepe-add-ons" value={f.addons} onChange={set("addons")} placeholder="e.g. crepe station, cheesecake display" /></div>
       <div className="field"><label htmlFor="bf-notes">Notes</label><textarea id="bf-notes" rows={3} value={f.notes} onChange={set("notes")} placeholder="Anything else we should know?" /></div>
+      <label
+        htmlFor="bf-policy"
+        style={{
+          display: "flex",
+          gap: 12,
+          alignItems: "flex-start",
+          margin: "16px 0 8px",
+          fontSize: 14,
+          lineHeight: 1.5,
+          color: "rgba(246,239,227,.88)",
+        }}
+      >
+        <input
+          id="bf-policy"
+          required
+          aria-required="true"
+          type="checkbox"
+          checked={f.policy_accepted}
+          onChange={(event) => setF({ ...f, policy_accepted: event.target.checked })}
+          style={{ marginTop: 4, accentColor: "var(--gold)" }}
+        />
+        <span>
+          I have read and agree to the Sophisticated Sips{" "}
+          <Link href={CANCELLATION_POLICY_URL} target="_blank" style={{ color: "var(--gold)", textDecoration: "underline" }}>
+            cancellation, rescheduling, and refund policy
+          </Link>
+          . I understand reservation payments, cancellation charges, rescheduling fees, weather/site-condition rules, and refund limits may apply.
+        </span>
+      </label>
       {err && <div className="form-error" role="alert">{err}</div>}
       <button className="btn btn-gold" type="submit" style={{ width: "100%", marginTop: 6 }} disabled={busy}>
         {busy ? "Sending…" : "Request My Catering Quote"}
