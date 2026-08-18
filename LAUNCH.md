@@ -39,7 +39,7 @@ Note: pages that query Supabase at build time will warn or render fallbacks unti
 ```bash
 npm test
 ```
-Expected: **5 passing** across 2 files — unsubscribe token round-trip, tamper rejection, garbage rejection, valid Square webhook signature accepted, invalid/missing signature rejected. These are the two security-critical HMACs; if either fails, stop.
+Expected: **10 passing** across 3 files — unsubscribe-token checks, Square webhook-signature checks, and catalog-preservation checks. If any fails, stop.
 
 ---
 
@@ -56,7 +56,7 @@ Fill every line. Reference:
 | `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Settings → API | These two are the ONLY safe-for-browser values |
 | `SUPABASE_SERVICE_ROLE_KEY` | Same page, "service_role" | Server-only. Treat like a root password |
 | `OWNER_EMAIL` | Amy's real login email | Must EXACTLY match the Supabase user AND the `owners` table row (case-insensitive) |
-| `ANTHROPIC_API_KEY` | console.anthropic.com | Server-only |
+| `ANTHROPIC_API_KEY_KAI_final` | console.anthropic.com | Server-only; this is the deployed Kai key name |
 | `RESEND_API_KEY` / `OUTREACH_FROM` | resend.com | `OUTREACH_FROM` must be on a domain you verify in Step B-email below |
 | `SQUARE_ACCESS_TOKEN` / `SQUARE_LOCATION_ID` | developer.squareup.com → your app → **Sandbox** tab | Sandbox and production tokens/locations are different values |
 | `SQUARE_ENVIRONMENT` | `sandbox` for now | Flip to `production` only at Step 18 |
@@ -158,7 +158,7 @@ For Steps 10–11 Square needs a **public** URL. Two options: (a) do Steps 10–
 
 ### Step 17. Deploy to Vercel
 1. vercel.com → **Add New → Project** → import the GitHub repo. Framework auto-detects Next.js.
-2. Environment Variables: paste every line from `.env.local`. Set `NEXT_PUBLIC_SITE_URL` to the final production domain (e.g. `https://sophisticatedsips.com`).
+2. Environment Variables: paste every line from `.env.local`. Set `NEXT_PUBLIC_SITE_URL` to the production domain: `https://sophisticatedsips.net`.
 3. Deploy. Expected: green build.
 4. Domains: add Amy's domain, follow the DNS instructions.
 5. Cron: `vercel.json` already schedules `/api/cron/followups` daily at 13:00 UTC (~8–9 AM Florida). Vercel automatically sends `Authorization: Bearer $CRON_SECRET` because `CRON_SECRET` is set — verify after the first run: `select count(*) from email_drafts where is_follow_up = true;` (will be 0 until a lead has sat "contacted" for 4+ days — that's correct behavior, not a bug).
@@ -185,7 +185,7 @@ Print this. Every box must be PASS before Amy shares the link.
 | 1 | `npm install` clean | Step 2 | ☐ |
 | 2 | `npm run typecheck` exits 0 | Step 3 | ☐ |
 | 3 | `npm run build` succeeds | Step 4 | ☐ |
-| 4 | `npm test` → 5/5 passing | Step 5 | ☐ |
+| 4 | `npm test` → 10/10 passing | Step 5 | ☐ |
 | 5 | All 16 env vars set in Vercel, zero secrets with `NEXT_PUBLIC_` prefix | Step 6 | ☐ |
 | 6 | Schema ran; owners row = Amy's email; verify query returns 3 columns | Steps 7–8 | ☐ |
 | 7 | Supabase public signups DISABLED | Step 7.4 | ☐ |

@@ -311,24 +311,40 @@ a,button{font-family:inherit}
   animation:none;box-shadow:0 2px 14px rgba(201,164,92,.35)}
 .nav-book:hover{box-shadow:0 4px 20px rgba(201,164,92,.55)}
 
-/* cinematic hero */
-.hero2{position:relative;min-height:88vh;display:flex;align-items:flex-end;overflow:hidden;background:#0A1D18}
-.hero2-bg{position:absolute;inset:0;background-size:cover;background-position:72% center;
-  animation:kenburns 26s ease-in-out infinite alternate;will-change:transform}
-@keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.1) translateX(-1.5%)}}
-.hero2-shade{position:absolute;inset:0;background:
-  linear-gradient(90deg, rgba(6,20,16,.96) 0%, rgba(6,20,16,.82) 28%, rgba(6,20,16,.35) 55%, rgba(6,20,16,.15) 75%, rgba(6,20,16,.45) 100%),
-  linear-gradient(180deg, rgba(6,20,16,.55) 0%, transparent 22%, transparent 70%, rgba(6,20,16,.75) 100%)}
-.hero2-in{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:78px 24px 0;width:100%}
-.hero2-kai-grid{display:grid;grid-template-columns:minmax(390px,.92fr) minmax(570px,1.08fr);gap:10px;align-items:end}
-.hero2-copy{padding:32px 0 96px;position:relative;z-index:3}
-.hero2 .kick{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-light);margin-bottom:20px}
-.hero2 h1{font-family:var(--font-serif),serif;font-weight:400;font-size:clamp(46px,8.4vw,88px);
-  line-height:.98;letter-spacing:.01em;color:var(--cream-soft);text-transform:uppercase;max-width:560px}
-.hero2 .sub{font-family:var(--font-script),cursive;font-size:clamp(30px,4.6vw,46px);color:var(--cream);
-  margin:14px 0 6px;display:flex;align-items:center;gap:18px}
-.hero2 .sub:after{content:"";flex:0 0 90px;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
-.hero2 .copy{max-width:420px;font-size:15.5px;line-height:1.7;font-weight:300;opacity:.88;margin:20px 0 30px}
+/* Actual-trailer landing hero. The centered 4:3 scene preserves Amy's photo without cropping. */
+.trailer-hero{position:relative;isolation:isolate;overflow:hidden;background:#061410;
+  border-bottom:1px solid rgba(201,164,92,.2)}
+.trailer-hero__backdrop{position:absolute;z-index:-1;inset:-42px -34px 110px;
+  background:url('/gallery/hero-trailer.jpg') center/cover no-repeat;filter:blur(30px) saturate(.72);
+  opacity:.34;transform:scale(1.08)}
+.trailer-hero__scene{position:relative;height:min(82dvh,860px);max-width:100%;aspect-ratio:4/3;margin:0 auto;
+  overflow:hidden;background:#091814;box-shadow:0 30px 90px rgba(0,0,0,.48)}
+.trailer-hero__image{object-fit:cover;object-position:center}
+.trailer-hero__fallback{position:absolute;inset:0;background:
+  radial-gradient(800px 500px at 65% 38%,rgba(201,164,92,.25),transparent 65%),
+  linear-gradient(150deg,#123B3A,#0A1D18 60%,#1A1108)}
+.trailer-hero__shade{position:absolute;z-index:1;inset:0;pointer-events:none;background:
+  linear-gradient(180deg,rgba(3,10,8,.16),transparent 28%,transparent 72%,rgba(3,10,8,.24)),
+  linear-gradient(90deg,rgba(3,10,8,.18),transparent 24%,transparent 78%,rgba(3,10,8,.12))}
+.trailer-hero__bar{position:relative;z-index:4;width:min(1140px,100%);margin:0 auto;padding:24px 26px 30px;
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center}
+.trailer-hero__copy .kick{font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px}
+.trailer-hero__copy h1{font-family:var(--font-serif),serif;font-size:clamp(34px,4vw,52px);font-weight:430;
+  line-height:1;color:var(--cream-soft);text-transform:uppercase;letter-spacing:.02em}
+.trailer-hero__copy>p:last-child{max-width:650px;margin-top:9px;font-size:14px;line-height:1.6;opacity:.78}
+.trailer-hero__actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+
+/* Kai is clipped to the open service window so he reads as standing behind the counter. */
+.trailer-kai{position:absolute;z-index:3;inset:0;pointer-events:none}
+.trailer-kai__window{position:absolute;left:44%;top:12.7%;width:20%;height:36.6%;overflow:hidden}
+.trailer-kai__window img{position:absolute;left:50%;top:-4%;width:114%;height:auto;max-width:none;
+  transform:translateX(-50%);filter:drop-shadow(0 12px 16px rgba(0,0,0,.62))}
+.trailer-kai__status{position:absolute;z-index:2;top:3%;left:3%;pointer-events:auto;display:flex;align-items:center;gap:8px;
+  min-height:42px;padding:9px 14px;border:1px solid rgba(235,214,160,.72);border-radius:999px;cursor:pointer;
+  color:var(--cream);background:rgba(5,14,11,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 10px 25px rgba(0,0,0,.3);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.trailer-kai__status span{width:8px;height:8px;border-radius:50%;background:#65D8A9;box-shadow:0 0 10px #65D8A9}
+.trailer-kai__status:hover{border-color:var(--gold);color:var(--gold-light)}
 .btn-lux{text-transform:uppercase;letter-spacing:.12em;font-size:13px;padding:15px 30px;border-radius:6px}
 .btn-lux.btn-gold{background:linear-gradient(120deg,#EBD6A0,#C9A45C);animation:none}
 .btn-lux.btn-gold:hover{box-shadow:0 8px 26px rgba(201,164,92,.55)}
@@ -457,14 +473,13 @@ a,button{font-family:inherit}
 .kai-message.user{align-self:flex-end;background:linear-gradient(120deg,var(--gold),var(--gold-light));color:var(--espresso);font-weight:500}
 
 @media(max-width:1040px){
-  .hero2-kai-grid{grid-template-columns:minmax(330px,.85fr) minmax(470px,1.15fr)}
   .kai-presence{grid-template-columns:minmax(260px,1fr) minmax(250px,300px)}
   .kai-character{height:610px;min-width:260px}
 }
 @media(max-width:820px){
-  .hero2{min-height:auto}
-  .hero2-kai-grid{grid-template-columns:1fr;padding-top:72px}
-  .hero2-copy{padding:18px 0 8px}
+  .trailer-hero__scene{width:100%;height:auto;aspect-ratio:4/3}
+  .trailer-hero__bar{grid-template-columns:1fr;padding:20px 20px 24px;gap:18px}
+  .trailer-hero__actions{justify-content:flex-start}
   .kai-presence{grid-template-columns:1fr;min-height:auto}
   .kai-conversation{padding:26px 0 12px;max-width:none}
   .kai-presence-owner .kai-conversation{padding:28px 22px 8px}
@@ -475,6 +490,11 @@ a,button{font-family:inherit}
   .kai-portrait-window img{height:150%;top:0;bottom:auto}
 }
 @media(max-width:560px){
+  .trailer-hero__copy h1{font-size:31px}
+  .trailer-hero__copy>p:last-child{font-size:13.5px}
+  .trailer-hero__actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .trailer-hero__actions .btn{padding:13px 12px;font-size:11px}
+  .trailer-kai__status{top:10px;left:10px;min-height:36px;padding:7px 10px;font-size:9px;letter-spacing:.11em}
   .kai-prompt-row{display:grid;grid-template-columns:1fr 46px}
   .kai-prompt-row .btn{grid-column:1/-1;width:100%}
   .kai-character{height:520px}

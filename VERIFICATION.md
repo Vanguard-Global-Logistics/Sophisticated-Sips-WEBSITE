@@ -11,7 +11,7 @@ Date: 2026-07-05 · Verifier: automated static battery (this environment has no 
 - **Booking**: client validates presence + email format + future date (with input min); server re-validates independently; lead auto-created; receipt awaited.
 
 ## Must run in Codespaces before launch (cannot execute here)
-`npm install` → `npm run typecheck` → `npm run build` → `npm test` (expect 5/5), then LAUNCH.md Parts B–E, finishing with the 28-item PASS/FAIL gate.
+`npm install` → `npm run typecheck` → `npm run build` → `npm test` (expect 10/10), then LAUNCH.md Parts B–E, finishing with the 28-item PASS/FAIL gate.
 
 ## Known launch-day realities
 - Gallery shows branded tiles until real photos land in /public/gallery.

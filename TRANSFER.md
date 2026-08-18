@@ -14,10 +14,10 @@ Two layers: the **in-app transfer** (dashboard access) and the **account transfe
 4. **Square**: money accounts are identity-bound and generally NOT transferable — the buyer creates their own Square account + application, and you swap `SQUARE_ACCESS_TOKEN`, `SQUARE_LOCATION_ID`, `SQUARE_WEBHOOK_SIGNATURE_KEY` (new webhook subscription on their account). Historical payments remain visible in the seller's Square for their records.
 5. **Resend + email domain**: buyer creates a Resend account, verifies the domain (it moves with DNS in step 6), new `RESEND_API_KEY`; update `OUTREACH_FROM` if the sender address changes.
 6. **Domain/DNS**: registrar → transfer domain to buyer (or change account ownership). Keep DNS records identical; TTL low during the move.
-7. **Anthropic**: buyer creates their own API key; swap `ANTHROPIC_API_KEY`.
+7. **Anthropic**: buyer creates their own API key; swap `ANTHROPIC_API_KEY_KAI_final`.
 
 ## Rotate EVERYTHING (non-negotiable after a sale)
-In Vercel env vars, replace: `SUPABASE_SERVICE_ROLE_KEY` (Supabase → Settings → API → regenerate), `NEXT_PUBLIC_SUPABASE_ANON_KEY` (regenerate), `ANTHROPIC_API_KEY`, `RESEND_API_KEY`, all three Square values, and generate fresh `UNSUBSCRIBE_SECRET` + `CRON_SECRET` (`openssl rand -hex 32`). **Change `OWNER_EMAIL` to the buyer** — it's a break-glass owner account, so leaving the seller's address there would leave them a back door. Buyer should also change their Supabase password and remove any seller auth users (Authentication → Users).
+In Vercel env vars, replace: `SUPABASE_SERVICE_ROLE_KEY` (Supabase → Settings → API → regenerate), `NEXT_PUBLIC_SUPABASE_ANON_KEY` (regenerate), `ANTHROPIC_API_KEY_KAI_final`, `RESEND_API_KEY`, all three Square values, and generate fresh `UNSUBSCRIBE_SECRET` + `CRON_SECRET` (`openssl rand -hex 32`). **Change `OWNER_EMAIL` to the buyer** — it's a break-glass owner account, so leaving the seller's address there would leave them a back door. Buyer should also change their Supabase password and remove any seller auth users (Authentication → Users).
 
 ## Verify the new owner has everything (15-minute test)
 Buyer, alone, should be able to: log in at /owner · run the AI briefing · submit a test booking on /book and see the lead · create a deposit link and see the Square checkout · send themselves a test email from the Setup Wizard · see `admin_audit_log` entries for the transfer. If all six work, the handover is real.

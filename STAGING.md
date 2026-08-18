@@ -26,7 +26,7 @@ Vercel does this natively — every environment variable has checkboxes for **Pr
 | `SQUARE_ENVIRONMENT` | `sandbox` | `production` |
 | `SQUARE_ACCESS_TOKEN` / `SQUARE_LOCATION_ID` / `SQUARE_WEBHOOK_SIGNATURE_KEY` | sandbox values | production values |
 | `NEXT_PUBLIC_SUPABASE_URL` / anon key / `SUPABASE_SERVICE_ROLE_KEY` | **staging Supabase project** | **production Supabase project** |
-| `NEXT_PUBLIC_SITE_URL` | the preview URL | `https://sophisticatedsips.com` |
+| `NEXT_PUBLIC_SITE_URL` | the preview URL | `https://sophisticatedsips.net` |
 | Everything else (AI key, Resend, secrets, address) | same values are fine | same values |
 
 ### 4. Two Supabase databases
@@ -62,8 +62,8 @@ Vercel → Project → Settings → **Deployment Protection** → turn on Vercel
 ## Going live (after Amy's approval)
 
 1. **Promote the code:** GitHub → Pull requests → New → base `main` ← compare `staging` → Merge. Vercel automatically builds the Production site from `main` with the Production variables (real Square, production database, no banner).
-2. **Connect the real domain:** Vercel → Project → Settings → Domains → add `sophisticatedsips.com` → follow the DNS instructions at your registrar. SSL is automatic. Set the Production `NEXT_PUBLIC_SITE_URL` to the domain and redeploy.
-3. **Point the production Square webhook** at `https://sophisticatedsips.com/api/square/webhook` and confirm a test event returns 200.
+2. **Connect the real domain:** Vercel → Project → Settings → Domains → add `sophisticatedsips.net` → follow the DNS instructions at your registrar. SSL is automatic. Set the Production `NEXT_PUBLIC_SITE_URL` to the domain and redeploy.
+3. **Point the production Square webhook** at `https://sophisticatedsips.net/api/square/webhook` and confirm a test event returns 200.
 4. **Fresh production database** — the staging junk data stays in staging; production starts clean (menu and packages are seeded by the schema).
 5. **Run the final gate:** LAUNCH.md Part E (28 items), ending with the $1 real-card payment + refund and Amy sending one real invoice from her phone.
 6. From then on, the rhythm is: build on `staging` → Amy plays → merge to `main`. The live site never sees untested code.

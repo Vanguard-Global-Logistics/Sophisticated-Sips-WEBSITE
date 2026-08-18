@@ -2,8 +2,8 @@
 
 Production platform for a real business (Amy Lavold's luxury mobile espresso catering, Florida). Real customers, real money, real email. Bias every decision toward stability and verification over new capability.
 
-## Current state (v1.2.0)
-Built and statically verified across multiple audit passes, but **never executed with dependencies installed** — the build environment that produced this code had no package registry access. Expect `npm run typecheck` to pass clean once node_modules exists (all prior tsc noise was missing-types artifacts); anything that prints is real and should be fixed. 5 unit tests exist (`npm test`) covering the two security-critical HMACs.
+## Current state (recovery checkpoint 2026-08-17)
+The canonical repository is deployed from `main` to the surviving Vercel project `sophisticated-sips`. Runtime, Supabase, menu, owner-login rendering, and Kai were re-verified against production. Typecheck and lint are clean; 10 unit tests pass. See `RECOVERY_STATUS_2026-08-17.md` for the exact verified state and remaining launch blockers. The public domain is `sophisticatedsips.net`; `.com` is not the production domain.
 
 ## Commands
 ```
@@ -12,7 +12,7 @@ npm run dev          # localhost:3000
 npm run typecheck    # tsc --noEmit — must exit 0
 npm run lint         # next lint (.eslintrc.json = next/core-web-vitals)
 npm run build
-npm test             # vitest — expect 5/5
+npm test             # vitest — expect 10/10
 ```
 
 ## Architecture map

@@ -3,7 +3,7 @@
 > **Before launch:** STAGING.md — Amy tests on a private preview (fake payments, rerouted emails, staging banner) before anything goes live.
 > **New owner or handing over?** Start with OWNER_TRAINING.md (daily operation), the in-app Setup Wizard at `/owner/setup`, and TRANSFER.md (selling/transferring the business).
 
-Luxury mobile espresso catering site + AI concierge + owner dashboard + outreach approval workflow + Stripe deposits.
+Luxury mobile espresso catering site + AI concierge + owner dashboard + outreach approval workflow + Square deposits.
 
 Next.js 15 (App Router) · Supabase (Postgres + Auth + RLS) · Resend · Square · Anthropic (server-side only)
 
@@ -32,10 +32,10 @@ Next.js 15 (App Router) · Supabase (Postgres + Auth + RLS) · Resend · Square 
 ```
 cp .env.example .env.local   # fill everything in
 ```
-`SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, `RESEND_API_KEY`, `STRIPE_SECRET_KEY`, `UNSUBSCRIBE_SECRET`, and `CRON_SECRET` are server-only — never prefix them with `NEXT_PUBLIC_`.
+`SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY_KAI_final`, `RESEND_API_KEY`, `SQUARE_ACCESS_TOKEN`, `UNSUBSCRIBE_SECRET`, and `CRON_SECRET` are server-only — never prefix them with `NEXT_PUBLIC_`.
 
 ### 3. Resend (email)
-1. Add and verify the sending domain (sophisticatedsips.com) — SPF + DKIM records.
+1. Add and verify the sending domain (`sophisticatedsips.net`) — SPF + DKIM records.
 2. Create an API key. Set `OUTREACH_FROM` to a real address on that domain.
 
 ### 4. Square

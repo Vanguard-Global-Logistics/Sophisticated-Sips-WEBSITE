@@ -7,7 +7,7 @@ create extension if not exists "pgcrypto";
 
 -- ---------- owner allow-list (drives RLS) ----------
 create table if not exists owners ( email text primary key );
-insert into owners (email) values ('amy@sophisticatedsips.com')
+insert into owners (email) values ('sophisticatedsnacksfl@gmail.com')
   on conflict do nothing; -- <-- CHANGE to Amy's real login email
 
 create or replace function is_owner() returns boolean
@@ -143,7 +143,7 @@ create table if not exists events (
   status text default 'scheduled' -- scheduled | completed | canceled
 );
 
--- ---------- payments (Stripe) ----------
+-- ---------- payments (Square) ----------
 create table if not exists payments (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz default now(),

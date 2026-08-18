@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/public/Reveal";
 import KaiPublicStage from "@/components/ai/KaiPublicStage";
@@ -41,29 +42,36 @@ export default async function Home() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      {/* 2 — cinematic hero */}
-      <header className="hero2">
-        <div className="hero2-bg" style={{
-          backgroundImage: heroImg
-            ? "url(/gallery/hero-trailer.jpg)"
-            : "radial-gradient(800px 500px at 70% 45%, rgba(201,164,92,.28), transparent 65%), linear-gradient(150deg,#123B3A,#0A1D18 60%,#1a1108)",
-        }} />
-        <div className="hero2-shade" />
-        <div className="hero2-in hero2-kai-grid">
-          <div className="hero2-copy">
-            <p className="kick">Premium coffee. Memorable experiences.</p>
-            <h1>Elevate<br />Your Event</h1>
-            <p className="sub">One sip at a time.</p>
-            <p className="copy">
-              Sophisticated Sips is a luxury mobile espresso bar bringing café-quality coffee and
-              elevated service to weddings, corporate events, and private celebrations across Florida.
-            </p>
-            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <Link href="/book" className="btn btn-lux btn-gold">Book an Event</Link>
-              <Link href="/catering" className="btn btn-lux btn-ghost">View Packages</Link>
-            </div>
-          </div>
+      {/* 2 — Amy's actual trailer, with Kai stationed behind the counter */}
+      <header className="trailer-hero">
+        {heroImg && <div className="trailer-hero__backdrop" aria-hidden="true" />}
+        <div className="trailer-hero__scene">
+          {heroImg ? (
+            <Image
+              className="trailer-hero__image"
+              src="/gallery/hero-trailer.jpg"
+              alt="The real Sophisticated Sips mobile espresso trailer ready to serve at an evening event"
+              fill
+              priority
+              sizes="(max-width: 820px) 100vw, 1147px"
+            />
+          ) : (
+            <div className="trailer-hero__fallback" aria-hidden="true" />
+          )}
+          <div className="trailer-hero__shade" aria-hidden="true" />
           <KaiPublicStage />
+        </div>
+
+        <div className="trailer-hero__bar">
+          <div className="trailer-hero__copy">
+            <p className="kick">Premium coffee. Memorable experiences.</p>
+            <h1>Elevate your event.</h1>
+            <p>Luxury mobile espresso catering for weddings, corporate events, and celebrations across Florida.</p>
+          </div>
+          <div className="trailer-hero__actions">
+            <Link href="/book" className="btn btn-lux btn-gold">Book an Event</Link>
+            <Link href="/catering" className="btn btn-lux btn-ghost">View Packages</Link>
+          </div>
         </div>
       </header>
 

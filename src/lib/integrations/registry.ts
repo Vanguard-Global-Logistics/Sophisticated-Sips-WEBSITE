@@ -65,7 +65,7 @@ export function integrationStatuses(): IntegrationStatus[] {
       label: "Anthropic",
       connected: hasClaudeApiKey(),
       category: "ai",
-      note: hasClaudeApiKey() ? undefined : "Set ANTHROPIC_API_KEY_KAI to connect.",
+      note: hasClaudeApiKey() ? undefined : "Set ANTHROPIC_API_KEY_KAI_final to connect.",
     },
   ];
 }
