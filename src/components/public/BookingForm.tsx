@@ -51,6 +51,15 @@ export default function BookingForm() {
     <form className="glass" style={{ padding: 28 }} onSubmit={(event) => { event.preventDefault(); void submit(); }}>
       <input type="text" value={f.website} onChange={set("website")} tabIndex={-1} autoComplete="off"
         style={{ position: "absolute", left: -9999, opacity: 0, height: 0 }} aria-hidden="true" />
+      <div className="booking-kai-card">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/kai-cinematic-concierge.jpg" alt="Kai, Sophisticated Sips AI Concierge" />
+        <div>
+          <span>Kai&apos;s AI event form</span>
+          <strong>Tell Amy what you&apos;re dreaming up.</strong>
+          <p>Kai keeps the questions focused so Amy has the details she needs to quote your event clearly.</p>
+        </div>
+      </div>
       <div className="fgrid">
         <div className="field"><label htmlFor="bf-name">Name</label><input id="bf-name" required aria-required="true" value={f.name} onChange={set("name")} autoComplete="name" placeholder="Your full name" /></div>
         <div className="field"><label htmlFor="bf-company">Company</label><input id="bf-company" value={f.company} onChange={set("company")} autoComplete="organization" placeholder="Optional" /></div>

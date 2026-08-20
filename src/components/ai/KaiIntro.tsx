@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 /**
  * KaiIntro — Kai's welcome, played full-screen when a visitor lands.
@@ -17,12 +17,12 @@ import { usePathname } from "next/navigation";
 const KAI_VIDEO_SRC =
   "https://d2ol7oe51mr4n9.cloudfront.net/user_3EbQNf19wFua1cVPa80DiJhKD2X/53c5ddea-107d-4787-9177-f8c46d178a82.mp4";
 // Shown until the video can paint, and as the fallback if it never loads.
-const KAI_POSTER_SRC = "/gallery/hero-trailer.jpg";
+const KAI_POSTER_SRC = "/brand/kai-cinematic-concierge.jpg";
 
 const GREETING_TEXT =
   "Hello, I'm Kai — your Sophisticated Sips concierge. Tell me about your event, and I'll help you plan something unforgettable.";
 
-const SEEN_KEY = "ss-kai-intro-v1";
+const SEEN_KEY = "ss-kai-intro-v2";
 export const INTRO_DONE_EVENT = "ss:kai-intro-done";
 export const INTRO_ACTIVE_KEY = "ss-kai-intro-active";
 
@@ -31,6 +31,7 @@ const MAX_MS = 22000;    // hard ceiling regardless of what stalls
 
 export default function KaiIntro() {
   const pathname = usePathname();
+  const router = useRouter();
   const [show, setShow] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -49,7 +50,7 @@ export default function KaiIntro() {
     setShow(true);
   }, [pathname]);
 
-  const finish = useCallback(() => {
+  const finish = useCallback((openKai = false) => {
     if (doneRef.current) return;
     doneRef.current = true;
 
@@ -57,13 +58,16 @@ export default function KaiIntro() {
     setLeaving(true);
     try { sessionStorage.removeItem(INTRO_ACTIVE_KEY); } catch {}
     window.dispatchEvent(new CustomEvent(INTRO_DONE_EVENT));
+    if (openKai) {
+      window.setTimeout(() => window.dispatchEvent(new CustomEvent("ss:concierge")), 760);
+    }
     window.setTimeout(() => setShow(false), 700);
   }, []);
 
   useEffect(() => {
     if (!show) return;
-    const quiet = window.setTimeout(() => { if (!playing) finish(); }, SILENT_MS);
-    const ceiling = window.setTimeout(finish, MAX_MS);
+    const quiet = window.setTimeout(() => { if (!playing) finish(false); }, SILENT_MS);
+    const ceiling = window.setTimeout(() => finish(true), MAX_MS);
     return () => { window.clearTimeout(quiet); window.clearTimeout(ceiling); };
   }, [show, playing, finish]);
 
@@ -74,7 +78,14 @@ export default function KaiIntro() {
     v.muted = false;
     v.volume = 1;
     try { v.currentTime = 0; } catch {}
-    void v.play().then(() => setPlaying(true)).catch(() => finish());
+    void v.play().then(() => setPlaying(true)).catch(() => finish(false));
+  };
+
+  const openConcierge = () => finish(true);
+
+  const bookEvent = () => {
+    finish(false);
+    router.push("/book");
   };
 
   if (!show) return null;
@@ -83,7 +94,7 @@ export default function KaiIntro() {
     <div className={`kai-intro ${leaving ? "leaving" : ""}`} role="dialog" aria-label="Welcome from Kai">
       {videoFailed ? (
         /* eslint-disable-next-line @next/next/no-img-element */
-        <img className="kai-intro-still" src={KAI_POSTER_SRC} alt="The Sophisticated Sips mobile espresso trailer at dusk" />
+        <img className="kai-intro-still" src={KAI_POSTER_SRC} alt="Kai, the Sophisticated Sips AI Concierge, inside the espresso trailer" />
       ) : (
         <video
           ref={videoRef}
@@ -94,7 +105,7 @@ export default function KaiIntro() {
           muted
           playsInline
           preload="auto"
-          onEnded={finish}
+          onEnded={() => finish(true)}
           onError={() => setVideoFailed(true)}
         />
       )}
@@ -103,10 +114,14 @@ export default function KaiIntro() {
       <div className="kai-intro-copy">
         <span className="kai-intro-name">Kai · Your Concierge</span>
         <p>{GREETING_TEXT}</p>
+        <div className="kai-intro-actions" aria-label="Kai intro next steps">
+          <button className="btn btn-lux btn-gold" type="button" onClick={openConcierge}>Plan With Kai</button>
+          <button className="btn btn-lux btn-ghost" type="button" onClick={bookEvent}>Book an Event</button>
+        </div>
       </div>
 
-      {!playing && <button className="kai-intro-sound" onClick={playGreeting}>🔊 Hear Kai</button>}
-      <button className="kai-intro-skip" onClick={finish}>Skip ▸</button>
+      {!playing && <button className="kai-intro-sound" onClick={playGreeting}>Hear Kai</button>}
+      <button className="kai-intro-skip" onClick={() => finish(false)}>Skip</button>
     </div>
   );
 }

@@ -3,7 +3,6 @@ import path from "path";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/public/Reveal";
-import KaiPublicStage from "@/components/ai/KaiPublicStage";
 import { supabaseServer } from "@/lib/database/supabase-server";
 
 export const revalidate = 300;
@@ -42,7 +41,7 @@ export default async function Home() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      {/* 2 — Amy's actual trailer, with Kai stationed behind the counter */}
+      {/* 2 — Amy's actual trailer, kept clean as the brand hero */}
       <header className="trailer-hero">
         {heroImg && <div className="trailer-hero__backdrop" aria-hidden="true" />}
         <div className="trailer-hero__scene">
@@ -59,7 +58,6 @@ export default async function Home() {
             <div className="trailer-hero__fallback" aria-hidden="true" />
           )}
           <div className="trailer-hero__shade" aria-hidden="true" />
-          <KaiPublicStage />
         </div>
 
         <div className="trailer-hero__bar">

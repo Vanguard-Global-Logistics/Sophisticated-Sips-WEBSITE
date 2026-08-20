@@ -38,7 +38,7 @@ export default function Book() {
             </p>
             <div className="lux-form-media">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/gallery/signature-drinks.jpg" alt="Sophisticated Sips signature iced drinks" />
+              <img src="/brand/kai-cinematic-concierge.jpg" alt="Kai, the Sophisticated Sips AI Concierge, ready to help plan an event" />
             </div>
           </div>
           <div className="lux-form-shell">

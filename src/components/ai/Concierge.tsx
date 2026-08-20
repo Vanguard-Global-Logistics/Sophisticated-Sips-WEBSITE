@@ -17,6 +17,7 @@ const CHIPS = [
   "Build a drink menu", "Holiday event ideas", "Check available dates",
 ];
 const STORE_KEY = "ss-concierge-v1";
+const KAI_IMAGE = "/brand/kai-cinematic-concierge.jpg";
 
 function formatAppearance(a: Appearance): string {
   if (!a) return "";
@@ -102,17 +103,17 @@ export default function Concierge({ nextAppearance = null }: { nextAppearance?: 
     <>
       {!open && (
         <button className="fab" onClick={() => setOpen(true)} aria-label="Open Kai, the AI Concierge">
-          <Image src="/brand/kai-ai-assistant.png" alt="" width={40} height={84} priority />
+          <Image src={KAI_IMAGE} alt="" width={120} height={120} priority />
         </button>
       )}
       {open && (
         <div className="chat kai-window" role="dialog" aria-label="Kai AI Concierge">
           <div className="kai-portrait-window">
             <Image
-              src="/brand/kai-ai-assistant.png"
+              src={KAI_IMAGE}
               alt="Kai, Sophisticated Sips AI Concierge"
-              width={864}
-              height={1821}
+              width={1536}
+              height={864}
               sizes="(max-width: 820px) 100vw, 330px"
             />
             <div className="kai-live"><i />Kai · Live</div>

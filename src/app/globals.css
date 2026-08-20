@@ -196,6 +196,8 @@ a,button{font-family:inherit}
   color:var(--gold-light);margin-bottom:12px}
 .kai-intro-copy p{font-family:var(--font-serif),serif;font-size:clamp(19px,3.2vw,30px);line-height:1.4;
   color:var(--cream);text-shadow:0 2px 24px rgba(0,0,0,.85)}
+.kai-intro-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:22px}
+.kai-intro-actions .btn{min-width:164px}
 @media(prefers-reduced-motion:reduce){.kai-intro-still{animation:none}}
 /* Vignette so the gold controls stay legible over any frame of the video. */
 .kai-intro-veil{position:absolute;inset:0;pointer-events:none;
@@ -218,7 +220,7 @@ a,button{font-family:inherit}
   border:1px solid var(--gold);cursor:pointer;font-size:25px;display:grid;place-items:center;overflow:hidden;
   background:radial-gradient(circle at 30% 30%, #17504E, var(--teal-deep));color:var(--gold-light);
   animation:aiGlow 2.6s ease-in-out infinite}
-.fab img{height:94px;width:auto;max-width:none;transform:translateY(17px);filter:drop-shadow(0 4px 8px rgba(0,0,0,.55))}
+.fab img{width:100%;height:100%;object-fit:cover;object-position:center;transform:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.55))}
 .fab .kai-x{font-size:25px}
 .chat{position:fixed;right:max(12px, env(safe-area-inset-right));
   bottom:calc(86px + env(safe-area-inset-bottom));z-index:95;
@@ -248,8 +250,8 @@ a,button{font-family:inherit}
   background:radial-gradient(70% 55% at 50% 25%,rgba(201,164,92,.18),transparent 70%),linear-gradient(180deg,#0f4541,#080604)}
 .kai-portrait-window:after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(180deg,transparent 55%,rgba(8,6,4,.92))}
-.kai-portrait-window img{position:absolute;left:50%;bottom:-17%;height:116%;width:auto;max-width:none;
-  transform:translateX(-50%);filter:drop-shadow(0 18px 24px rgba(0,0,0,.65))}
+.kai-portrait-window img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;
+  filter:drop-shadow(0 18px 24px rgba(0,0,0,.65))}
 .kai-live{position:absolute;z-index:2;left:50%;bottom:22px;display:flex;align-items:center;gap:7px;
   transform:translateX(-50%);white-space:nowrap;padding:7px 12px;border:1px solid var(--line);
   border-radius:99px;background:rgba(8,6,4,.82);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
@@ -334,17 +336,6 @@ a,button{font-family:inherit}
 .trailer-hero__copy>p:last-child{max-width:650px;margin-top:9px;font-size:14px;line-height:1.6;opacity:.78}
 .trailer-hero__actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
 
-/* Kai is clipped to the open service window so he reads as standing behind the counter. */
-.trailer-kai{position:absolute;z-index:3;inset:0;pointer-events:none}
-.trailer-kai__window{position:absolute;left:44%;top:12.7%;width:20%;height:36.6%;overflow:hidden}
-.trailer-kai__window img{position:absolute;left:50%;top:-4%;width:114%;height:auto;max-width:none;
-  transform:translateX(-50%);filter:drop-shadow(0 12px 16px rgba(0,0,0,.62))}
-.trailer-kai__status{position:absolute;z-index:2;top:3%;left:3%;pointer-events:auto;display:flex;align-items:center;gap:8px;
-  min-height:42px;padding:9px 14px;border:1px solid rgba(235,214,160,.72);border-radius:999px;cursor:pointer;
-  color:var(--cream);background:rgba(5,14,11,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  box-shadow:0 10px 25px rgba(0,0,0,.3);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-.trailer-kai__status span{width:8px;height:8px;border-radius:50%;background:#65D8A9;box-shadow:0 0 10px #65D8A9}
-.trailer-kai__status:hover{border-color:var(--gold);color:var(--gold-light)}
 .btn-lux{text-transform:uppercase;letter-spacing:.12em;font-size:13px;padding:15px 30px;border-radius:6px}
 .btn-lux.btn-gold{background:linear-gradient(120deg,#EBD6A0,#C9A45C);animation:none}
 .btn-lux.btn-gold:hover{box-shadow:0 8px 26px rgba(201,164,92,.55)}
@@ -487,14 +478,13 @@ a,button{font-family:inherit}
   .kai-presence-public{margin-right:0}
   .chat.kai-window{grid-template-columns:1fr;height:min(720px,84dvh)}
   .kai-portrait-window{height:230px;border-right:0;border-bottom:1px solid var(--line)}
-  .kai-portrait-window img{height:150%;top:0;bottom:auto}
+  .kai-portrait-window img{height:100%;object-position:center}
 }
 @media(max-width:560px){
   .trailer-hero__copy h1{font-size:31px}
   .trailer-hero__copy>p:last-child{font-size:13.5px}
   .trailer-hero__actions{display:grid;grid-template-columns:1fr 1fr;width:100%}
   .trailer-hero__actions .btn{padding:13px 12px;font-size:11px}
-  .trailer-kai__status{top:10px;left:10px;min-height:36px;padding:7px 10px;font-size:9px;letter-spacing:.11em}
   .kai-prompt-row{display:grid;grid-template-columns:1fr 46px}
   .kai-prompt-row .btn{grid-column:1/-1;width:100%}
   .kai-character{height:520px}
@@ -937,11 +927,19 @@ a,button{font-family:inherit}
   text-transform:uppercase;line-height:.98;color:#fff8eb}
 .lux-form-intro p{color:#d6cab8;line-height:1.7;margin-top:17px}
 .lux-form-media{height:245px;margin-top:26px;overflow:hidden;border:1px solid rgba(201,164,92,.5)}
-.lux-form-media img{width:100%;height:100%;object-fit:cover}
+.lux-form-media img{width:100%;height:100%;object-fit:cover;object-position:center}
 .lux-form-shell{border:1px solid rgba(211,157,61,.58);background:
   radial-gradient(500px 280px at 50% 0,rgba(176,113,62,.13),transparent 70%),rgba(6,10,8,.94);
   padding:26px;box-shadow:0 24px 65px rgba(0,0,0,.46)}
 .lux-form-shell .glass{background:transparent;border:0;box-shadow:none;padding:0}
+.booking-kai-card{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center;
+  margin-bottom:22px;padding:12px;border:1px solid rgba(201,164,92,.36);background:rgba(246,239,227,.045)}
+.booking-kai-card img{width:100%;height:118px;object-fit:cover;object-position:center;border:1px solid rgba(201,164,92,.34)}
+.booking-kai-card span{display:block;color:var(--gold-light);font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;margin-bottom:5px}
+.booking-kai-card strong{display:block;color:var(--cream-soft);font-family:var(--font-serif),serif;font-size:22px;
+  font-weight:450;line-height:1.1}
+.booking-kai-card p{color:#d6cab8;font-size:13px;line-height:1.55;margin-top:7px}
 
 /* Home photographic proof strip */
 .home-proof{background:#050806;border-top:1px solid rgba(201,164,92,.35);border-bottom:1px solid rgba(201,164,92,.35)}
@@ -1008,6 +1006,8 @@ a,button{font-family:inherit}
   .gallery-lux-grid figure:nth-child(n){grid-column:auto;grid-row:auto}
   .story-statements{grid-template-columns:1fr}
   .lux-form-shell{padding:18px 14px}
+  .booking-kai-card{grid-template-columns:1fr;gap:12px}
+  .booking-kai-card img{height:170px}
   .home-proof__grid{grid-template-columns:1fr}
   .home-proof figure{height:245px;border-right:0;border-bottom:1px solid rgba(201,164,92,.35)}
 }

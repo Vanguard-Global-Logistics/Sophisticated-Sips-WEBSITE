@@ -3,6 +3,7 @@ import { Fraunces, Outfit, Great_Vibes } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/public/Nav";
 import Concierge from "@/components/ai/Concierge";
+import KaiIntro from "@/components/ai/KaiIntro";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/database/supabase-server";
 
@@ -96,6 +97,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <span>Family-owned by Amy Lavold</span>
           </div>
         </footer>
+        <KaiIntro />
         <Concierge nextAppearance={appearance} />
       </body>
     </html>
