@@ -18,13 +18,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    || "sb_publishable_8apPcpmpfBid2mIdjyTK7Q_7rSyMzx7";
-
-  if (!supabaseUrl) {
-    return NextResponse.next();
-  }
+  // Recovery default: matches supabase-server.ts and supabase-browser.ts.
+  // All surviving Vercel projects should read Amy's recovered Supabase
+  // project, even if an older deployment has a stale public key set.
+  const supabaseUrl = "https://wzzfyvxvsymkenewpbzs.supabase.co";
+  const supabaseAnonKey = "sb_publishable_8apPcpmpfBid2mIdjyTK7Q_7rSyMzx7";
 
   const res = NextResponse.next();
 
