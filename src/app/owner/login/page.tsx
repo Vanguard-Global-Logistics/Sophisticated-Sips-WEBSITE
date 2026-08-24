@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/database/supabase-browser";
 
 export default function OwnerLogin() {
@@ -11,7 +10,6 @@ export default function OwnerLogin() {
   const [resetBusy, setResetBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [configurationMissing, setConfigurationMissing] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     setConfigurationMissing(new URLSearchParams(window.location.search).get("configuration") === "missing");
@@ -35,8 +33,7 @@ export default function OwnerLogin() {
         setErr("That login didn't work — check your email and password.");
         return;
       }
-      router.replace("/owner");
-      router.refresh();
+      window.location.href = "/owner";
     } catch {
       setErr("The sign-in service did not respond. Please try again.");
     } finally {
