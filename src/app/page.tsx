@@ -28,7 +28,7 @@ export default async function Home() {
   const sigImg = has("gallery/signature-drinks.jpg");
 
   const jsonLd = {
-    "@context": "https://schema.org", "@type": "CateringService",
+    "@context": "https://schema.org", "@type": "FoodEstablishment",
     name: "Sophisticated Sips",
     description: "Luxury mobile espresso, crepes, and dessert catering based in New Port Richey, serving Tampa and the greater Tampa Bay area.",
     servesCuisine: ["Coffee", "Espresso", "Crepes", "Desserts"],
