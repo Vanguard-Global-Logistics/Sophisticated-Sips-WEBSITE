@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Outfit, Great_Vibes } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Nav from "@/components/public/Nav";
 import Concierge from "@/components/ai/Concierge";
@@ -10,6 +11,9 @@ import { supabaseAdmin } from "@/lib/database/supabase-server";
 const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-serif", display: "swap" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 const script = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-script", display: "swap" });
+
+// GA4 property "Sophisticated Sips", created 2026-08-24.
+const GA_MEASUREMENT_ID = "G-789M5SH16K";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -61,6 +65,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${fraunces.variable} ${outfit.variable} ${script.variable}`}>
       <body>
+        {process.env.NEXT_PUBLIC_APP_ENV === "production" && (
+          <>
+            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} strategy="afterInteractive" />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}');`}
+            </Script>
+          </>
+        )}
         {process.env.NEXT_PUBLIC_APP_ENV !== "production" && (
           <div role="status" className="staging-banner no-print" style={{
             background: "repeating-linear-gradient(45deg,#C9A45C,#C9A45C 14px,#B0713E 14px,#B0713E 28px)",
