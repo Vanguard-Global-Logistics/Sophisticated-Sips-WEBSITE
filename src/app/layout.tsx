@@ -31,6 +31,7 @@ export const metadata: Metadata = {
   robots: process.env.NEXT_PUBLIC_APP_ENV === "production"
     ? { index: true, follow: true }
     : { index: false, follow: false }, // staging/preview must never be indexed
+  verification: { google: "qm1EFdUY6onv9_Q4lFxFn73-22j9FKOfTadHaEDx5iA" },
 };
 
 export const viewport: Viewport = {
