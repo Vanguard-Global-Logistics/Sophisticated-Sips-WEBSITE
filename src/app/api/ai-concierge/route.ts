@@ -44,7 +44,7 @@ Rules: warm, concise (2–5 short sentences), premium tone. Never state real ava
 
 const FALLBACK_CATALOG = {
   notice: "The live database is temporarily unavailable. These are Amy's approved flyer starting prices; Amy confirms final event quotes.",
-  service_area: "Florida",
+  service_area: "New Port Richey & Tampa Bay",
   menu: DEMO_MENU,
   packages: DEMO_PACKAGES,
 };

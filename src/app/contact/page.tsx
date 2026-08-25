@@ -3,7 +3,7 @@ import ContactForm from "@/components/public/ContactForm";
 
 export const metadata = {
   title: "Contact",
-  description: "Contact Amy at Sophisticated Sips about mobile espresso, crepe, and event catering in Florida.",
+  description: "Contact Amy at Sophisticated Sips about mobile espresso, crepe, and event catering in New Port Richey, Tampa, and the greater Tampa Bay area.",
 };
 
 export default function ContactPage() {

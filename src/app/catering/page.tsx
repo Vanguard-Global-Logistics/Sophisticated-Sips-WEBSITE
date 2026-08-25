@@ -5,8 +5,8 @@ import { DEMO_PACKAGES } from "@/lib/demo-data";
 
 export const revalidate = 300;
 export const metadata = {
-  title: "Coffee & Crepe Catering for Florida Events — Sophisticated Sips",
-  description: "Explore Sophisticated Sips luxury espresso, crepe, wedding, corporate, and private-event catering experiences.",
+  title: "Coffee & Crepe Catering for Tampa Bay Events — Sophisticated Sips",
+  description: "Explore Sophisticated Sips luxury espresso, crepe, wedding, corporate, and private-event catering experiences in New Port Richey, Tampa, and the greater Tampa Bay area.",
 };
 
 type CateringPackage = {

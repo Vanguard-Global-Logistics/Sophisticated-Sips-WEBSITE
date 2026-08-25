@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Sophisticated Sips — Luxury Mobile Espresso Catering in Florida";
+export const alt = "Sophisticated Sips — Luxury Mobile Espresso Catering in Tampa Bay, FL";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -19,7 +19,7 @@ export default function OgImage() {
           fontSize: 28, letterSpacing: 10, textTransform: "uppercase",
           color: "#C9A45C", marginBottom: 28, display: "flex",
         }}>
-          Luxury Mobile Espresso · Florida
+          Luxury Mobile Espresso · Tampa Bay
         </div>
         <div style={{ fontSize: 92, fontWeight: 600, display: "flex" }}>
           Sophisticated <span style={{ color: "#C9A45C", marginLeft: 24 }}>Sips</span>

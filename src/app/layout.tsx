@@ -16,14 +16,14 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Sophisticated Sips — Luxury Mobile Espresso Catering in Florida",
+    default: "Sophisticated Sips — Mobile Espresso Catering | Tampa Bay, FL",
     template: "%s · Sophisticated Sips",
   },
   description:
-    "Luxury mobile espresso, handcrafted drinks, crepes, and dessert catering for unforgettable Florida events. Corporate events, weddings, schools, churches, and more.",
+    "Luxury mobile espresso, handcrafted drinks, crepes, and dessert catering based in New Port Richey, serving Tampa, Clearwater, St. Petersburg, and the greater Tampa Bay area. Corporate events, weddings, schools, churches, and more.",
   openGraph: {
-    title: "Sophisticated Sips on the Go",
-    description: "Luxury mobile espresso and dessert catering for unforgettable Florida events.",
+    title: "Sophisticated Sips on the Go — Mobile Espresso Catering in Tampa Bay",
+    description: "Luxury mobile espresso and dessert catering serving New Port Richey, Tampa, and the greater Tampa Bay area.",
     type: "website",
     url: SITE,
     siteName: "Sophisticated Sips",
@@ -77,7 +77,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div className="lux-footer__brand">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/photos/sophisticated-sips-ornate-wordmark.svg" alt="Sophisticated Sips" />
-              <span>Mobile espresso &amp; crepe experiences across Florida</span>
+              <span>Mobile espresso &amp; crepe experiences across Tampa Bay</span>
             </div>
             <div className="lux-footer__links" aria-label="Footer navigation">
               <Link href="/catering">Catering</Link>

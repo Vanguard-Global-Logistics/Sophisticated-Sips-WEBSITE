@@ -28,11 +28,17 @@ export default async function Home() {
   const sigImg = has("gallery/signature-drinks.jpg");
 
   const jsonLd = {
-    "@context": "https://schema.org", "@type": "FoodEstablishment",
+    "@context": "https://schema.org", "@type": "CateringService",
     name: "Sophisticated Sips",
-    description: "Luxury mobile espresso, crepes, and dessert catering for Florida events.",
+    description: "Luxury mobile espresso, crepes, and dessert catering based in New Port Richey, serving Tampa and the greater Tampa Bay area.",
     servesCuisine: ["Coffee", "Espresso", "Crepes", "Desserts"],
-    areaServed: "Florida, USA",
+    address: { "@type": "PostalAddress", addressLocality: "New Port Richey", addressRegion: "FL", addressCountry: "US" },
+    areaServed: [
+      "New Port Richey, FL", "Tampa, FL", "Clearwater, FL", "St. Petersburg, FL",
+      "Wesley Chapel, FL", "Land O' Lakes, FL", "Trinity, FL", "Odessa, FL",
+      "Lutz, FL", "Spring Hill, FL", "Brooksville, FL",
+    ].map((city) => ({ "@type": "City", name: city })),
+    ...(settings?.phone ? { telephone: settings.phone } : {}),
     founder: { "@type": "Person", name: "Amy Lavold" },
     url: process.env.NEXT_PUBLIC_SITE_URL,
   };
@@ -64,7 +70,7 @@ export default async function Home() {
           <div className="trailer-hero__copy">
             <p className="kick">Premium coffee. Memorable experiences.</p>
             <h1>Elevate your event.</h1>
-            <p>Luxury mobile espresso catering for weddings, corporate events, and celebrations across Florida.</p>
+            <p>Luxury mobile espresso catering for weddings, corporate events, and celebrations across Tampa Bay — based in New Port Richey.</p>
           </div>
           <div className="trailer-hero__actions">
             <Link href="/book" className="btn btn-lux btn-gold">Book an Event</Link>
@@ -173,7 +179,7 @@ export default async function Home() {
             )}
             <span>
               <svg viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z" /><circle cx="12" cy="10" r="2.5" /></svg>
-              Serving {settings?.service_area || "Florida"} &amp; beyond
+              Serving {settings?.service_area || "New Port Richey & Tampa Bay"} &amp; beyond
             </span>
           </div>
         </div>

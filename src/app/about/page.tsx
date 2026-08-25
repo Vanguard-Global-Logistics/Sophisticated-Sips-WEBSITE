@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "About — Sophisticated Sips",
-  description: "Meet Amy Lavold and the family-owned story behind Sophisticated Sips.",
+  description: "Meet Amy Lavold and the family-owned story behind Sophisticated Sips, a New Port Richey mobile café serving the Tampa Bay area.",
 };
 
 export default function About() {
@@ -17,7 +17,7 @@ export default function About() {
           <h1>Made with<br />purpose</h1>
           <span className="lux-script">served with genuine care.</span>
           <p className="lux-lead">
-            A Florida mobile café built around handcrafted drinks, beautiful presentation,
+            A New Port Richey mobile café built around handcrafted drinks, beautiful presentation,
             and the belief that hospitality should feel personal.
           </p>
         </div>
