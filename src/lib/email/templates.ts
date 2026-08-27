@@ -169,6 +169,34 @@ ${opts.businessName}`;
 }
 
 /**
+ * Lead-magnet checklist delivery (transactional — they explicitly asked for this
+ * exact document — NO unsubscribe link). The PDF itself rides as an attachment;
+ * this is just the cover note plus a soft, one-line nod toward booking.
+ */
+export function checklistEmail(opts: { customerName?: string; siteUrl?: string }): EmailContent {
+  const subject = "Your checklist: 7 Questions to Ask Before You Book";
+  const inner = `${h1("Here's your checklist")}
+${greeting(opts.customerName)}
+<p style="margin:0 0 8px 0;">As promised — the real questions to ask any mobile coffee or event vendor before you hand over a deposit. It's attached to this email as a PDF.</p>
+<p style="margin:16px 0 0 0;">Now that you know what to ask&hellip; here's what we'd tell you if you asked us. Whenever you're ready, we'd love to talk through your event.</p>
+${opts.siteUrl ? button("See our menu & packages", `${opts.siteUrl}/menu`) : ""}
+<p style="margin:16px 0 0 0;">Warmly,<br />Amy &mdash; Sophisticated Sips</p>`;
+
+  const text = `Here's your checklist
+
+Hi ${opts.customerName || "there"},
+
+As promised — the real questions to ask any mobile coffee or event vendor before you hand over a deposit. It's attached to this email as a PDF.
+
+Now that you know what to ask... here's what we'd tell you if you asked us. Whenever you're ready, we'd love to talk through your event.
+${opts.siteUrl ? `\nSee our menu & packages: ${opts.siteUrl}/menu\n` : ""}
+Warmly,
+Amy — Sophisticated Sips`;
+
+  return { subject, html: layout(inner), text };
+}
+
+/**
  * Invoice / payment request (transactional — NO unsubscribe link).
  */
 export function invoiceEmail(opts: {

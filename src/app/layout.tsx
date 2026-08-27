@@ -100,6 +100,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <Link href="/menu">Menu</Link>
               <Link href="/gallery">Gallery</Link>
               <Link href="/about">About</Link>
+              <Link href="/checklist">Free Checklist</Link>
               <Link href="/contact">Contact</Link>
               <Link href="/policies">Policies</Link>
             </div>

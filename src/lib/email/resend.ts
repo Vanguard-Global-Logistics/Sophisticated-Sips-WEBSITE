@@ -1,9 +1,12 @@
+import { readFileSync } from "fs";
+import { join } from "path";
 import { Resend } from "resend";
 import {
   CANCELLATION_POLICY_SUMMARY,
   CANCELLATION_POLICY_URL,
   POLICY_VERSION,
 } from "@/lib/policies/cancellation";
+import { checklistEmail } from "./templates";
 import { makeUnsubToken } from "./unsubscribe";
 
 const isStaging = () => process.env.NEXT_PUBLIC_APP_ENV !== "production";
@@ -50,6 +53,38 @@ export async function sendBookingReceipt(to: string, name: string) {
       text: `Hi ${name},\n\nThank you — Sophisticated Sips has received your event request. Amy will review it personally and respond with a quote shortly.\n\nFor your records, your request was submitted with the Sophisticated Sips cancellation, rescheduling, and refund policy acknowledged. Policy version: ${POLICY_VERSION}.\n\nPolicy: ${policyUrl}\n\nQuick summary:\n${CANCELLATION_POLICY_SUMMARY}\n\nWarmly,\nSophisticated Sips`,
     });
   } catch { /* non-fatal */ }
+}
+
+/** Delivers the "7 Questions" lead-magnet PDF instantly (transactional, no unsubscribe needed). */
+export async function sendChecklistEmail(to: string, name?: string) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.sophisticatedsips.net";
+  const { subject, html, text } = checklistEmail({ customerName: name, siteUrl });
+  const routed = stagingReroute(to, subject);
+  const pdf = readFileSync(join(process.cwd(), "public/downloads/7-Questions-Before-You-Book.pdf"));
+  await resend().emails.send({
+    from: process.env.OUTREACH_FROM!,
+    to: routed.to,
+    subject: routed.subject,
+    html,
+    text,
+    attachments: [{ filename: "7-Questions-Before-You-Book.pdf", content: pdf.toString("base64") }],
+  });
+}
+
+/** Internal heads-up whenever a new lead lands, from any source (booking chat, checklist opt-in, contact form). */
+export async function notifyOwnerNewLead(lead: { name: string; email: string; source: string; notes?: string }) {
+  try {
+    const to = [process.env.OWNER_EMAIL, process.env.LEAD_NOTIFY_CC].filter(Boolean) as string[];
+    if (!to.length) return;
+    await resend().emails.send({
+      from: process.env.OUTREACH_FROM!,
+      to,
+      subject: `New lead (${lead.source}): ${lead.name}`,
+      text: `A new lead just came in.\n\nName: ${lead.name}\nEmail: ${lead.email}\nSource: ${lead.source}\n${lead.notes ? `Notes: ${lead.notes}\n` : ""}\nSee it in the owner dashboard's Pipeline.`,
+    });
+  } catch (e) {
+    console.error("notifyOwnerNewLead:", e); // never let a notification failure lose the lead itself
+  }
 }
 
 /** General-contact confirmation (transactional, no unsubscribe needed). */
