@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/database/supabase-server";
 import { notifyOwnerNewLead, sendChecklistEmail } from "@/lib/email/resend";
+import { rateLimit } from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
@@ -9,10 +10,16 @@ export type ChecklistResult = { ok: true } | { ok: false; error: string };
  * Shared by Kai's send_checklist tool and the standalone /checklist opt-in
  * form — one pipeline no matter how someone asks for the lead magnet:
  * save the lead, email the PDF instantly, let Amy know it happened.
+ *
+ * Rate-limited per recipient address (not just per caller IP) so this can't
+ * become a mini spam-relay against one target — no combination of tricking
+ * Kai's chat or hammering the form can push repeat sends past this limit.
  */
 export async function captureChecklistLead(rawEmail: string, rawName?: string): Promise<ChecklistResult> {
   const email = String(rawEmail || "").trim().toLowerCase().slice(0, 200);
   if (!EMAIL_RE.test(email)) return { ok: false, error: "That email doesn't look valid." };
+  if (!rateLimit(`checklist-email:${email}`, 2, 30 * 60_000))
+    return { ok: false, error: "That email was already sent the checklist recently — check the inbox (and spam folder)." };
   const name = String(rawName || "").trim().slice(0, 200) || undefined;
 
   const db = supabaseAdmin();
