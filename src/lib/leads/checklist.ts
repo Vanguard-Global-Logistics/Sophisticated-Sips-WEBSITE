@@ -32,7 +32,14 @@ export async function captureChecklistLead(rawEmail: string, rawName?: string): 
     return { ok: false, error: "Couldn't save that just now — please try again." };
   }
 
-  await sendChecklistEmail(email, name);
+  try {
+    await sendChecklistEmail(email, name);
+  } catch (e) {
+    // Lead is already saved — Amy can still follow up manually — but the
+    // visitor needs to know the PDF itself didn't actually go out.
+    console.error("sendChecklistEmail:", e);
+    return { ok: false, error: "Saved, but the email couldn't be sent right now — please try again in a bit." };
+  }
   await notifyOwnerNewLead({ name: name || email, email, source: "checklist_optin" });
 
   return { ok: true };

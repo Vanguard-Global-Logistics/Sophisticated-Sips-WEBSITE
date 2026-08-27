@@ -61,7 +61,7 @@ export async function sendChecklistEmail(to: string, name?: string) {
   const { subject, html, text } = checklistEmail({ customerName: name, siteUrl });
   const routed = stagingReroute(to, subject);
   const pdf = readFileSync(join(process.cwd(), "public/downloads/7-Questions-Before-You-Book.pdf"));
-  await resend().emails.send({
+  const { error } = await resend().emails.send({
     from: process.env.OUTREACH_FROM!,
     to: routed.to,
     subject: routed.subject,
@@ -69,6 +69,7 @@ export async function sendChecklistEmail(to: string, name?: string) {
     text,
     attachments: [{ filename: "7-Questions-Before-You-Book.pdf", content: pdf.toString("base64") }],
   });
+  if (error) throw new Error(error.message);
 }
 
 /** Internal heads-up whenever a new lead lands, from any source (booking chat, checklist opt-in, contact form). */
