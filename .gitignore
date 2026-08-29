@@ -7,3 +7,9 @@ out/
 *.tsbuildinfo
 .DS_Store
 .env*
+
+# Ephemeral git worktrees created by Claude Code for isolated subagents. These
+# are full checkouts of this repository (several MB each) and are scaffolding,
+# not project files. .claude/ itself is deliberately NOT ignored, so a future
+# settings.json or skill can still be committed.
+.claude/worktrees/
