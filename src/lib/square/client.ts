@@ -120,6 +120,29 @@ export async function getPaymentStatusByOrder(orderId: string) {
   };
 }
 
+/** The notification URLs a Square webhook delivery may have been signed for.
+ *
+ *  Square signs `notificationUrl + rawBody`, so the URL we verify against must be
+ *  byte-for-byte the one configured in the Square subscription. In Vercel prod,
+ *  NEXT_PUBLIC_SITE_URL was set with a trailing slash, which produced
+ *  ".net//api/square/webhook" and made every delivery fail with 401. We now strip
+ *  trailing slashes from the env value and also try the URL Square actually
+ *  posted to (scheme + forwarded host + path), so www/apex drift cannot break it.
+ *  Trying more than one URL is safe: each is still verified with the secret key. */
+export function webhookNotificationUrls(headers: Headers): string[] {
+  const path = "/api/square/webhook";
+  const out: string[] = [];
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/+$/, "");
+  if (base) out.push(`${base}${path}`);
+  const host = headers.get("x-forwarded-host") || headers.get("host");
+  if (host) {
+    const proto = headers.get("x-forwarded-proto") || "https";
+    const fromReq = `${proto}://${host}${path}`;
+    if (!out.includes(fromReq)) out.push(fromReq);
+  }
+  return out;
+}
+
 /** Verify Square webhook signatures (x-square-hmacsha256-signature). */
 export function verifySquareWebhook(rawBody: string, signatureHeader: string | null, notificationUrl: string) {
   if (!signatureHeader) return false;

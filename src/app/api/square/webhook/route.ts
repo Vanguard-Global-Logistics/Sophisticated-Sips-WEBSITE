@@ -1,19 +1,17 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/database/supabase-server";
-import { verifySquareWebhook } from "@/lib/square/client";
+import { verifySquareWebhook, webhookNotificationUrls } from "@/lib/square/client";
 import { applyPaidPayment } from "@/lib/database/payments";
 
 export const runtime = "nodejs";
 
 /** Square webhook: subscribe to payment.updated and invoice.payment_made.
- *  Notification URL must be exactly ${NEXT_PUBLIC_SITE_URL}/api/square/webhook */
+ *  Notification URL must be exactly ${NEXT_PUBLIC_SITE_URL}/api/square/webhook.
+ *  See webhookNotificationUrls() for why we verify against more than one URL. */
 export async function POST(req: Request) {
   const raw = await req.text();
-  const ok = verifySquareWebhook(
-    raw,
-    req.headers.get("x-square-hmacsha256-signature"),
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/square/webhook`
-  );
+  const sig = req.headers.get("x-square-hmacsha256-signature");
+  const ok = webhookNotificationUrls(req.headers).some((url) => verifySquareWebhook(raw, sig, url));
   if (!ok) return NextResponse.json({ error: "invalid signature" }, { status: 401 });
 
   const event = JSON.parse(raw);
