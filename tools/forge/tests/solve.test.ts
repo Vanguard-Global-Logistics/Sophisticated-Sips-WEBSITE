@@ -63,7 +63,8 @@ describe("solveShot", () => {
     const shot = solveShot({ ...base, lighting: "golden_hour", shutterSeconds: 1 / 160 });
     expect(shot.exposure.verdict).toBe("overexposed");
     expect(shot.exposure.stops).toBeGreaterThan(4);
-    expect(shot.exposure.remedy).toMatch(/ND\d+/);
+    // 5.2 stops over should reach for ND32 (5 stops), not the next size up.
+    expect(shot.exposure.remedy).toMatch(/an ND32 filter/);
     expect(shot.warnings.join(" ")).toMatch(/stops overexposed/);
   });
 

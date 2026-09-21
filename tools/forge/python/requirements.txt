@@ -1,0 +1,11 @@
+# Pinned loosely: the exact torch build depends on the host's CUDA version, so
+# install torch first following https://pytorch.org/get-started/locally/ and
+# then this file.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+diffusers>=0.31
+transformers>=4.46
+accelerate>=1.1
+safetensors>=0.4.5
+pillow>=11.0
+pydantic>=2.9

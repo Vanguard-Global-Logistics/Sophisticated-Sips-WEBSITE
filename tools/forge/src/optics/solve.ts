@@ -212,14 +212,18 @@ function judgeExposure(
     stops,
     verdict: overexposed ? "overexposed" : "underexposed",
     remedy: overexposed
-      ? `Fit roughly a ${ndFilterFor(stops)} ND filter, or raise the shutter speed, to keep this aperture`
+      ? `Fit roughly an ${ndFilterFor(stops)} filter, or raise the shutter speed, to keep this aperture`
       : "Open the aperture, slow the shutter, or raise ISO to hold this exposure",
   };
 }
 
-/** Nearest common ND strength for a given number of stops to lose. */
+/**
+ * Nearest commonly sold ND strength for a given number of stops to lose.
+ * ND32 (5 stops) belongs here: leaving it out rounded a 5.2-stop overexposure
+ * up to ND64, which is a stop further than needed.
+ */
 function ndFilterFor(stops: number): string {
-  const common = [1, 2, 3, 4, 6, 10];
+  const common = [1, 2, 3, 4, 5, 6, 10];
   const nearest = common.reduce((best, n) =>
     Math.abs(n - stops) < Math.abs(best - stops) ? n : best,
   );
