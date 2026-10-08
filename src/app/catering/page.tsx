@@ -5,8 +5,10 @@ import { DEMO_PACKAGES } from "@/lib/demo-data";
 
 export const revalidate = 300;
 export const metadata = {
-  title: "Coffee & Crepe Catering for Tampa Bay Events — Sophisticated Sips",
-  description: "Explore Sophisticated Sips luxury espresso, crepe, wedding, corporate, and private-event catering experiences in New Port Richey, Tampa, and the greater Tampa Bay area.",
+  title: "Espresso & Crepe Catering | Tampa Bay Events",
+  description: "Espresso, signature drinks and fresh crepes served from our trailer at weddings, offices, schools and private parties in Pasco, Hillsborough and Pinellas. See packages.",
+  alternates: { canonical: "/catering" },
+  openGraph: { title: "Espresso & Crepe Catering | Tampa Bay Events", description: "Espresso, signature drinks and fresh crepes served from our trailer at weddings, offices, schools and private parties in Pasco, Hillsborough and Pinellas. See packages.", url: "/catering", type: "website", siteName: "Sophisticated Sips" },
 };
 
 type CateringPackage = {

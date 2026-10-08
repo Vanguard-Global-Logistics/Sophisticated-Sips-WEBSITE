@@ -2,8 +2,10 @@ import Link from "next/link";
 import ContactForm from "@/components/public/ContactForm";
 
 export const metadata = {
-  title: "Contact",
-  description: "Contact Amy at Sophisticated Sips about mobile espresso, crepe, and event catering in New Port Richey, Tampa, and the greater Tampa Bay area.",
+  title: "Contact Sophisticated Sips | New Port Richey, FL",
+  description: "Call or message Amy about mobile espresso catering in New Port Richey, Pasco County and Tampa Bay.",
+  alternates: { canonical: "/contact" },
+  openGraph: { title: "Contact Sophisticated Sips | New Port Richey, FL", description: "Call or message Amy about mobile espresso catering in New Port Richey, Pasco County and Tampa Bay.", url: "/contact", type: "website", siteName: "Sophisticated Sips" },
 };
 
 export default function ContactPage() {

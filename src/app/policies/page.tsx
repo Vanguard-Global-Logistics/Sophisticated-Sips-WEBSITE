@@ -6,8 +6,10 @@ import {
 } from "@/lib/policies/cancellation";
 
 export const metadata = {
-  title: "Cancellation and Refund Policy — Sophisticated Sips",
+  title: "Cancellation and Refund Policy | Sophisticated Sips",
   description: "Sophisticated Sips cancellation, rescheduling, and refund policy for private event bookings.",
+  alternates: { canonical: "/policies" },
+  openGraph: { title: "Cancellation and Refund Policy | Sophisticated Sips", description: "Sophisticated Sips cancellation, rescheduling, and refund policy for private event bookings.", url: "/policies", type: "website", siteName: "Sophisticated Sips" },
 };
 
 export default function PoliciesPage() {

@@ -5,8 +5,10 @@ import { DEMO_MENU } from "@/lib/demo-data";
 
 export const revalidate = 60;
 export const metadata = {
-  title: "Menu — Sophisticated Sips",
-  description: "Explore the current Sophisticated Sips mobile espresso bar menu, including Amy's signature drinks and event favorites.",
+  title: "Espresso, Iced Drinks & Crepes Menu | Sophisticated Sips",
+  description: "Shaken espressos, lattes, macchiatos, dirty sodas and crepes from the Sophisticated Sips mobile cafe in New Port Richey. See the full event menu.",
+  alternates: { canonical: "/menu" },
+  openGraph: { title: "Espresso, Iced Drinks & Crepes Menu | Sophisticated Sips", description: "Shaken espressos, lattes, macchiatos, dirty sodas and crepes from the Sophisticated Sips mobile cafe in New Port Richey. See the full event menu.", url: "/menu", type: "website", siteName: "Sophisticated Sips" },
 };
 
 async function activeMenu(): Promise<BrandedMenuItem[]> {

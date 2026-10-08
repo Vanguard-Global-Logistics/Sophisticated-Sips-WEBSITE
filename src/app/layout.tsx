@@ -19,15 +19,13 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: {
-    default: "Sophisticated Sips — Mobile Espresso Catering | Tampa Bay, FL",
-    template: "%s · Sophisticated Sips",
-  },
+  title: "Mobile Espresso Bar & Coffee Trailer | New Port Richey, FL",
   description:
-    "Luxury mobile espresso, handcrafted drinks, crepes, and dessert catering based in New Port Richey, serving Tampa, Clearwater, St. Petersburg, and the greater Tampa Bay area. Corporate events, weddings, schools, churches, and more.",
+    "Sophisticated Sips is a family-owned mobile espresso trailer in New Port Richey serving weddings, corporate events and parties across Pasco and Tampa Bay. Request a quote.",
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Sophisticated Sips on the Go — Mobile Espresso Catering in Tampa Bay",
-    description: "Luxury mobile espresso and dessert catering serving New Port Richey, Tampa, and the greater Tampa Bay area.",
+    title: "Mobile Espresso Bar & Coffee Trailer | New Port Richey, FL",
+    description: "Family-owned mobile espresso trailer serving weddings, corporate events and parties across Pasco and Tampa Bay.",
     type: "website",
     url: SITE,
     siteName: "Sophisticated Sips",
@@ -111,7 +109,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
           <div className="wrap lux-footer__legal">
             <span>© {new Date().getFullYear()} Sophisticated Sips. All rights reserved.</span>
-            <span>Family-owned by Amy Lavold</span>
+            <span>Family-owned by Amy Lavold · <a href="tel:+18135953536">(813) 595-3536</a></span>
           </div>
         </footer>
         <KaiIntro />

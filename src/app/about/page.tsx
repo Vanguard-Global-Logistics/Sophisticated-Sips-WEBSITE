@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "About — Sophisticated Sips",
-  description: "Meet Amy Lavold and the family-owned story behind Sophisticated Sips, a New Port Richey mobile café serving the Tampa Bay area.",
+  title: "About Amy Lavold & Sophisticated Sips | New Port Richey",
+  description: "Meet Amy Lavold, the family behind Sophisticated Sips, a New Port Richey mobile cafe bringing real espresso and handmade crepes to Tampa Bay events.",
+  alternates: { canonical: "/about" },
+  openGraph: { title: "About Amy Lavold & Sophisticated Sips | New Port Richey", description: "Meet Amy Lavold, the family behind Sophisticated Sips, a New Port Richey mobile cafe bringing real espresso and handmade crepes to Tampa Bay events.", url: "/about", type: "website", siteName: "Sophisticated Sips" },
 };
 
 export default function About() {

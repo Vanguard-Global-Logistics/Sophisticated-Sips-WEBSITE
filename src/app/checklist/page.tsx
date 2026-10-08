@@ -2,9 +2,10 @@ import Link from "next/link";
 import ChecklistForm from "@/components/public/ChecklistForm";
 
 export const metadata = {
-  title: "Free Checklist: 7 Questions to Ask Before You Book",
-  description:
-    "Before you book a mobile coffee bar or any event vendor, ask these 7 questions. Free checklist from Sophisticated Sips, Tampa Bay's luxury mobile espresso catering.",
+  title: "Free Checklist: 7 Questions to Ask Before You Book | Sophisticated Sips",
+  description: "Before you book a mobile coffee bar or any event vendor, ask these 7 questions. Free checklist from Sophisticated Sips, Tampa Bay's luxury mobile espresso catering.",
+  alternates: { canonical: "/checklist" },
+  openGraph: { title: "Free Checklist: 7 Questions to Ask Before You Book | Sophisticated Sips", description: "Before you book a mobile coffee bar or any event vendor, ask these 7 questions. Free checklist from Sophisticated Sips, Tampa Bay's luxury mobile espresso catering.", url: "/checklist", type: "website", siteName: "Sophisticated Sips" },
 };
 
 export default function ChecklistPage() {
