@@ -27,20 +27,35 @@ export default async function Home() {
   const heroImg = has("gallery/hero-trailer.jpg");
   const sigImg = has("gallery/signature-drinks.jpg");
 
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.sophisticatedsips.net").replace(/\/$/, "");
   const jsonLd = {
-    "@context": "https://schema.org", "@type": "FoodEstablishment",
+    "@context": "https://schema.org",
+    "@type": ["FoodEstablishment", "CateringService"],
+    "@id": `${base}/#business`,
     name: "Sophisticated Sips",
-    description: "Luxury mobile espresso, crepes, and dessert catering based in New Port Richey, serving Tampa and the greater Tampa Bay area.",
+    description: "Family-owned mobile espresso trailer in New Port Richey serving handcrafted espresso drinks and crepes at weddings, corporate events and private parties across Pasco County and Tampa Bay.",
+    url: `${base}/`,
+    telephone: settings?.phone || "+1-813-595-3536",
+    image: `${base}/gallery/hero-trailer.jpg`,
+    logo: `${base}/photos/sophisticated-sips-ornate-wordmark.svg`,
+    priceRange: "$$",
     servesCuisine: ["Coffee", "Espresso", "Crepes", "Desserts"],
-    address: { "@type": "PostalAddress", addressLocality: "New Port Richey", addressRegion: "FL", addressCountry: "US" },
+    address: { "@type": "PostalAddress", addressLocality: "New Port Richey", addressRegion: "FL", postalCode: "34654", addressCountry: "US" },
+    geo: { "@type": "GeoCoordinates", latitude: 28.2442, longitude: -82.7193 },
     areaServed: [
-      "New Port Richey, FL", "Tampa, FL", "Clearwater, FL", "St. Petersburg, FL",
-      "Wesley Chapel, FL", "Land O' Lakes, FL", "Trinity, FL", "Odessa, FL",
-      "Lutz, FL", "Spring Hill, FL", "Brooksville, FL",
-    ].map((city) => ({ "@type": "City", name: city })),
-    ...(settings?.phone ? { telephone: settings.phone } : {}),
+      { "@type": "GeoCircle", geoMidpoint: { "@type": "GeoCoordinates", latitude: 28.2442, longitude: -82.7193 }, geoRadius: "80000" },
+      ...[
+        "New Port Richey", "Tampa", "Clearwater", "St. Petersburg", "Wesley Chapel",
+        "Land O' Lakes", "Trinity", "Odessa", "Lutz", "Spring Hill", "Brooksville",
+      ].map((city) => ({ "@type": "City", name: city })),
+    ],
     founder: { "@type": "Person", name: "Amy Lavold" },
-    url: process.env.NEXT_PUBLIC_SITE_URL,
+    sameAs: [
+      "https://www.instagram.com/sophisticated_sips/",
+      "https://www.tiktok.com/@sophisticated_sips",
+      "https://www.pinterest.com/sophisticatedsnacksfl/",
+      "https://x.com/Sips_Espresso",
+    ],
   };
 
   return (

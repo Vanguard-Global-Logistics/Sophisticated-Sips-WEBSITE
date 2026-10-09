@@ -3,8 +3,10 @@ import path from "path";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Gallery — Sophisticated Sips",
-  description: "See the Sophisticated Sips mobile espresso trailer, handcrafted drinks, and luxury event presentation.",
+  title: "Coffee Trailer Photos | Sophisticated Sips, Pasco County",
+  description: "See our mobile espresso trailer, latte art and event setups at weddings and markets across Pasco County and Tampa Bay.",
+  alternates: { canonical: "/gallery" },
+  openGraph: { title: "Coffee Trailer Photos | Sophisticated Sips, Pasco County", description: "See our mobile espresso trailer, latte art and event setups at weddings and markets across Pasco County and Tampa Bay.", url: "/gallery", type: "website", siteName: "Sophisticated Sips" },
 };
 
 const FRIENDLY_CAPTIONS: Record<string, string> = {

@@ -1,8 +1,10 @@
 import BookingForm from "@/components/public/BookingForm";
 
 export const metadata = {
-  title: "Book the Trailer — Sophisticated Sips",
-  description: "Request Sophisticated Sips luxury mobile espresso and crepe catering for your event.",
+  title: "Book a Mobile Espresso Trailer | Sophisticated Sips",
+  description: "Request a quote for your wedding, corporate event or party. Tell us your date, location and guest count and Amy will reply personally with a custom quote.",
+  alternates: { canonical: "/book" },
+  openGraph: { title: "Book a Mobile Espresso Trailer | Sophisticated Sips", description: "Request a quote for your wedding, corporate event or party. Tell us your date, location and guest count and Amy will reply personally with a custom quote.", url: "/book", type: "website", siteName: "Sophisticated Sips" },
 };
 
 export default function Book() {
