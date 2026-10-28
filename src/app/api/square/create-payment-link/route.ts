@@ -10,9 +10,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "owner only" }, { status: 401 });
 
   const { eventId, kind = "deposit", amountCents } = await req.json().catch(() => ({}));
-  const amount = parseInt(amountCents);
-  if (!eventId || !amount || amount < 100)
-    return NextResponse.json({ error: "eventId and amountCents (≥100) required" }, { status: 400 });
+  const amount = typeof amountCents === "string" && /^\d+$/.test(amountCents)
+    ? Number(amountCents) : amountCents;
+  if (!eventId || !Number.isSafeInteger(amount) || amount < 100)
+    return NextResponse.json({ error: "eventId and integer amountCents (≥100) required" }, { status: 400 });
   if (process.env.NEXT_PUBLIC_APP_ENV !== "production" && process.env.SQUARE_ENVIRONMENT === "production")
     return NextResponse.json({ error: "Blocked: this is the STAGING site but Square is set to production. Staging may only use the Square sandbox." }, { status: 403 });
   if (!["deposit", "balance", "full"].includes(kind))
