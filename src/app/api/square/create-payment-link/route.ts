@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireOwner, supabaseAdmin } from "@/lib/database/supabase-server";
 import { createPaymentLink } from "@/lib/square/client";
+import {
+  createTrackedPaymentLink,
+  PaymentPersistenceError,
+} from "@/lib/payments/create-tracked-payment-link";
 
 export const runtime = "nodejs";
 
@@ -25,17 +29,26 @@ export async function POST(req: Request) {
   if (!ev) return NextResponse.json({ error: "event not found" }, { status: 404 });
 
   try {
-    const link = await createPaymentLink({
-      name: `Sophisticated Sips — ${kind === "deposit" ? "Event Deposit" : kind === "full" ? "Event Payment (in full)" : "Event Balance"}`,
-      amountCents: amount,
-      note: ev.title,
-    });
-    await db.from("payments").insert({
-      event_id: eventId, kind, amount_cents: amount, status: "pending",
-      square_payment_link_id: link.paymentLinkId, square_order_id: link.orderId,
+    const link = await createTrackedPaymentLink({
+      createLink: () => createPaymentLink({
+        name: `Sophisticated Sips — ${kind === "deposit" ? "Event Deposit" : kind === "full" ? "Event Payment (in full)" : "Event Balance"}`,
+        amountCents: amount,
+        note: ev.title,
+      }),
+      persist: (createdLink) => db.from("payments").insert({
+        event_id: eventId, kind, amount_cents: amount, status: "pending",
+        square_payment_link_id: createdLink.paymentLinkId,
+        square_order_id: createdLink.orderId,
+      }),
     });
     return NextResponse.json({ url: link.url });
   } catch (e: any) {
+    if (e instanceof PaymentPersistenceError) {
+      console.error("payment record:", e.persistenceError);
+      return NextResponse.json({
+        error: "Payment link could not be safely recorded. No payment link was released; retry after checking the database.",
+      }, { status: 502 });
+    }
     console.error("square link:", e?.result ?? e);
     return NextResponse.json({ error: "Square couldn't create the link — check credentials and location id." }, { status: 502 });
   }
