@@ -28,13 +28,25 @@ describe("tracked payment links", () => {
     expect(order).toEqual(["create", "persist"]);
   });
 
-  it("does not return the provider link when payment persistence fails", async () => {
+  it("does not return the provider link when persistence returns an error", async () => {
     const databaseError = { message: "database unavailable" };
     const persist = vi.fn(async () => ({ error: databaseError }));
 
     await expect(createTrackedPaymentLink({
       createLink: async () => link,
       persist,
+    })).rejects.toMatchObject({
+      name: "PaymentPersistenceError",
+      persistenceError: databaseError,
+    });
+  });
+
+  it("does not return the provider link when persistence throws", async () => {
+    const databaseError = new Error("connection reset");
+
+    await expect(createTrackedPaymentLink({
+      createLink: async () => link,
+      persist: async () => { throw databaseError; },
     })).rejects.toMatchObject({
       name: "PaymentPersistenceError",
       persistenceError: databaseError,
