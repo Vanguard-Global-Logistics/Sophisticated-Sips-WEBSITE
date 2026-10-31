@@ -26,7 +26,12 @@ export async function createTrackedPaymentLink(opts: {
   persist: (link: PaymentLinkRecord) => PromiseLike<PersistResult>;
 }) {
   const link = await opts.createLink();
-  const { error } = await opts.persist(link);
-  if (error) throw new PaymentPersistenceError(error);
+  let result: PersistResult;
+  try {
+    result = await opts.persist(link);
+  } catch (error) {
+    throw new PaymentPersistenceError(error);
+  }
+  if (result.error) throw new PaymentPersistenceError(result.error);
   return link;
 }
