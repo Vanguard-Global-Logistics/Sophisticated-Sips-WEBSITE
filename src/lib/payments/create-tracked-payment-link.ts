@@ -10,7 +10,7 @@ export class PaymentPersistenceError extends Error {
   readonly persistenceError: unknown;
 
   constructor(persistenceError: unknown) {
-    super("Payment link was created but its local payment record could not be saved.");
+    super("A provider payment resource was created but its local payment record could not be saved.");
     this.name = "PaymentPersistenceError";
     this.persistenceError = persistenceError;
   }
