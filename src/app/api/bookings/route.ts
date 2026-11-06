@@ -4,6 +4,7 @@ import {
   BookingPersistenceError,
   createBookingPipeline,
 } from "@/lib/bookings/create-booking-pipeline";
+import { isBookableEventDate } from "@/lib/bookings/validate-event-date";
 import { sendBookingReceipt } from "@/lib/email/resend";
 import { policyAcknowledgementLine } from "@/lib/policies/cancellation";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
@@ -23,6 +24,8 @@ export async function POST(req: Request) {
   const email = String(f.email || "").trim().slice(0, 200);
   if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !f.event_date)
     return NextResponse.json({ error: "Name, valid email, and event date are required." }, { status: 400 });
+  if (!isBookableEventDate(f.event_date))
+    return NextResponse.json({ error: "Event date must be a valid upcoming date." }, { status: 400 });
   if (f.policy_accepted !== true)
     return NextResponse.json({ error: "Please accept the cancellation, rescheduling, and refund policy before submitting." }, { status: 400 });
 
