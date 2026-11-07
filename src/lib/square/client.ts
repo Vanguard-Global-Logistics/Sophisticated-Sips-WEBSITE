@@ -1,5 +1,9 @@
 import { Client, Environment } from "square";
 import crypto from "crypto";
+import type {
+  InvoiceDraftRecord,
+  PublishedInvoiceRecord,
+} from "@/lib/payments/create-tracked-invoice";
 
 /** Server-only Square client. Never import from client components. */
 export function square() {
@@ -40,14 +44,17 @@ export async function createPaymentLink(opts: {
   };
 }
 
-/** Create + publish a Square invoice emailed to the client. */
-export async function createInvoice(opts: {
+/**
+ * Create an unpublished Square invoice draft. Publishing is deliberately
+ * separate so the local payment ledger can be written before Square emails it.
+ */
+export async function createInvoiceDraft(opts: {
   customerEmail: string;
   customerName: string;
   title: string;
   amountCents: number;
   dueDate?: string; // YYYY-MM-DD
-}) {
+}): Promise<InvoiceDraftRecord> {
   const sq = square();
 
   // 1. Find or create the customer.
@@ -78,7 +85,7 @@ export async function createInvoice(opts: {
   });
   const orderId = orderRes.order!.id!;
 
-  // 3. Create + publish the invoice (Square emails it).
+  // 3. Create the invoice but do not publish or email it yet.
   const { result: invRes } = await sq.invoicesApi.createInvoice({
     idempotencyKey: crypto.randomUUID(),
     invoice: {
@@ -96,15 +103,26 @@ export async function createInvoice(opts: {
     },
   });
   const invoice = invRes.invoice!;
-  const { result: pub } = await sq.invoicesApi.publishInvoice(invoice.id!, {
+  return {
+    invoiceId: invoice.id!,
+    orderId,
     version: invoice.version!,
+  };
+}
+
+/** Publish a previously tracked draft. This is the step that emails the client. */
+export async function publishInvoiceDraft(
+  draft: InvoiceDraftRecord,
+): Promise<PublishedInvoiceRecord> {
+  const { result } = await square().invoicesApi.publishInvoice(draft.invoiceId, {
+    version: draft.version,
     idempotencyKey: crypto.randomUUID(),
   });
   return {
-    invoiceId: pub.invoice!.id!,
-    orderId,
-    publicUrl: pub.invoice!.publicUrl ?? null,
-    status: pub.invoice!.status ?? "UNKNOWN",
+    invoiceId: result.invoice!.id!,
+    orderId: draft.orderId,
+    publicUrl: result.invoice!.publicUrl ?? null,
+    status: result.invoice!.status ?? "UNKNOWN",
   };
 }
 
