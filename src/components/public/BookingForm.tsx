@@ -8,6 +8,7 @@ const PACKAGES = ["Not sure yet","The Espresso Hour","The Golden Event","Corpora
 
 export default function BookingForm() {
   const [done, setDone] = useState(false);
+  const [receiptSent, setReceiptSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [f, setF] = useState<any>({
@@ -31,6 +32,7 @@ export default function BookingForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong");
+      setReceiptSent(data.receiptSent === true);
       setDone(true); window.scrollTo(0, 0);
     } catch (e: any) {
       setErr(e.message || "Could not send your request — please try again.");
@@ -43,7 +45,9 @@ export default function BookingForm() {
       <div style={{ fontSize: 44 }}>✦</div>
       <h2 className="serif sec-title" style={{ margin: "14px 0" }}>Thank you</h2>
       <p className="sec-sub">Sophisticated Sips will review your event and respond shortly.
-      A confirmation is on its way to your inbox.</p>
+      {receiptSent
+        ? " A confirmation is on its way to your inbox."
+        : " Your request is saved, but the confirmation email could not be sent. Amy will still follow up directly."}</p>
     </div>
   );
 

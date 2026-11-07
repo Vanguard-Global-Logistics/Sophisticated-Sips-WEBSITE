@@ -81,6 +81,6 @@ export async function POST(req: Request) {
   }
 
   // Awaited: serverless platforms may kill un-awaited work after the response.
-  await sendBookingReceipt(email, name);
-  return NextResponse.json({ ok: true });
+  const receiptSent = await sendBookingReceipt(email, name);
+  return NextResponse.json({ ok: true, receiptSent });
 }
