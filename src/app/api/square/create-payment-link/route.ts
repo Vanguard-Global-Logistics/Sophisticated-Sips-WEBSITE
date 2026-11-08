@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { requireOwner, supabaseAdmin } from "@/lib/database/supabase-server";
 import { createPaymentLink } from "@/lib/square/client";
 import {
+  loadPaymentEvent,
+  PaymentEventLookupError,
+} from "@/lib/payments/load-payment-event";
+import {
   createTrackedPaymentLink,
   PaymentPersistenceError,
 } from "@/lib/payments/create-tracked-payment-link";
@@ -25,7 +29,18 @@ export async function POST(req: Request) {
 
   const db = supabaseAdmin();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
-  const { data: ev } = await db.from("events").select("id,title").eq("id", eventId).single();
+  let ev;
+  try {
+    ev = await loadPaymentEvent(
+      db.from("events").select("id,title").eq("id", eventId).single(),
+    );
+  } catch (error) {
+    const detail = error instanceof PaymentEventLookupError
+      ? error.lookupError
+      : error;
+    console.error("payment-link event lookup:", detail);
+    return NextResponse.json({ error: "Could not load the event." }, { status: 502 });
+  }
   if (!ev) return NextResponse.json({ error: "event not found" }, { status: 404 });
 
   try {

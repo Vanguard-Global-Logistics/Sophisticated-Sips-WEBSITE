@@ -9,6 +9,10 @@ import {
   InvoicePublishError,
 } from "@/lib/payments/create-tracked-invoice";
 import { PaymentPersistenceError } from "@/lib/payments/create-tracked-payment-link";
+import {
+  loadPaymentEvent,
+  PaymentEventLookupError,
+} from "@/lib/payments/load-payment-event";
 
 export const runtime = "nodejs";
 
@@ -30,11 +34,17 @@ export async function POST(req: Request) {
 
   const db = supabaseAdmin();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
-  const { data: ev, error: eventError } = await db
-    .from("events").select("id,title,lead_id, leads(contact_email,name)")
-    .eq("id", eventId).single();
-  if (eventError) {
-    console.error("invoice event lookup:", eventError);
+  let ev;
+  try {
+    ev = await loadPaymentEvent(
+      db.from("events").select("id,title,lead_id, leads(contact_email,name)")
+        .eq("id", eventId).single(),
+    );
+  } catch (error) {
+    const detail = error instanceof PaymentEventLookupError
+      ? error.lookupError
+      : error;
+    console.error("invoice event lookup:", detail);
     return NextResponse.json({ error: "Could not load the event." }, { status: 502 });
   }
   if (!ev) return NextResponse.json({ error: "event not found" }, { status: 404 });
