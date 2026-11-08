@@ -12,6 +12,8 @@ import {
 
 export const runtime = "nodejs";
 
+type PaymentLinkEvent = { id: string; title: string };
+
 /** Amy creates a Square deposit/balance payment link for an event. */
 export async function POST(req: Request) {
   if (!(await requireOwner()))
@@ -31,7 +33,7 @@ export async function POST(req: Request) {
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   let ev;
   try {
-    ev = await loadPaymentEvent(
+    ev = await loadPaymentEvent<PaymentLinkEvent>(
       db.from("events").select("id,title").eq("id", eventId).single(),
     );
   } catch (error) {

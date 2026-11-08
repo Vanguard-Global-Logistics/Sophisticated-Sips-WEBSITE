@@ -16,6 +16,18 @@ import {
 
 export const runtime = "nodejs";
 
+type InvoiceLead = {
+  contact_email: string | null;
+  name: string | null;
+};
+
+type InvoiceEvent = {
+  id: string;
+  title: string;
+  lead_id: string | null;
+  leads: InvoiceLead | InvoiceLead[] | null;
+};
+
 /** Amy sends a Square invoice by email for an event balance. */
 export async function POST(req: Request) {
   if (!(await requireOwner()))
@@ -36,7 +48,7 @@ export async function POST(req: Request) {
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
   let ev;
   try {
-    ev = await loadPaymentEvent(
+    ev = await loadPaymentEvent<InvoiceEvent>(
       db.from("events").select("id,title,lead_id, leads(contact_email,name)")
         .eq("id", eventId).single(),
     );
