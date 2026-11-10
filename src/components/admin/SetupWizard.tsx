@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { runOwnerRequest } from "@/lib/owner-request";
 import TransferOwnership from "@/components/admin/TransferOwnership";
 
 const STEPS = ["Business", "Square", "Email", "AI", "Menu", "Booking", "Admins", "Launch"] as const;
@@ -18,12 +19,30 @@ export default function SetupWizard() {
   const [status, setStatus] = useState<any>(null); // connection status
   const [flash, setFlash] = useState("");
   const [busy, setBusy] = useState(false);
+  const [loadError, setLoadError] = useState("");
 
-  const load = () => {
-    fetch("/api/owner/settings").then((r) => r.json()).then((d) => setS(d.settings));
-    fetch("/api/owner/status").then((r) => r.json()).then(setStatus);
-  };
-  useEffect(load, []);
+  const load = useCallback(async () => {
+    setLoadError("");
+    const [settingsResult, statusResult] = await Promise.all([
+      runOwnerRequest<{ settings?: unknown }>(
+        () => fetch("/api/owner/settings"),
+        "Couldn't load business settings.",
+      ),
+      runOwnerRequest<Record<string, unknown>>(
+        () => fetch("/api/owner/status"),
+        "Couldn't load connection status.",
+      ),
+    ]);
+    if (!settingsResult.ok || !statusResult.ok ||
+        typeof settingsResult.data.settings !== "object" ||
+        settingsResult.data.settings === null) {
+      setLoadError("Couldn't load setup. Check the connection and retry.");
+      return;
+    }
+    setS(settingsResult.data.settings);
+    setStatus(statusResult.data);
+  }, []);
+  useEffect(() => { void load(); }, [load]);
 
   const note = (m: string) => { setFlash(m); setTimeout(() => setFlash(""), 6000); };
   const set = (k: string) => (e: any) => setS({ ...s, [k]: e.target.value });
@@ -31,24 +50,31 @@ export default function SetupWizard() {
 
   const save = async (extra: any = {}) => {
     setBusy(true);
-    const res = await fetch("/api/owner/settings", {
-      method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...s, ...extra }),
-    });
-    const d = await res.json();
+    const result = await runOwnerRequest<{ ok?: boolean; error?: string }>(
+      () => fetch("/api/owner/settings", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...s, ...extra }),
+      }),
+      "Couldn't reach setup. Nothing was saved — please retry.",
+    );
     setBusy(false);
-    note(d.ok ? "Saved ✦" : d.error || "Couldn't save.");
-    if (d.ok && extra.wizard) setS({ ...s, ...extra });
+    if (!result.ok) { note(result.error); return; }
+    note(result.data.ok ? "Saved ✦" : result.data.error || "Couldn't save.");
+    if (result.data.ok && extra.wizard) setS({ ...s, ...extra });
   };
 
   const test = async (kind: string) => {
     setBusy(true);
-    const res = await fetch("/api/owner/test", {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind }),
-    });
-    const d = await res.json();
+    const result = await runOwnerRequest<{ message?: string; error?: string }>(
+      () => fetch("/api/owner/test", {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind }),
+      }),
+      "Couldn't reach the connection test. Please retry.",
+    );
     setBusy(false);
-    note(d.message || d.error || "No response.");
+    note(result.ok
+      ? result.data.message || result.data.error || "No response."
+      : result.error);
   };
 
   const toggleCheck = (key: string) => {
@@ -61,7 +87,12 @@ export default function SetupWizard() {
     <span className={`badge ${ok ? "b-hot" : "b-ok"}`} style={{ marginLeft: 8 }}>{ok ? "connected" : "not connected"}</span>
   );
 
-  if (!s || !status) return <div className="section"><div className="wrap"><p>Loading setup…</p></div></div>;
+  if (!s || !status) return (
+    <div className="section"><div className="wrap">
+      <p>{loadError || "Loading setup…"}</p>
+      {loadError ? <button className="mini-btn gold" onClick={() => void load()}>Retry setup</button> : null}
+    </div></div>
+  );
 
   return (
     <div className="section">
