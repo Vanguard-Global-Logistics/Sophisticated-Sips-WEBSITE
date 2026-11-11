@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveBookingRequestKey } from "@/lib/bookings/request-key";
 import { supabaseAdmin } from "@/lib/database/supabase-server";
 import {
   BookingPersistenceError,
@@ -29,6 +30,12 @@ export async function POST(req: Request) {
   if (f.policy_accepted !== true)
     return NextResponse.json({ error: "Please accept the cancellation, rescheduling, and refund policy before submitting." }, { status: 400 });
 
+  let requestKey: string;
+  try {
+    requestKey = resolveBookingRequestKey(f.request_key);
+  } catch {
+    return NextResponse.json({ error: "Invalid booking request identifier." }, { status: 400 });
+  }
   const guests = Math.max(0, Math.min(100000, parseInt(f.guest_count) || 0));
   const phone = String(f.phone || "").slice(0, 40);
   const notes = [
@@ -39,6 +46,7 @@ export async function POST(req: Request) {
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
   const booking = {
+    request_key: requestKey,
     name,
     email,
     company: String(f.company || "").slice(0, 200),

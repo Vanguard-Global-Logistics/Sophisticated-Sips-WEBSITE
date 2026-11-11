@@ -19,6 +19,7 @@ $$;
 create table if not exists booking_requests (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz default now(),
+  request_key uuid unique,
   name text not null,
   company text,
   email text not null,
@@ -358,9 +359,11 @@ declare
   v_booking_id uuid;
 begin
   insert into public.booking_requests (
-    name, company, email, phone, event_type, event_date, event_time, location,
-    guest_count, budget_range, package_interest, drink_preferences, addons, notes
+    request_key, name, company, email, phone, event_type, event_date, event_time,
+    location, guest_count, budget_range, package_interest, drink_preferences,
+    addons, notes
   ) values (
+    nullif(p_booking ->> 'request_key', '')::uuid,
     p_booking ->> 'name',
     p_booking ->> 'company',
     p_booking ->> 'email',
@@ -376,9 +379,14 @@ begin
     p_booking ->> 'addons',
     p_booking ->> 'notes'
   )
+  on conflict (request_key) do update
+    set request_key = excluded.request_key
   returning id into v_booking_id;
 
-  insert into public.leads (
+  if not exists (
+    select 1 from public.leads where booking_request_id = v_booking_id
+  ) then
+    insert into public.leads (
     booking_request_id, name, contact_email, contact_phone, event_type,
     event_date, guest_count, score, est_value_cents, source, status
   ) values (
@@ -393,7 +401,8 @@ begin
     coalesce((p_lead ->> 'est_value_cents')::int, 0),
     coalesce(p_lead ->> 'source', 'website'),
     coalesce(p_lead ->> 'status', 'new')
-  );
+    );
+  end if;
 
   return v_booking_id;
 end;

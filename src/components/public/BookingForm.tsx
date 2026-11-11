@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CANCELLATION_POLICY_URL } from "@/lib/policies/cancellation";
 
 const EVENT_TYPES = ["Corporate event","Employee appreciation","School event","Church event","Wedding","Private party","Sporting event","Holiday party","Vendor fair","Grand opening","Real estate event","Other"];
@@ -11,6 +11,7 @@ export default function BookingForm() {
   const [receiptSent, setReceiptSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const requestKey = useRef("");
   const [f, setF] = useState<any>({
     name: "", company: "", email: "", phone: "", event_type: EVENT_TYPES[0],
     event_date: "", event_time: "", location: "", guest_count: "",
@@ -27,8 +28,10 @@ export default function BookingForm() {
     if (!f.policy_accepted) { setErr("Please review and accept the cancellation, rescheduling, and refund policy before submitting."); return; }
     setBusy(true);
     try {
+      requestKey.current ||= crypto.randomUUID();
       const res = await fetch("/api/bookings", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(f),
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...f, request_key: requestKey.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong");
