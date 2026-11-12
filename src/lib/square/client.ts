@@ -22,9 +22,10 @@ export async function createPaymentLink(opts: {
   name: string;
   amountCents: number;
   note?: string;
+  idempotencyKey?: string;
 }) {
   const { result } = await square().checkoutApi.createPaymentLink({
-    idempotencyKey: crypto.randomUUID(),
+    idempotencyKey: opts.idempotencyKey ?? crypto.randomUUID(),
     quickPay: {
       name: opts.name.slice(0, 255),
       priceMoney: { amount: BigInt(opts.amountCents), currency: "USD" },

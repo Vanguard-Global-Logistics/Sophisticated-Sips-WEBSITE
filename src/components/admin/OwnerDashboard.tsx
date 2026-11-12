@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { runOwnerPaymentRequest } from "@/lib/payments/owner-payment-request";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/database/supabase-browser";
@@ -29,6 +29,7 @@ export default function OwnerDashboard() {
   const [weather, setWeather] = useState<any>(null);
   const [settings, setSettings] = useState<any>(null);
   const [busy, setBusy] = useState(false);
+  const paymentRequestKeys = useRef<Record<string, string>>({});
   const [np, setNp] = useState({ category: "Signature", name: "", price_label: "", description: "" });
 
   const load = useCallback(async () => {
@@ -94,17 +95,20 @@ export default function OwnerDashboard() {
   /* ----- payments (Square) ----- */
   const paymentLink = async (ev: any, kind: "deposit" | "full") => {
     const amountCents = kind === "deposit" ? (ev.deposit_cents || 10000) : (ev.quote_total_cents || ev.deposit_cents || 10000);
+    const requestIdentity = `${ev.id}:${kind}:${amountCents}`;
+    const requestKey = paymentRequestKeys.current[requestIdentity] ??= crypto.randomUUID();
     setBusy(true);
     const result = await runOwnerPaymentRequest<{ url?: string }>(
       () => fetch("/api/square/create-payment-link", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId: ev.id, kind, amountCents }),
+        body: JSON.stringify({ eventId: ev.id, kind, amountCents, requestKey }),
       }),
       "Couldn't reach the payment service. Nothing was sent — please retry.",
     );
     setBusy(false);
     if (!result.ok) { note(result.error); return; }
     if (result.data.url) {
+      delete paymentRequestKeys.current[requestIdentity];
       await navigator.clipboard?.writeText(result.data.url).catch(() => {});
       note(`Square ${kind === "full" ? "full-payment" : "deposit"} link created and copied — text it to your client.`);
     } else note("Square did not return a payment link. Nothing was copied.");
