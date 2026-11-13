@@ -1,5 +1,6 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { runOwnerPaymentRequest } from "@/lib/payments/owner-payment-request";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/database/supabase-browser";
 import Marketing from "@/components/admin/tabs/Marketing";
@@ -28,6 +29,7 @@ export default function OwnerDashboard() {
   const [weather, setWeather] = useState<any>(null);
   const [settings, setSettings] = useState<any>(null);
   const [busy, setBusy] = useState(false);
+  const paymentRequestKeys = useRef<Record<string, string>>({});
   const [np, setNp] = useState({ category: "Signature", name: "", price_label: "", description: "" });
 
   const load = useCallback(async () => {
@@ -93,34 +95,60 @@ export default function OwnerDashboard() {
   /* ----- payments (Square) ----- */
   const paymentLink = async (ev: any, kind: "deposit" | "full") => {
     const amountCents = kind === "deposit" ? (ev.deposit_cents || 10000) : (ev.quote_total_cents || ev.deposit_cents || 10000);
+    const requestIdentity = `${ev.id}:${kind}:${amountCents}`;
+    const requestKey = paymentRequestKeys.current[requestIdentity] ??= crypto.randomUUID();
     setBusy(true);
-    const res = await fetch("/api/square/create-payment-link", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ eventId: ev.id, kind, amountCents }),
-    });
-    const data = await res.json();
+    const result = await runOwnerPaymentRequest<{ url?: string }>(
+      () => fetch("/api/square/create-payment-link", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId: ev.id, kind, amountCents, requestKey }),
+      }),
+      "Couldn't reach the payment service. Nothing was sent — please retry.",
+    );
     setBusy(false);
-    if (data.url) { await navigator.clipboard?.writeText(data.url).catch(() => {}); note(`Square ${kind === "full" ? "full-payment" : "deposit"} link created and copied — text it to your client.`); }
-    else note(data.error || "Couldn't create the payment link.");
+    if (!result.ok) { note(result.error); return; }
+    if (result.data.url) {
+      delete paymentRequestKeys.current[requestIdentity];
+      await navigator.clipboard?.writeText(result.data.url).catch(() => {});
+      note(`Square ${kind === "full" ? "full-payment" : "deposit"} link created and copied — text it to your client.`);
+    } else note("Square did not return a payment link. Nothing was copied.");
   };
   const sendInvoice = async (ev: any) => {
     const balance = Math.max(0, (ev.quote_total_cents || 0) - (ev.deposit_cents || 0));
+    const invoiceAmount = balance || ev.quote_total_cents;
+    const requestIdentity = `${ev.id}:invoice:${invoiceAmount}`;
+    const requestKey = paymentRequestKeys.current[requestIdentity] ??= crypto.randomUUID();
     setBusy(true);
-    const res = await fetch("/api/square/create-invoice", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ eventId: ev.id, amountCents: balance || ev.quote_total_cents }),
-    });
-    const data = await res.json();
+    const result = await runOwnerPaymentRequest<{ ok?: boolean }>(
+      () => fetch("/api/square/create-invoice", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId: ev.id, amountCents: invoiceAmount, requestKey }),
+      }),
+      "Couldn't reach the invoice service. Nothing was sent — please retry.",
+    );
     setBusy(false);
-    note(data.ok ? "Square invoice sent by email ✦" : data.error || "Couldn't create the invoice.");
-    load();
+    if (result.ok && result.data.ok) delete paymentRequestKeys.current[requestIdentity];
+    note(result.ok && result.data.ok
+      ? "Square invoice sent by email ✦"
+      : result.ok
+        ? "Square did not confirm the invoice was sent."
+        : result.error);
+    if (result.ok) load();
   };
   const checkPayment = async (paymentId: string) => {
     setBusy(true);
-    const res = await fetch(`/api/square/payment-status?paymentId=${paymentId}`);
-    const data = await res.json();
+    const result = await runOwnerPaymentRequest<{
+      paid?: boolean;
+      orderState?: string;
+    }>(
+      () => fetch(`/api/square/payment-status?paymentId=${paymentId}`),
+      "Couldn't reach the payment status service. Please retry.",
+    );
     setBusy(false);
-    note(data.paid ? "Paid ✦ — records updated." : data.error || `Not paid yet (Square: ${data.orderState}).`);
+    if (!result.ok) { note(result.error); return; }
+    note(result.data.paid
+      ? "Paid ✦ — records updated."
+      : `Not paid yet (Square: ${result.data.orderState ?? "unknown"}).`);
     load();
   };
 

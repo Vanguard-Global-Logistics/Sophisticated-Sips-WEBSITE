@@ -21,7 +21,8 @@ export async function POST(req: Request) {
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
 
   const markPaid = async (col: "square_order_id" | "square_invoice_id", val: string) => {
-    const { data: pay } = await db.from("payments").select("*").eq(col, val).maybeSingle();
+    const { data: pay, error } = await db.from("payments").select("*").eq(col, val).maybeSingle();
+    if (error) throw error;
     await applyPaidPayment(db, pay);
   };
 
@@ -36,6 +37,7 @@ export async function POST(req: Request) {
     }
   } catch (e) {
     console.error("square webhook:", e);
+    return NextResponse.json({ error: "Payment reconciliation failed; retry required." }, { status: 500 });
   }
   return NextResponse.json({ received: true });
 }

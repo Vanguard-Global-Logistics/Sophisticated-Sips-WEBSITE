@@ -7,6 +7,7 @@ import {
   POLICY_VERSION,
 } from "@/lib/policies/cancellation";
 import { checklistEmail } from "./templates";
+import { attemptBookingReceipt } from "./booking-receipt";
 import { makeUnsubToken } from "./unsubscribe";
 
 const isStaging = () => process.env.NEXT_PUBLIC_APP_ENV !== "production";
@@ -46,13 +47,16 @@ export async function sendBookingReceipt(to: string, name: string) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.sophisticatedsips.net";
     const policyUrl = `${siteUrl}${CANCELLATION_POLICY_URL}`;
     const routed = stagingReroute(to, "We received your event request — Sophisticated Sips");
-    await resend().emails.send({
+    return await attemptBookingReceipt(() => resend().emails.send({
       from: process.env.OUTREACH_FROM!,
       to: routed.to,
       subject: routed.subject,
       text: `Hi ${name},\n\nThank you — Sophisticated Sips has received your event request. Amy will review it personally and respond with a quote shortly.\n\nFor your records, your request was submitted with the Sophisticated Sips cancellation, rescheduling, and refund policy acknowledged. Policy version: ${POLICY_VERSION}.\n\nPolicy: ${policyUrl}\n\nQuick summary:\n${CANCELLATION_POLICY_SUMMARY}\n\nWarmly,\nSophisticated Sips`,
-    });
-  } catch { /* non-fatal */ }
+    }));
+  } catch (error) {
+    console.error("booking receipt:", error);
+    return false;
+  }
 }
 
 /** Delivers the "7 Questions" lead-magnet PDF instantly (transactional, no unsubscribe needed). */
