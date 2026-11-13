@@ -26,8 +26,9 @@ describe("invoice retry idempotency", () => {
 
   it("derives stable endpoint-specific Square keys", () => {
     const client = read("src/lib/square/client.ts");
-    for (const suffix of ["customer", "order", "invoice", "publish"]) {
+    for (const suffix of ["customer", "order", "invoice"]) {
       expect(client).toContain(`idempotencyKey}-${suffix}`);
     }
+    expect(client).toContain("requestKey}-publish");
   });
 });
