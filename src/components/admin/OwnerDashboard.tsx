@@ -115,15 +115,19 @@ export default function OwnerDashboard() {
   };
   const sendInvoice = async (ev: any) => {
     const balance = Math.max(0, (ev.quote_total_cents || 0) - (ev.deposit_cents || 0));
+    const invoiceAmount = balance || ev.quote_total_cents;
+    const requestIdentity = `${ev.id}:invoice:${invoiceAmount}`;
+    const requestKey = paymentRequestKeys.current[requestIdentity] ??= crypto.randomUUID();
     setBusy(true);
     const result = await runOwnerPaymentRequest<{ ok?: boolean }>(
       () => fetch("/api/square/create-invoice", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId: ev.id, amountCents: balance || ev.quote_total_cents }),
+        body: JSON.stringify({ eventId: ev.id, amountCents: invoiceAmount, requestKey }),
       }),
       "Couldn't reach the invoice service. Nothing was sent — please retry.",
     );
     setBusy(false);
+    if (result.ok && result.data.ok) delete paymentRequestKeys.current[requestIdentity];
     note(result.ok && result.data.ok
       ? "Square invoice sent by email ✦"
       : result.ok

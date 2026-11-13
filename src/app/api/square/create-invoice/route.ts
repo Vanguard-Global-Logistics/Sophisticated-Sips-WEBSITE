@@ -9,6 +9,7 @@ import {
   InvoicePublishError,
 } from "@/lib/payments/create-tracked-invoice";
 import { PaymentPersistenceError } from "@/lib/payments/create-tracked-payment-link";
+import { resolvePaymentRequestKey } from "@/lib/payments/request-key";
 import {
   loadPaymentEvent,
   PaymentEventLookupError,
@@ -36,13 +37,19 @@ export async function POST(req: Request) {
   if (process.env.NEXT_PUBLIC_APP_ENV !== "production" && process.env.SQUARE_ENVIRONMENT === "production")
     return NextResponse.json({ error: "Blocked: staging may only use the Square sandbox." }, { status: 403 });
 
-  const { eventId, amountCents, dueDate } = await req.json().catch(() => ({}));
+  const { eventId, amountCents, dueDate, requestKey } = await req.json().catch(() => ({}));
   const amount = typeof amountCents === "string" && /^\d+$/.test(amountCents)
     ? Number(amountCents) : amountCents;
   if (!eventId || !Number.isSafeInteger(amount) || amount < 100)
     return NextResponse.json({ error: "eventId and integer amountCents (≥100) required" }, { status: 400 });
   if (dueDate !== undefined && (typeof dueDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)))
     return NextResponse.json({ error: "dueDate must use YYYY-MM-DD" }, { status: 400 });
+  let idempotencyKey: string;
+  try {
+    idempotencyKey = resolvePaymentRequestKey(requestKey);
+  } catch {
+    return NextResponse.json({ error: "Invalid invoice request identifier." }, { status: 400 });
+  }
 
   const db = supabaseAdmin();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
@@ -72,16 +79,17 @@ export async function POST(req: Request) {
         title: ev.title,
         amountCents: amount,
         dueDate,
+        idempotencyKey,
       }),
-      persist: (draft) => db.from("payments").insert({
+      persist: (draft) => db.from("payments").upsert({
         event_id: eventId,
         kind: "invoice",
         amount_cents: amount,
         status: "pending",
         square_invoice_id: draft.invoiceId,
         square_order_id: draft.orderId,
-      }),
-      publish: publishInvoiceDraft,
+      }, { onConflict: "square_invoice_id", ignoreDuplicates: true }),
+      publish: (draft) => publishInvoiceDraft(draft, idempotencyKey),
     });
     return NextResponse.json({ ok: true, invoiceUrl: inv.publicUrl, status: inv.status });
   } catch (e: any) {
@@ -94,7 +102,7 @@ export async function POST(req: Request) {
     if (e instanceof InvoicePublishError) {
       console.error("invoice publish:", e.publishError);
       return NextResponse.json({
-        error: "Invoice was recorded but Square could not send it. Check Square before retrying.",
+        error: "Invoice was recorded but Square did not confirm sending. Retrying is safe; the same request will be reused.",
       }, { status: 502 });
     }
     console.error("square invoice:", e?.result ?? e);

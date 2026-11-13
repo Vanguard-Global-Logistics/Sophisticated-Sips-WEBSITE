@@ -55,8 +55,10 @@ export async function createInvoiceDraft(opts: {
   title: string;
   amountCents: number;
   dueDate?: string; // YYYY-MM-DD
+  idempotencyKey?: string;
 }): Promise<InvoiceDraftRecord> {
   const sq = square();
+  const idempotencyKey = opts.idempotencyKey ?? crypto.randomUUID();
 
   // 1. Find or create the customer.
   const { result: search } = await sq.customersApi.searchCustomers({
@@ -65,6 +67,7 @@ export async function createInvoiceDraft(opts: {
   let customerId = search.customers?.[0]?.id;
   if (!customerId) {
     const { result: created } = await sq.customersApi.createCustomer({
+      idempotencyKey: `${idempotencyKey}-customer`,
       emailAddress: opts.customerEmail,
       givenName: opts.customerName.slice(0, 300),
     });
@@ -73,7 +76,7 @@ export async function createInvoiceDraft(opts: {
 
   // 2. Draft order for the amount.
   const { result: orderRes } = await sq.ordersApi.createOrder({
-    idempotencyKey: crypto.randomUUID(),
+    idempotencyKey: `${idempotencyKey}-order`,
     order: {
       locationId: LOCATION_ID(),
       customerId,
@@ -88,7 +91,7 @@ export async function createInvoiceDraft(opts: {
 
   // 3. Create the invoice but do not publish or email it yet.
   const { result: invRes } = await sq.invoicesApi.createInvoice({
-    idempotencyKey: crypto.randomUUID(),
+    idempotencyKey: `${idempotencyKey}-invoice`,
     invoice: {
       locationId: LOCATION_ID(),
       orderId,
@@ -114,10 +117,12 @@ export async function createInvoiceDraft(opts: {
 /** Publish a previously tracked draft. This is the step that emails the client. */
 export async function publishInvoiceDraft(
   draft: InvoiceDraftRecord,
+  idempotencyKey?: string,
 ): Promise<PublishedInvoiceRecord> {
+  const requestKey = idempotencyKey ?? crypto.randomUUID();
   const { result } = await square().invoicesApi.publishInvoice(draft.invoiceId, {
     version: draft.version,
-    idempotencyKey: crypto.randomUUID(),
+    idempotencyKey: `${requestKey}-publish`,
   });
   return {
     invoiceId: result.invoice!.id!,
