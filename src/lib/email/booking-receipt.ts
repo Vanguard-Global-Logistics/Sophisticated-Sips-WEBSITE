@@ -1,3 +1,7 @@
+export function bookingReceiptIdempotencyKey(requestKey: string) {
+  return `booking-receipt/${requestKey}`;
+}
+
 type EmailSendResult = {
   error?: unknown | null;
 };
