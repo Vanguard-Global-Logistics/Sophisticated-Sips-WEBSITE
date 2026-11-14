@@ -7,7 +7,7 @@ import {
   POLICY_VERSION,
 } from "@/lib/policies/cancellation";
 import { checklistEmail } from "./templates";
-import { attemptBookingReceipt } from "./booking-receipt";
+import { attemptBookingReceipt, bookingReceiptIdempotencyKey } from "./booking-receipt";
 import { makeUnsubToken } from "./unsubscribe";
 
 const isStaging = () => process.env.NEXT_PUBLIC_APP_ENV !== "production";
@@ -42,7 +42,7 @@ export async function sendOutreachEmail(opts: { to: string; subject: string; bod
 }
 
 /** Booking confirmation to the customer (transactional, no unsubscribe needed). */
-export async function sendBookingReceipt(to: string, name: string) {
+export async function sendBookingReceipt(to: string, name: string, requestKey: string) {
   try {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.sophisticatedsips.net";
     const policyUrl = `${siteUrl}${CANCELLATION_POLICY_URL}`;
@@ -52,7 +52,7 @@ export async function sendBookingReceipt(to: string, name: string) {
       to: routed.to,
       subject: routed.subject,
       text: `Hi ${name},\n\nThank you — Sophisticated Sips has received your event request. Amy will review it personally and respond with a quote shortly.\n\nFor your records, your request was submitted with the Sophisticated Sips cancellation, rescheduling, and refund policy acknowledged. Policy version: ${POLICY_VERSION}.\n\nPolicy: ${policyUrl}\n\nQuick summary:\n${CANCELLATION_POLICY_SUMMARY}\n\nWarmly,\nSophisticated Sips`,
-    }));
+    }, { idempotencyKey: bookingReceiptIdempotencyKey(requestKey) }));
   } catch (error) {
     console.error("booking receipt:", error);
     return false;
