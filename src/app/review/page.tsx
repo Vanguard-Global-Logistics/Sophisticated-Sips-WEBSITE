@@ -3,8 +3,8 @@ import Link from "next/link";
 // The QR and NFC review cards all point here (https://www.sophisticatedsips.net/review).
 // To change where reviews go, edit the two links below. No card ever needs reprinting.
 const YELP_REVIEW = "https://www.yelp.com/writeareview/biz/sophisticated-sips-new-port-richey";
-// Add the Google review link here once the Google Business Profile is verified, then set to a real URL.
-const GOOGLE_REVIEW: string | null = null;
+// Google Business Profile verified 2026-10-10. Place ID confirmed via Google's own g.page review short links.
+const GOOGLE_REVIEW: string | null = "https://search.google.com/local/writereview?placeid=ChIJiyR9ck52Dm0RlOye85dV0VY";
 
 export const metadata = {
   title: "Leave a Review | Sophisticated Sips",
