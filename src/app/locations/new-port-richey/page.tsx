@@ -60,7 +60,7 @@ export default function NewPortRichey() {
             </ul>
             <p>
               Also serving Trinity, Odessa, Land O&apos; Lakes, Lutz, Wesley Chapel, Spring Hill,
-              Brooksville, Tampa, Clearwater, and St. Petersburg.
+              Brooksville, Hudson, Zephyrhills, Tampa, Clearwater, and St. Petersburg.
             </p>
             <div className="lux-actions">
               <Link href="/book" className="btn btn-lux btn-gold">Request a Quote</Link>

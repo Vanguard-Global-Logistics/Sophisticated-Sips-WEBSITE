@@ -47,6 +47,7 @@ export default async function Home() {
       ...[
         "New Port Richey", "Tampa", "Clearwater", "St. Petersburg", "Wesley Chapel",
         "Land O' Lakes", "Trinity", "Odessa", "Lutz", "Spring Hill", "Brooksville",
+        "Zephyrhills", "Hudson",
       ].map((city) => ({ "@type": "City", name: city })),
     ],
     founder: { "@type": "Person", name: "Amy Lavold" },

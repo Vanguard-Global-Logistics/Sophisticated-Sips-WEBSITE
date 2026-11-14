@@ -103,6 +103,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <Link href="/checklist">Free Checklist</Link>
               <Link href="/contact">Contact</Link>
               <Link href="/policies">Policies</Link>
+              <Link href="/locations/new-port-richey">New Port Richey</Link>
+              <Link href="/locations/zephyrhills">Zephyrhills</Link>
+              <Link href="/locations/hudson">Hudson</Link>
             </div>
             <div className="lux-footer__book">
               <span className="lux-script">Let&apos;s make it unforgettable.</span>
