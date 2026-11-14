@@ -25,11 +25,38 @@ async function activeMenu(): Promise<BrandedMenuItem[]> {
   return data?.length ? data : DEMO_MENU;
 }
 
+function menuJsonLd(items: BrandedMenuItem[], base: string) {
+  const byCategory = new Map<string, BrandedMenuItem[]>();
+  for (const item of items) {
+    if (!byCategory.has(item.category)) byCategory.set(item.category, []);
+    byCategory.get(item.category)!.push(item);
+  }
+  return {
+    "@context": "https://schema.org",
+    "@type": "Menu",
+    name: "Sophisticated Sips Event Menu",
+    url: `${base}/menu`,
+    hasMenuSection: Array.from(byCategory.entries()).map(([category, sectionItems]) => ({
+      "@type": "MenuSection",
+      name: category,
+      hasMenuItem: sectionItems.map((item) => ({
+        "@type": "MenuItem",
+        name: item.name,
+        ...(item.description ? { description: item.description } : {}),
+        offers: { "@type": "Offer", price: item.price_label, priceCurrency: "USD" },
+      })),
+    })),
+  };
+}
+
 export default async function MenuPage() {
   const items = await activeMenu();
+  const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.sophisticatedsips.net").replace(/\/$/, "");
+  const jsonLd = menuJsonLd(items, base);
 
   return (
     <main className="menu-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="wrap menu-page__wrap">
         <header className="menu-page__intro">
           <div>
