@@ -1,8 +1,33 @@
 import { NextResponse } from "next/server";
 import { requireOwner, supabaseAdmin } from "@/lib/database/supabase-server";
-import { createInvoice } from "@/lib/square/client";
+import {
+  createInvoiceDraft,
+  publishInvoiceDraft,
+} from "@/lib/square/client";
+import {
+  createTrackedInvoice,
+  InvoicePublishError,
+} from "@/lib/payments/create-tracked-invoice";
+import { PaymentPersistenceError } from "@/lib/payments/create-tracked-payment-link";
+import { resolvePaymentRequestKey } from "@/lib/payments/request-key";
+import {
+  loadPaymentEvent,
+  PaymentEventLookupError,
+} from "@/lib/payments/load-payment-event";
 
 export const runtime = "nodejs";
+
+type InvoiceLead = {
+  contact_email: string | null;
+  name: string | null;
+};
+
+type InvoiceEvent = {
+  id: string;
+  title: string;
+  lead_id: string | null;
+  leads: InvoiceLead | InvoiceLead[] | null;
+};
 
 /** Amy sends a Square invoice by email for an event balance. */
 export async function POST(req: Request) {
@@ -11,35 +36,75 @@ export async function POST(req: Request) {
 
   if (process.env.NEXT_PUBLIC_APP_ENV !== "production" && process.env.SQUARE_ENVIRONMENT === "production")
     return NextResponse.json({ error: "Blocked: staging may only use the Square sandbox." }, { status: 403 });
-  const { eventId, amountCents, dueDate } = await req.json().catch(() => ({}));
-  const amount = parseInt(amountCents);
-  if (!eventId || !amount || amount < 100)
-    return NextResponse.json({ error: "eventId and amountCents (≥100) required" }, { status: 400 });
+
+  const { eventId, amountCents, dueDate, requestKey } = await req.json().catch(() => ({}));
+  const amount = typeof amountCents === "string" && /^\d+$/.test(amountCents)
+    ? Number(amountCents) : amountCents;
+  if (!eventId || !Number.isSafeInteger(amount) || amount < 100)
+    return NextResponse.json({ error: "eventId and integer amountCents (≥100) required" }, { status: 400 });
+  if (dueDate !== undefined && (typeof dueDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)))
+    return NextResponse.json({ error: "dueDate must use YYYY-MM-DD" }, { status: 400 });
+  let idempotencyKey: string;
+  try {
+    idempotencyKey = resolvePaymentRequestKey(requestKey);
+  } catch {
+    return NextResponse.json({ error: "Invalid invoice request identifier." }, { status: 400 });
+  }
 
   const db = supabaseAdmin();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
-  const { data: ev } = await db
-    .from("events").select("id,title,lead_id, leads(contact_email,name)")
-    .eq("id", eventId).single();
+  let ev;
+  try {
+    ev = await loadPaymentEvent<InvoiceEvent>(
+      db.from("events").select("id,title,lead_id, leads(contact_email,name)")
+        .eq("id", eventId).single(),
+    );
+  } catch (error) {
+    const detail = error instanceof PaymentEventLookupError
+      ? error.lookupError
+      : error;
+    console.error("invoice event lookup:", detail);
+    return NextResponse.json({ error: "Could not load the event." }, { status: 502 });
+  }
   if (!ev) return NextResponse.json({ error: "event not found" }, { status: 404 });
   const lead: any = Array.isArray(ev.leads) ? ev.leads[0] : ev.leads;
   if (!lead?.contact_email)
     return NextResponse.json({ error: "This event's lead has no email on file." }, { status: 400 });
 
   try {
-    const inv = await createInvoice({
-      customerEmail: lead.contact_email,
-      customerName: lead.name || "Valued Client",
-      title: ev.title,
-      amountCents: amount,
-      dueDate,
-    });
-    await db.from("payments").insert({
-      event_id: eventId, kind: "invoice", amount_cents: amount, status: "pending",
-      square_invoice_id: inv.invoiceId, square_order_id: inv.orderId,
+    const inv = await createTrackedInvoice({
+      createDraft: () => createInvoiceDraft({
+        customerEmail: lead.contact_email,
+        customerName: lead.name || "Valued Client",
+        title: ev.title,
+        amountCents: amount,
+        dueDate,
+        idempotencyKey,
+      }),
+      persist: (draft) => db.from("payments").upsert({
+        event_id: eventId,
+        kind: "invoice",
+        amount_cents: amount,
+        status: "pending",
+        square_invoice_id: draft.invoiceId,
+        square_order_id: draft.orderId,
+      }, { onConflict: "square_invoice_id", ignoreDuplicates: true }),
+      publish: (draft) => publishInvoiceDraft(draft, idempotencyKey),
     });
     return NextResponse.json({ ok: true, invoiceUrl: inv.publicUrl, status: inv.status });
   } catch (e: any) {
+    if (e instanceof PaymentPersistenceError) {
+      console.error("invoice payment record:", e.persistenceError);
+      return NextResponse.json({
+        error: "Invoice draft could not be safely recorded, so it was not sent. Check the database before retrying.",
+      }, { status: 502 });
+    }
+    if (e instanceof InvoicePublishError) {
+      console.error("invoice publish:", e.publishError);
+      return NextResponse.json({
+        error: "Invoice was recorded but Square did not confirm sending. Retrying is safe; the same request will be reused.",
+      }, { status: 502 });
+    }
     console.error("square invoice:", e?.result ?? e);
     return NextResponse.json({ error: "Square couldn't create the invoice." }, { status: 502 });
   }

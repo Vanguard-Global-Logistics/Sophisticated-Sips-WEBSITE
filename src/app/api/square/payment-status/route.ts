@@ -2,6 +2,12 @@ import { NextResponse } from "next/server";
 import { requireOwner, supabaseAdmin } from "@/lib/database/supabase-server";
 import { getPaymentStatusByOrder } from "@/lib/square/client";
 import { applyPaidPayment } from "@/lib/database/payments";
+import {
+  PaymentLookupError,
+  PaymentRecordNotFoundError,
+  PaymentReconciliationError,
+  reconcilePaymentStatus,
+} from "@/lib/payments/reconcile-payment-status";
 
 export const runtime = "nodejs";
 
@@ -15,15 +21,35 @@ export async function GET(req: Request) {
 
   const db = supabaseAdmin();
   if (!db) return NextResponse.json({ error: "Service not configured yet." }, { status: 503 });
-  const { data: pay } = await db.from("payments").select("*").eq("id", paymentId).single();
-  if (!pay?.square_order_id) return NextResponse.json({ error: "payment not found" }, { status: 404 });
 
   try {
-    const status = await getPaymentStatusByOrder(pay.square_order_id);
-    if (status.paid) await applyPaidPayment(db, pay);
-    return NextResponse.json({ ...status, dbStatus: status.paid ? "paid" : pay.status });
-  } catch (e) {
-    console.error("square status:", e);
+    const status = await reconcilePaymentStatus(db, paymentId, {
+      getStatus: getPaymentStatusByOrder,
+      applyPaid: applyPaidPayment,
+    });
+    return NextResponse.json(status);
+  } catch (error) {
+    if (error instanceof PaymentRecordNotFoundError) {
+      return NextResponse.json({ error: "payment not found" }, { status: 404 });
+    }
+
+    if (error instanceof PaymentLookupError) {
+      console.error("payment status lookup:", error.cause);
+      return NextResponse.json(
+        { error: "Payment records are temporarily unavailable. Try again." },
+        { status: 503 },
+      );
+    }
+
+    if (error instanceof PaymentReconciliationError) {
+      console.error("payment status reconciliation:", error.cause);
+      return NextResponse.json(
+        { error: "Square shows paid, but records couldn't be updated. Try Check payment again." },
+        { status: 503 },
+      );
+    }
+
+    console.error("square status:", error);
     return NextResponse.json({ error: "Couldn't reach Square." }, { status: 502 });
   }
 }
