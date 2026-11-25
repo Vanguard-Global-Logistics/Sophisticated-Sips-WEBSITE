@@ -4,7 +4,7 @@ import type {
   InvoiceDraftRecord,
   PublishedInvoiceRecord,
 } from "@/lib/payments/create-tracked-invoice";
-import { requireCompletePaymentLink } from "@/lib/payments/create-tracked-payment-link";
+import { requireCompletePaymentLink } from "../payments/create-tracked-payment-link";
 
 /** Server-only Square client. Never import from client components. */
 export function square() {
