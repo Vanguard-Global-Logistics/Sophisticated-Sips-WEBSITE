@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CANCELLATION_POLICY_URL } from "@/lib/policies/cancellation";
 
 const EVENT_TYPES = ["Corporate event","Employee appreciation","School event","Church event","Wedding","Private party","Sporting event","Holiday party","Vendor fair","Grand opening","Real estate event","Other"];
@@ -8,8 +8,10 @@ const PACKAGES = ["Not sure yet","The Espresso Hour","The Golden Event","Corpora
 
 export default function BookingForm() {
   const [done, setDone] = useState(false);
+  const [receiptSent, setReceiptSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const requestKey = useRef("");
   const [f, setF] = useState<any>({
     name: "", company: "", email: "", phone: "", event_type: EVENT_TYPES[0],
     event_date: "", event_time: "", location: "", guest_count: "",
@@ -26,11 +28,14 @@ export default function BookingForm() {
     if (!f.policy_accepted) { setErr("Please review and accept the cancellation, rescheduling, and refund policy before submitting."); return; }
     setBusy(true);
     try {
+      requestKey.current ||= crypto.randomUUID();
       const res = await fetch("/api/bookings", {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(f),
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...f, request_key: requestKey.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong");
+      setReceiptSent(data.receiptSent === true);
       setDone(true); window.scrollTo(0, 0);
     } catch (e: any) {
       setErr(e.message || "Could not send your request — please try again.");
@@ -43,7 +48,9 @@ export default function BookingForm() {
       <div style={{ fontSize: 44 }}>✦</div>
       <h2 className="serif sec-title" style={{ margin: "14px 0" }}>Thank you</h2>
       <p className="sec-sub">Sophisticated Sips will review your event and respond shortly.
-      A confirmation is on its way to your inbox.</p>
+      {receiptSent
+        ? " A confirmation is on its way to your inbox."
+        : " Your request is saved, but the confirmation email could not be sent. Amy will still follow up directly."}</p>
     </div>
   );
 
