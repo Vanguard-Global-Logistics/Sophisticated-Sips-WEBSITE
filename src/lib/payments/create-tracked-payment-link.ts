@@ -16,6 +16,37 @@ export class PaymentPersistenceError extends Error {
   }
 }
 
+export class PaymentLinkResponseError extends Error {
+  constructor() {
+    super("Square did not return a complete hosted payment link.");
+    this.name = "PaymentLinkResponseError";
+  }
+}
+
+/** Reject incomplete provider responses before any local payment row is attempted. */
+export function requireCompletePaymentLink(link: {
+  url?: string | null;
+  id?: string | null;
+  orderId?: string | null;
+} | null | undefined): PaymentLinkRecord {
+  if (
+    !link
+    || typeof link.url !== "string"
+    || !/^https:\/\//.test(link.url)
+    || typeof link.id !== "string"
+    || link.id.length === 0
+    || typeof link.orderId !== "string"
+    || link.orderId.length === 0
+  ) {
+    throw new PaymentLinkResponseError();
+  }
+  return {
+    url: link.url,
+    paymentLinkId: link.id,
+    orderId: link.orderId,
+  };
+}
+
 /**
  * Return a hosted payment link only after the matching pending payment row is saved.
  * Square may already contain a link when persistence fails, but that link is never
