@@ -4,6 +4,7 @@ import type {
   InvoiceDraftRecord,
   PublishedInvoiceRecord,
 } from "@/lib/payments/create-tracked-invoice";
+import { requireCompletePaymentLink } from "@/lib/payments/create-tracked-payment-link";
 
 /** Server-only Square client. Never import from client components. */
 export function square() {
@@ -37,12 +38,7 @@ export async function createPaymentLink(opts: {
       merchantSupportEmail: process.env.OUTREACH_FROM?.match(/<(.+)>/)?.[1],
     },
   });
-  const link = result.paymentLink!;
-  return {
-    url: link.url!,
-    paymentLinkId: link.id!,
-    orderId: link.orderId!, // webhook payment.updated events carry this order_id
-  };
+  return requireCompletePaymentLink(result.paymentLink);
 }
 
 /**
