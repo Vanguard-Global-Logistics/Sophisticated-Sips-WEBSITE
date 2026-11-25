@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   createTrackedPaymentLink,
+  PaymentLinkResponseError,
   PaymentPersistenceError,
+  requireCompletePaymentLink,
   type PaymentLinkRecord,
 } from "../src/lib/payments/create-tracked-payment-link";
 
@@ -10,6 +12,28 @@ const link: PaymentLinkRecord = {
   paymentLinkId: "plink-1",
   orderId: "order-1",
 };
+
+describe("Square payment-link response validation", () => {
+  it("normalizes a complete Square response", () => {
+    expect(requireCompletePaymentLink({
+      url: "https://square.test/pay",
+      id: "plink-1",
+      orderId: "order-1",
+    })).toEqual(link);
+  });
+
+  it.each([
+    undefined,
+    null,
+    { url: "", id: "plink-1", orderId: "order-1" },
+    { url: "http://square.test/pay", id: "plink-1", orderId: "order-1" },
+    { url: "https://square.test/pay", id: "", orderId: "order-1" },
+    { url: "https://square.test/pay", id: "plink-1", orderId: "" },
+  ])("rejects incomplete or unsafe provider data before persistence", (providerLink) => {
+    expect(() => requireCompletePaymentLink(providerLink))
+      .toThrow(PaymentLinkResponseError);
+  });
+});
 
 describe("tracked payment links", () => {
   it("returns a link only after its pending payment record is saved", async () => {
