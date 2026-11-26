@@ -16,6 +16,13 @@ export default function Nav() {
         <Link href="/" className="logo" aria-label="Sophisticated Sips — home">
           <Logo size={56} priority />
         </Link>
+        <a
+          href="tel:+18135953536"
+          className="nav-phone"
+          style={{ fontWeight: 700, whiteSpace: "nowrap", fontSize: "0.95rem" }}
+        >
+          (813) 595-3536
+        </a>
         <div className="nav-links">
           {LINKS.map(([label, href]) => (
             <Link key={href} href={href} className={`nav-link ${path === href ? "on" : ""}`}>{label}</Link>

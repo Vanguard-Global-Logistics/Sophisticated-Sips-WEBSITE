@@ -56,6 +56,9 @@ export default async function Home() {
       "https://www.tiktok.com/@sophisticated_sips",
       "https://www.pinterest.com/sophisticatedsnacksfl/",
       "https://x.com/Sips_Espresso",
+      "https://www.facebook.com/sophisticatedsipsfl/",
+      "https://www.yelp.com/biz/sophisticated-sips-new-port-richey",
+      "https://maps.google.com/?cid=17292919903229247498",
     ],
   };
 
