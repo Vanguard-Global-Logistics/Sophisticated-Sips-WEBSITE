@@ -119,7 +119,7 @@ export default function SchoolsAndChurches() {
                   <h3>{p.name}</h3>
                   <strong style={{ color: "#e4bd68", fontFamily: "var(--font-serif)", fontSize: 18 }}>Starting at {p.price}</strong>
                   <p style={{ marginTop: 9 }}>{p.note}</p>
-                  <Link className="btn btn-lux btn-gold" href="/book">Request a Quote</Link>
+                  <Link className="btn btn-lux btn-gold" href="/book" style={{ marginTop: "auto" }}>Request a Quote</Link>
                 </div>
               </article>
             ))}
