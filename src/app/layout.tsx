@@ -96,6 +96,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <div className="lux-footer__links" aria-label="Footer navigation">
               <Link href="/catering">Catering</Link>
               <Link href="/weddings">Weddings</Link>
+              <Link href="/schools-churches">Schools &amp; Churches</Link>
               <Link href="/menu">Menu</Link>
               <Link href="/gallery">Gallery</Link>
               <Link href="/about">About</Link>

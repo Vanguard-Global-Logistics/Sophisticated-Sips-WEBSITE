@@ -104,7 +104,7 @@ export default function KaiIntro() {
           autoPlay
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           onEnded={() => finish(true)}
           onError={() => setVideoFailed(true)}
         />

@@ -23,6 +23,12 @@ a,button{font-family:inherit}
 .logo{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
 .logo-name{font-size:16px;font-weight:600;letter-spacing:.05em;white-space:nowrap}
 .logo-name em{color:var(--gold);font-style:normal}
+.nav-phone{display:flex;align-items:center;gap:8px;font-family:var(--font-serif),serif;
+  color:var(--gold-light);font-size:14.5px;letter-spacing:.04em;white-space:nowrap;
+  padding:8px 14px;border:1px solid rgba(201,164,92,.35);border-radius:20px;
+  background:rgba(201,164,92,.06);transition:all .25s}
+.nav-phone svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:1.8;flex-shrink:0}
+.nav-phone:hover{background:rgba(201,164,92,.14);border-color:rgba(201,164,92,.55);color:var(--gold-light)}
 .nav-links{display:flex;gap:2px;align-items:center;overflow-x:auto;scrollbar-width:none;
   -webkit-overflow-scrolling:touch;min-width:0}
 .nav-links::-webkit-scrollbar{display:none}

@@ -56,6 +56,9 @@ export default async function Home() {
       "https://www.tiktok.com/@sophisticated_sips",
       "https://www.pinterest.com/sophisticatedsnacksfl/",
       "https://x.com/Sips_Espresso",
+      "https://www.facebook.com/sophisticatedsipsfl/",
+      "https://www.yelp.com/biz/sophisticated-sips-new-port-richey",
+      "https://maps.google.com/?cid=17292919903229247498",
     ],
   };
 
@@ -94,6 +97,26 @@ export default async function Home() {
           </div>
         </div>
       </header>
+
+      {/* 2b — real service-area copy: names Tampa Bay broadly, not just New Port Richey,
+          so the page actually targets the "Tampa Bay" searches the SXO audit found
+          the site was absent from, not just the tight New Port Richey ones it already wins.
+          Reuses the same dark-section treatment as .sig so cream text has real contrast. */}
+      <section className="sig" aria-label="Where Sophisticated Sips travels" style={{ padding: "70px 0" }}>
+        <div className="wrap">
+          <p className="sec-kicker" style={{ textAlign: "left" }}>Where We Travel</p>
+          <h2 style={{ maxWidth: 720 }}>Serving Tampa Bay, not just New Port Richey</h2>
+          <p className="copy" style={{ maxWidth: 640, marginTop: 14 }}>
+            From our home in New Port Richey, Sophisticated Sips journeys across the whole of
+            Tampa Bay — roughly fifty miles, or about forty-five minutes, in nearly any
+            direction. We&rsquo;re honored to bring the experience to weddings, corporate
+            events, and private celebrations throughout Tampa, Clearwater, St. Petersburg,
+            Wesley Chapel, Land O&rsquo; Lakes, Trinity, Odessa, Lutz, Spring Hill,
+            Brooksville, Zephyrhills, and Hudson. Don&rsquo;t see your city listed?{" "}
+            <Link href="/book">Ask us</Link> — we&rsquo;re often happy to make the drive.
+          </p>
+        </div>
+      </section>
 
       {/* 3 — photographic proof, matching Amy's luxury flyers */}
       <section className="home-proof" aria-label="The Sophisticated Sips experience">
