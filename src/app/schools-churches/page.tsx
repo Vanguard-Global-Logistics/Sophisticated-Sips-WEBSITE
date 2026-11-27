@@ -82,9 +82,9 @@ export default function SchoolsAndChurches() {
             catered real events at Cypress Elementary, Trinity Elementary, and Zephyrhills High
             School, plus Claywell Elementary in Hillsborough County. We bring that same experience
             to schools and churches throughout Tampa Bay: teacher appreciation days, fundraisers,
-            back-to-school nights, awards ceremonies, and church fellowship events. Every drink is
-            made fresh, hot or iced, by a real barista — not an urn of drip coffee sitting on a
-            folding table.
+            back-to-school nights, awards ceremonies, and church fellowship events. Forget the
+            coffee pot that&rsquo;s been burning in the teacher&rsquo;s lounge since homeroom —
+            this is a real espresso bar, made fresh in front of everyone.
           </p>
           <p>
             Setup and breakdown are handled for you, so your staff or volunteers get to actually
