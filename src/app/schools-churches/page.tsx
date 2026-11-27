@@ -12,9 +12,9 @@ export const metadata = {
 };
 
 const PACKAGES = [
-  { name: "The Signature Bar", guests: "Up to 50 guests", price: "$499", note: "A professional espresso bar with unlimited handcrafted hot and iced drinks, premium syrups and milk choices, plus setup and breakdown." },
-  { name: "The Paris Experience", guests: "Up to 100 guests", price: "$999", note: "Everything in The Signature Bar, plus a live gourmet crepe station made fresh for every guest." },
-  { name: "The Grand Experience", guests: "Up to 200 guests", price: "$1,999", note: "The flagship: a luxury coffee cart, premium décor and floral accents, personalized drink names, and priority staffing." },
+  { name: "The Signature Bar", guests: "Up to 50 guests", price: "$499", note: "A professional espresso bar with unlimited handcrafted hot and iced drinks, premium syrups and milk choices, plus setup and breakdown.", photo: "/gallery/signature-drinks.jpg", photoPosition: "center 46%" },
+  { name: "The Paris Experience", guests: "Up to 100 guests", price: "$999", note: "Everything in The Signature Bar, plus a live gourmet crepe station made fresh for every guest.", photo: "/branding/catering/Catering-Luxury.jpeg", photoPosition: "center 46%" },
+  { name: "The Grand Experience", guests: "Up to 200 guests", price: "$1,999", note: "The flagship: a luxury coffee cart, premium décor and floral accents, personalized drink names, and priority staffing.", photo: "/gallery/hero-trailer.jpg", photoPosition: "center 58%" },
 ];
 
 const FAQS = [
@@ -110,6 +110,10 @@ export default function SchoolsAndChurches() {
           <div className="experience-grid">
             {PACKAGES.map((p) => (
               <article key={p.name} className="experience-card">
+                <div className="experience-card__media">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={p.photo} alt="" style={{ objectPosition: p.photoPosition }} />
+                </div>
                 <div className="experience-card__body">
                   <span className="experience-card__tag">{p.guests}</span>
                   <h3>{p.name}</h3>
