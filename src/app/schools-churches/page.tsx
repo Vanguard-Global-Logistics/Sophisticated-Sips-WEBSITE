@@ -73,16 +73,18 @@ export default function SchoolsAndChurches() {
 
       <section className="lux-section lux-section--deep">
         <div className="wrap lux-copy" style={{ maxWidth: 820 }}>
-          <p className="lux-kicker">A familiar face at Claywell and beyond</p>
+          <p className="lux-kicker">A familiar face at local schools</p>
           <h2 className="lux-title" style={{ fontSize: "clamp(34px,5vw,54px)", margin: "10px 0 18px" }}>
-            We&rsquo;ve been pouring at Claywell Elementary — and we&rsquo;d love to come to you
+            An approved Pasco County Schools vendor — and we&rsquo;d love to come to you
           </h2>
           <p>
-            Sophisticated Sips has catered real events at Claywell Elementary School, and we bring
-            that same experience to schools and churches throughout Tampa Bay: teacher appreciation
-            days, fundraisers, back-to-school nights, awards ceremonies, and church fellowship
-            events. Every drink is made fresh, hot or iced, by a real barista — not an urn of drip
-            coffee sitting on a folding table.
+            Sophisticated Sips is an approved vendor for Pasco County Schools, and we&rsquo;ve
+            catered real events at Cypress Elementary, Trinity Elementary, and Zephyrhills High
+            School, plus Claywell Elementary in Hillsborough County. We bring that same experience
+            to schools and churches throughout Tampa Bay: teacher appreciation days, fundraisers,
+            back-to-school nights, awards ceremonies, and church fellowship events. Every drink is
+            made fresh, hot or iced, by a real barista — not an urn of drip coffee sitting on a
+            folding table.
           </p>
           <p>
             Setup and breakdown are handled for you, so your staff or volunteers get to actually
